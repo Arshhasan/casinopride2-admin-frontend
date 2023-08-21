@@ -1,24 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import LoginPage from "./Layouts/Pages/LoginPage";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import HomePage from "./Layouts/Pages/HomePage";
+import CrudDemoPage from "./Layouts/Pages/CrudDemoPage";
+import Layout from "./Layouts/Components/Layout";
+import "rsuite/styles/index.less"; // or 'rsuite/dist/rsuite.min.css'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route
+          path="/HomePage"
+          element={
+            <Layout>
+              <HomePage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/CrudDemoPage"
+          element={
+            <Layout>
+              <CrudDemoPage />
+            </Layout>
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 
