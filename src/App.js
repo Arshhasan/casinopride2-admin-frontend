@@ -12,6 +12,15 @@ import MasterAgent from "./Layouts/Pages/Users/MasterAgent";
 import AgentList from "./Layouts/Pages/Users/AgentList";
 import DriverList from "./Layouts/Pages/Users/DriverList";
 import AccountsList from "./Layouts/Pages/Users/AccountsList";
+import PackageList from "./Layouts/Pages/Packages/PackageList";
+import AddPackage from "./Layouts/Components/AddPackage";
+import CouponsList from "./Layouts/Pages/Coupons/CouponsList";
+import AddCoupon from "./Layouts/Components/AddCoupon";
+import Discountonwebsite from "./Layouts/Pages/DiscountsOnWebsite/Discountonwebsite";
+import AddDiscountOnWebsite from "./Layouts/Components/AddDiscountOnWebsite";
+import NewBooking from "./Layouts/Components/NewBooking";
+import BookingList from "./Layouts/Pages/Booking/BookingList";
+import PackagesPage from "./Layouts/Pages/Packages/PackagePage";
 
 function App() {
   return (
@@ -31,6 +40,24 @@ function App() {
           element={
             <Layout>
               <CrudDemoPage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/BookingList"
+          element={
+            <Layout>
+              <BookingList />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/NewBooking"
+          element={
+            <Layout>
+              <NewBooking />
             </Layout>
           }
         />
@@ -93,6 +120,61 @@ function App() {
           element={
             <Layout>
               <AccountsList />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/PackageList"
+          element={
+            <Layout>
+              <PackageList />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/AddPackage"
+          element={
+            <Layout>
+              <AddPackage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/CouponsList"
+          element={
+            <Layout>
+              <CouponsList />
+            </Layout>
+          }
+        />
+
+        <Route path="/PackagesPage" element={<PackagesPage />} />
+
+        <Route
+          path="/AddCoupon"
+          element={
+            <Layout>
+              <AddCoupon />
+            </Layout>
+          }
+        />
+        <Route
+          path="/Discountonwebsite"
+          element={
+            <Layout>
+              <Discountonwebsite />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/AddDiscountOnWebsite"
+          element={
+            <Layout>
+              <AddDiscountOnWebsite />
             </Layout>
           }
         />

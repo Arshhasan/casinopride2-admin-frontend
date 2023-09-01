@@ -51,8 +51,6 @@ const SideNav = () => {
     <div
       style={{
         height: "100vh",
-        // display: "flex",
-        // flexDirection: "column",
       }}
     >
       {expanded ? (
@@ -84,15 +82,13 @@ const SideNav = () => {
           <Nav activeKey={activeKey} onSelect={setActiveKey}>
             {loginDetails?.logindata?.UserType == "1" ? (
               <Nav.Item eventKey="1" icon={<DashboardIcon />}>
-                Bookings
+                <Link to="/BookingList" className="links">
+                  Bookings
+                </Link>
               </Nav.Item>
             ) : (
               <></>
             )}
-
-            <Nav.Item eventKey="2" icon={<GroupIcon />}>
-              User Group
-            </Nav.Item>
             {loginDetails?.logindata?.UserType == "1" ? (
               <Nav.Menu
                 placement="rightStart"
@@ -137,14 +133,28 @@ const SideNav = () => {
             )}
             {loginDetails?.logindata?.UserType == "1" ? (
               <Nav.Item eventKey="6" icon={<DashboardIcon />}>
-                Coupons
+                <Link to="/CouponsList" className="links">
+                  Coupons
+                </Link>
+              </Nav.Item>
+            ) : (
+              <></>
+            )}
+
+            {loginDetails?.logindata?.UserType == "1" ? (
+              <Nav.Item eventKey="7" icon={<DashboardIcon />}>
+                <Link to="/PackageList" className="links">
+                  Packages
+                </Link>
               </Nav.Item>
             ) : (
               <></>
             )}
             {loginDetails?.logindata?.UserType == "1" ? (
-              <Nav.Item eventKey="7" icon={<DashboardIcon />}>
-                Packages
+              <Nav.Item eventKey="6" icon={<DashboardIcon />}>
+                <Link to="/Discountonwebsite" className="links">
+                  Discounts on website
+                </Link>
               </Nav.Item>
             ) : (
               <></>

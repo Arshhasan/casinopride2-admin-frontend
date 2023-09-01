@@ -1,0 +1,293 @@
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+import { AddCouponDetails, EditCouponDetails } from "../../Redux/actions/users";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "../../assets/global.css";
+
+const AddCoupon = () => {
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { userType } = location.state;
+  const { userData } = location.state;
+
+  const loginDetails = useSelector(
+    (state) => state.auth?.userDetailsAfterLogin.Details
+  );
+
+  const [couponTitle, setcouponTitle] = useState(
+    userData?.CouponTitle ? userData?.CouponTitle : ""
+  );
+  const [couponDiscount, setcouponDiscount] = useState(
+    userData?.CouponDiscount ? userData?.CouponDiscount : ""
+  );
+  const [initial, setinitial] = useState(
+    userData?.Initial ? userData?.Initial : ""
+  );
+  const [seriesStart, setseriesStart] = useState(
+    userData?.SeriesStart ? userData?.SeriesStart : ""
+  );
+  const [seriesEnd, setseriesEnd] = useState(
+    userData?.SeriesEnd ? userData?.SeriesEnd : ""
+  );
+  const [startDate, setstartDate] = useState(
+    userData?.StartDate ? userData?.StartDate : ""
+  );
+  const [endDate, setendDate] = useState(
+    userData?.EndDate ? userData?.EndDate : ""
+  );
+  //   const [totalCoupons, settotalCoupons] = useState("");
+  const [usedCoupons, setusedCoupons] = useState([]);
+  const [remainingCoupons, setremainingCoupons] = useState("");
+
+  const onsubmit = () => {
+    const startNumber = parseInt(seriesStart);
+    const endNumber = parseInt(seriesEnd);
+    const totalCoupons = endNumber - startNumber + 1;
+
+    if (
+      couponTitle == "" ||
+      couponDiscount == "" ||
+      initial == "" ||
+      seriesStart == "" ||
+      seriesEnd == "" ||
+      startDate == "" ||
+      endDate == ""
+    ) {
+      toast.warning("Please fill all the fields");
+    } else {
+      const data = {
+        couponTitle: couponTitle,
+        couponDiscount: parseInt(couponDiscount),
+        initial: initial,
+        seriesStart: seriesStart,
+        seriesEnd: seriesEnd,
+        startDate: startDate,
+        endDate: endDate,
+        totalCoupons: totalCoupons,
+        usedCoupons: "[]",
+        remainingCoupons: totalCoupons,
+        isActive: 1,
+        isCouponEnabled: 1,
+      };
+
+      dispatch(
+        AddCouponDetails(data, loginDetails?.logindata?.Token, (callback) => {
+          if (callback.status) {
+            toast.success("User Added");
+            navigate(-1);
+            toast.error(callback.error);
+          } else {
+            toast.error(callback.error);
+          }
+        })
+      );
+    }
+  };
+
+  const onEditCoupon = () => {
+    const startNumber = parseInt(seriesStart);
+    const endNumber = parseInt(seriesEnd);
+    const totalCoupons = endNumber - startNumber + 1;
+
+    if (
+      couponTitle == "" ||
+      couponDiscount == "" ||
+      initial == "" ||
+      seriesStart == "" ||
+      seriesEnd == "" ||
+      startDate == "" ||
+      endDate == ""
+    ) {
+      toast.warning("Please fill all the fields");
+    } else {
+      const data = {
+        couponId: userData?.Id,
+        couponRef: userData?.Ref,
+        couponTitle: couponTitle,
+        couponDiscount: parseInt(couponDiscount),
+        initial: initial,
+        seriesStart: seriesStart,
+        seriesEnd: seriesEnd,
+        startDate: startDate,
+        endDate: endDate,
+        totalCoupons: totalCoupons,
+        usedCoupons: "[]",
+        remainingCoupons: totalCoupons,
+        isActive: 1,
+        isCouponEnabled: 1,
+      };
+
+      dispatch(
+        EditCouponDetails(data, loginDetails?.logindata?.Token, (callback) => {
+          if (callback.status) {
+            toast.success("Coupon Edited");
+            navigate(-1);
+            toast.error(callback.error);
+          } else {
+            toast.error(callback.error);
+          }
+        })
+      );
+    }
+  };
+
+  return (
+    <div>
+      {" "}
+      <ToastContainer />{" "}
+      <div className="row">
+        <h3 className="mb-4">Add Coupon</h3>
+        <div className="col-lg-6 mt-3 mt-3">
+          <label for="formGroupExampleInput " className="form_text">
+            Coupon Title
+          </label>
+          <input
+            class="form-control mt-2 "
+            type="text"
+            placeholder="Coupon Title"
+            onChange={(e) => setcouponTitle(e.target.value)}
+            defaultValue={userData?.CouponTitle}
+          />
+        </div>
+        <div className="col-lg-6 mt-3">
+          <label
+            for="formGroupExampleInput "
+            className="form_text"
+            style={{ fontSize: "15px", fontWeight: "600" }}
+          >
+            Coupon Discount
+          </label>
+          <input
+            class="form-control mt-2"
+            type="text"
+            placeholder="Coupon Discount"
+            onChange={(e) => setcouponDiscount(e.target.value)}
+            defaultValue={userData?.CouponDiscount}
+          />
+        </div>
+        <div className="col-lg-6 mt-3">
+          <label for="formGroupExampleInput " className="form_text">
+            Initial
+          </label>
+          <input
+            class="form-control mt-2"
+            type="text"
+            placeholder="Enter Initial"
+            onChange={(e) => setinitial(e.target.value)}
+            defaultValue={userData?.Initial}
+          />
+        </div>
+
+        <div className="col-lg-6 mt-3">
+          <label for="formGroupExampleInput " className="form_text">
+            Series Start
+          </label>
+          <input
+            class="form-control mt-2"
+            type="text"
+            placeholder="Enter  Series Start"
+            onChange={(e) => setseriesStart(e.target.value)}
+            defaultValue={userData?.SeriesStart}
+          />
+        </div>
+        <div className="col-lg-6 mt-3">
+          <label for="formGroupExampleInput " className="form_text">
+            Series End
+          </label>
+          <input
+            class="form-control mt-2"
+            type="text"
+            placeholder="Enter Series End"
+            onChange={(e) => setseriesEnd(e.target.value)}
+            defaultValue={userData?.SeriesEnd}
+          />
+        </div>
+
+        <div className="col-lg-6 mt-3">
+          <label for="formGroupExampleInput " className="form_text">
+            Start Date
+          </label>
+          <input
+            class="form-control mt-2"
+            type="date"
+            placeholder="Enter   Start Date"
+            onChange={(e) => setstartDate(e.target.value)}
+            defaultValue={userData?.StartDate}
+          />
+        </div>
+        <div className="col-lg-6 mt-3">
+          <label for="formGroupExampleInput " className="form_text">
+            End Date
+          </label>
+          <input
+            class="form-control mt-2"
+            type="date"
+            placeholder=" End Date"
+            onChange={(e) => setendDate(e.target.value)}
+            defaultValue={userData?.EndDate}
+          />
+        </div>
+
+        {/* <div className="col-lg-6 mt-3">
+          <label for="formGroupExampleInput " className="form_text">
+            Total Coupons
+          </label>
+          <input
+            class="form-control mt-2"
+            type="text"
+            placeholder="password"
+            onChange={(e) => settotalCoupons(e.target.value)}
+            //   defaultValue={userData?.Password}
+          />
+        </div> */}
+
+        {/* <div className="col-lg-6 mt-3">
+          <label for="formGroupExampleInput " className="form_text">
+            Used Coupons
+          </label>
+          <input
+            class="form-control mt-2"
+            type="text"
+            placeholder="password"
+            onChange={(e) => setusedCoupons(e.target.value)}
+            //   defaultValue={userData?.Password}
+          />
+        </div> */}
+        {/* 
+        <div className="col-lg-6 mt-3">
+          <label for="formGroupExampleInput " className="form_text">
+            Remaining Coupons
+          </label>
+          <input
+            class="form-control mt-2"
+            type="text"
+            placeholder="password"
+            onChange={(e) => setremainingCoupons(e.target.value)}
+            //   defaultValue={userData?.Password}
+          />
+        </div> */}
+
+        {!userData ? (
+          <div className="mt-5">
+            <button onClick={onsubmit} className="btn btn-primary">
+              Add Coupon
+            </button>
+          </div>
+        ) : (
+          <div className="mt-5">
+            <button onClick={onEditCoupon} className="btn btn-primary">
+              Edit Coupon
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AddCoupon;

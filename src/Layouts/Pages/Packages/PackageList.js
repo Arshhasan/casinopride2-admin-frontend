@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../../../assets/ManagerList.css";
 import { Link } from "react-router-dom";
-import { getUserDetails, deleteUser } from "../../../Redux/actions/users";
+import { getPackageDetails, deletePackage } from "../../../Redux/actions/users";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
@@ -12,16 +12,18 @@ import "react-toastify/dist/ReactToastify.css";
 import { Button, Modal } from "react-bootstrap";
 import more from "../../../assets/Images/more.png";
 
-const DriverList = () => {
+const PackageList = () => {
   const dispatch = useDispatch();
 
   const loginDetails = useSelector(
     (state) => state.auth?.userDetailsAfterLogin.Details
   );
 
-  const [driver, setDriver] = useState([]);
+  const [packageDetails, setPackageDetails] = useState([]);
+  const [filterPackageDetails, setFilterPackageDetails] = useState([]);
 
   const [loading, setLoading] = useState(true);
+
   const [userId, setUserId] = useState("");
 
   const handleClose = () => setShowModal(false);
@@ -31,54 +33,42 @@ const DriverList = () => {
     setUserId(Id);
   };
 
-  const fetchDriverDetails = () => {
+  const [itemDetails, setItemDetails] = useState([]);
+
+  const fetchPackageDetails = () => {
     dispatch(
-      getUserDetails(loginDetails?.logindata?.Token, 6, (callback) => {
+      getPackageDetails(loginDetails?.logindata?.Token, 4, (callback) => {
         if (callback.status) {
           setLoading(false);
           console.log(
-            "Callback---------get MasterAgent list",
+            "Callback---------get Package Details",
             callback?.response
           );
-          setDriver(callback?.response?.Details);
-          setFilterDriverList(callback?.response?.Details);
+
+          setFilterPackageDetails(callback?.response?.Details?.packageDetails);
+          setPackageDetails(callback?.response?.Details?.packageDetails);
+          setItemDetails(callback?.response?.Details?.packageItemDetails);
         }
       })
     );
   };
 
   useEffect(() => {
-    fetchDriverDetails();
+    fetchPackageDetails();
   }, [dispatch]);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredManagerDetails, setFilteredManagerDetails] = useState([]);
-  const [filterDriverList, setFilterDriverList] = useState([]);
-  const [showModal, setShowModal] = useState(false);
 
-  const filterDriverDetails = () => {
-    if (searchQuery.trim() === "") {
-      setFilterDriverList([]);
-    } else {
-      const lowerCaseQuery = searchQuery.toLowerCase();
-      const filtered = driver.filter(
-        (item) =>
-          item.Name.toLowerCase().includes(lowerCaseQuery) ||
-          item.Phone.includes(searchQuery) ||
-          item.Email.toLowerCase().includes(lowerCaseQuery)
-      );
-      setFilterDriverList(filtered);
-    }
-  };
+  const [showModal, setShowModal] = useState(false);
 
   const deleteUserFunction = () => {
     dispatch(
-      deleteUser(loginDetails?.logindata?.Token, userId, (callback) => {
+      deletePackage(loginDetails?.logindata?.Token, userId, (callback) => {
         if (callback.status) {
-          console.log("Callback---------get Delete user ", callback?.response);
+          console.log("Callback--------- Delete Package ", callback?.response);
           setShowModal(false);
-          fetchDriverDetails();
-          toast.success("Master Agent Deleted");
+          fetchPackageDetails();
+          toast.success("Package Deleted");
         }
       })
     );
@@ -97,9 +87,36 @@ const DriverList = () => {
     setSelectedUserDetails({});
   };
 
+  const [isToggled, setIsToggled] = useState(false);
+
+  const handleToggle = (PackageId) => {
+    console.log("PackageId", PackageId);
+  };
+
+  const groupedData = packageDetails.map((packageDetail) => {
+    const matchingPackageItems = itemDetails.filter(
+      (itemDetail) => itemDetail.PackageId === packageDetail.Id
+    );
+    return {
+      ...packageDetail,
+      packageItems: matchingPackageItems,
+    };
+  });
+
+  const filterPackageDetailsFn = () => {
+    if (searchQuery.trim() === "") {
+      setFilterPackageDetails([]);
+    } else {
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      const filtered = groupedData.filter((item) =>
+        item?.PackageName.toLowerCase().includes(lowerCaseQuery)
+      );
+      setFilterPackageDetails(filtered);
+    }
+  };
   return (
     <div>
-      <h3 className="mb-4">Drivers List</h3>
+      <h3 className="mb-4">Package List</h3>
       <div className="container">
         <div className="row">
           <div className="col-md-8 col-lg-6 mb-3">
@@ -110,7 +127,7 @@ const DriverList = () => {
                 placeholder="Search"
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  filterDriverDetails();
+                  filterPackageDetailsFn();
                 }}
               />
             </div>
@@ -118,11 +135,11 @@ const DriverList = () => {
           <div className="col-md-4 col-lg-6 d-flex justify-content-end mb-3">
             <button className="btn btn-primary">
               <Link
-                to="/AddUser"
-                state={{ userType: "6" }}
+                to="/AddPackage"
+                state={{ userType: "4" }}
                 className="addLinks"
               >
-                Add Driver
+                Add Packages
               </Link>
             </button>
           </div>
@@ -132,13 +149,16 @@ const DriverList = () => {
         <thead>
           <tr>
             <th scope="col" className="text-center table_heading">
-              Name
+              Package Name
             </th>
             <th scope="col" className="text-center table_heading">
-              Phone Number
+              Package Weekday Price
             </th>
             <th scope="col" className="text-center table_heading">
-              Email
+              Package Weekend Price
+            </th>
+            <th scope="col" className="text-center table_heading">
+              Status
             </th>
             <th scope="col" className="text-center table_heading">
               Edit
@@ -147,7 +167,7 @@ const DriverList = () => {
               Delete
             </th>
             <th scope="col" className="text-center table_heading">
-              View More
+              View more
             </th>
           </tr>
         </thead>
@@ -176,22 +196,30 @@ const DriverList = () => {
                 </div>
               </td>
             </tr>
-          ) : filterDriverList.length === 0 ? (
+          ) : groupedData.length === 0 ? (
             <tr>
               <td colSpan="4" className="text-center">
                 No data found.
               </td>
             </tr>
           ) : (
-            filterDriverList.map((item) => (
+            groupedData.map((item) => (
               <tr key={item.id}>
-                <td className="manager-list ">{item.Name}</td>
-                <td className="manager-list">{item.Phone}</td>
-                <td className="manager-list">{item.Email}</td>
+                <td className="manager-list ">{item.PackageName}</td>
+                <td className="manager-list">{item.PackageWeekdayPrice}</td>
+                <td className="manager-list">{item.PackageWeekendPrice}</td>
+
                 <td className="manager-list">
-                  {" "}
+                  {item.IsPackageEnabled === 1 ? (
+                    <span style={{ color: "green" }}>Active</span>
+                  ) : (
+                    <span style={{ color: "red" }}>Inactive</span>
+                  )}
+                </td>
+
+                <td className="manager-list">
                   <Link
-                    to="/AddUser"
+                    to="/AddPackage"
                     state={{ userData: item }}
                     className="links"
                   >
@@ -200,11 +228,9 @@ const DriverList = () => {
                     />
                   </Link>
                 </td>
-                <td
-                  className="manager-list"
-                  onClick={() => handleShow(item.Id)}
-                >
+                <td className="manager-list">
                   <AiFillDelete
+                    onClick={() => handleShow(item.PackageId)}
                     style={{ color: "#C5CEE0", fontSize: "20px" }}
                   />
                 </td>
@@ -212,7 +238,6 @@ const DriverList = () => {
                   className="manager-list"
                   onClick={() => handleViewMore(item)}
                 >
-                  {" "}
                   <img src={more} className="more_img" />
                 </td>
 
@@ -220,18 +245,17 @@ const DriverList = () => {
                   <div className="row">
                     <div className="col-lg-4">
                       <Link
-                        to="/AddUser"
+                        to="/AddPackage"
                         state={{ userData: item }}
                         className="links"
                       >
                         <AiFillEdit />
                       </Link>
                     </div>
-                    <div
-                      className="col-lg-4"
-                      onClick={() => handleShow(item.Id)}
-                    >
-                      <AiFillDelete />
+                    <div className="col-lg-4">
+                      <AiFillDelete
+                        onClick={() => handleShow(item.PackageId)}
+                      />
                     </div>
                     <div
                       className="col-lg-4"
@@ -246,14 +270,13 @@ const DriverList = () => {
           )}
         </tbody>
       </table>
-
       <ToastContainer />
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Delete Manager</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete this Driver Agent?
+          Are you sure you want to delete this Master Agent?
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -267,21 +290,65 @@ const DriverList = () => {
 
       <Modal show={showViewMoreModal} onHide={handleCloseViewMore}>
         <Modal.Header closeButton>
-          <Modal.Title>Driver Details</Modal.Title>
+          <Modal.Title>Master Agent Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p className="manager-list ">Name: {selectedUserDetails.Name}</p>
-          <p className="manager-list ">Phone: {selectedUserDetails.Phone}</p>
-          <p className="manager-list ">Email: {selectedUserDetails.Email}</p>
           <p className="manager-list ">
-            Address: {selectedUserDetails.Address}
+            Package Name: {selectedUserDetails.PackageName}
           </p>
           <p className="manager-list ">
-            Password: {selectedUserDetails.Password}
+            Package Weekday Price: {selectedUserDetails.PackageWeekdayPrice}
           </p>
           <p className="manager-list ">
-            Username: {selectedUserDetails.Username}
+            Package Weekend Price: {selectedUserDetails.PackageWeekendPrice}
           </p>
+          <p className="manager-list ">
+            No of Items: {selectedUserDetails.NumberOfItems}
+          </p>
+
+          <div className="row mx-auto">
+            {selectedUserDetails?.packageItems?.map((item) => (
+              <div
+                className="col-5 mx-auto mb-3 mt-3"
+                style={{
+                  border: "1px solid #ccc",
+                  borderRadius: "8px",
+                  padding: "10px",
+                  background: "#f8f8f8",
+                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <p
+                  className="manager-list"
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    marginBottom: "5px",
+                  }}
+                >
+                  Item Name: {item.ItemName}
+                </p>
+                <p
+                  className="manager-list"
+                  style={{ fontSize: "14px", marginBottom: "5px" }}
+                >
+                  Item Tax: {item.ItemTax}
+                </p>
+                <p
+                  className="manager-list"
+                  style={{ fontSize: "14px", marginBottom: "5px" }}
+                >
+                  Item Weekday Price: {item.ItemWeekdayPrice}
+                </p>
+                <p
+                  className="manager-list"
+                  style={{ fontSize: "14px", marginBottom: "5px" }}
+                >
+                  Item Weekend Price: {item.ItemWeekendPrice}
+                </p>
+              </div>
+            ))}
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseViewMore}>
@@ -293,4 +360,4 @@ const DriverList = () => {
   );
 };
 
-export default DriverList;
+export default PackageList;

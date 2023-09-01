@@ -13,3 +13,27 @@
   font-size: 16px !important;
   font-weight: 600 !important;
 }
+
+.more_img {
+  height: 20px;
+  width: 20px;
+}
+
+.btn_colour {
+  background-color: #4a85f6;
+  color: white;
+}
+
+.btn_colour:hover {
+  background-color: #4a85f6;
+  color: #fff;
+}
+
+.cancel_img {
+  height: 30px;
+  width: 30px;
+  margin-top: 10px;
+}
+.addLinks {
+  color: white !important;
+}

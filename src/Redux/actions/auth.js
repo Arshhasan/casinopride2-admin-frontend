@@ -1,17 +1,21 @@
 import api from "../../Service/api";
 import { saveLoginData } from "../reducers/auth";
 
+console.log("Log from apin ", api);
+
 export const Login = (data, callback) => async (dispatch) => {
-  api
-    .post("/auth/validateuser", data)
+  console.log(
+    "Validate user URL ->",
+    api.AUTH_PORT.defaults.baseURL + "/auth/validateuser"
+  );
+  api.AUTH_PORT.post("/auth/validateuser", data)
     .then((response) => {
       console.log("Validate user data ->", response.data);
       if (response.data?.Details) {
-        api
-          .post("/auth/login", {
-            UserId: response.data?.Details?.Id,
-            UserType: response.data?.Details?.UserType,
-          })
+        api.AUTH_PORT.post("/auth/login", {
+          UserId: response.data?.Details?.Id,
+          UserType: response.data?.Details?.UserType,
+        })
           .then((response) => {
             console.log("Login data -->", response.data);
             dispatch(saveLoginData(response.data));
@@ -39,12 +43,11 @@ export const Login = (data, callback) => async (dispatch) => {
 export const Logout = (data, token, callback) => async (dispatch) => {
   console.log("inside Logout", data);
   console.log("inside token", token);
-  api
-    .post("/auth/logout", data, {
-      headers: {
-        AuthToken: token,
-      },
-    })
+  api.AUTH_PORT.post("/auth/logout", data, {
+    headers: {
+      AuthToken: token,
+    },
+  })
     .then((response) => {
       console.log("LOGOUT RESPONSE :: ==>", response.data);
       if (response.data?.Details) {

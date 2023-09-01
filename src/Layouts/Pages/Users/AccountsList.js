@@ -10,6 +10,7 @@ import "../../../assets/global.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button, Modal } from "react-bootstrap";
+import more from "../../../assets/Images/more.png";
 
 const AccountsList = () => {
   const dispatch = useDispatch();
@@ -111,7 +112,11 @@ const AccountsList = () => {
           </div>
           <div className="col-md-4 col-lg-6 d-flex justify-content-end mb-3">
             <button className="btn btn-primary">
-              <Link to="/AddUser" state={{ userType: "7" }} className="links">
+              <Link
+                to="/AddUser"
+                state={{ userType: "7" }}
+                className="addLinks"
+              >
                 Add Accountant
               </Link>
             </button>
@@ -131,7 +136,13 @@ const AccountsList = () => {
               Email
             </th>
             <th scope="col" className="text-center table_heading">
-              Action
+              Edit
+            </th>
+            <th scope="col" className="text-center table_heading">
+              Delete
+            </th>
+            <th scope="col" className="text-center table_heading">
+              View More
             </th>
           </tr>
         </thead>
@@ -174,6 +185,33 @@ const AccountsList = () => {
                 <td className="manager-list">{item.Phone}</td>
                 <td className="manager-list">{item.Email}</td>
                 <td className="manager-list">
+                  <Link
+                    to="/AddUser"
+                    state={{ userData: item }}
+                    className="links"
+                  >
+                    <AiFillEdit
+                      style={{ color: "#C5CEE0", fontSize: "20px" }}
+                    />
+                  </Link>
+                </td>
+                <td
+                  className="manager-list"
+                  onClick={() => handleShow(item.Id)}
+                >
+                  <AiFillDelete
+                    style={{ color: "#C5CEE0", fontSize: "20px" }}
+                  />
+                </td>
+                <td
+                  className="manager-list"
+                  onClick={() => handleViewMore(item)}
+                >
+                  {" "}
+                  <img src={more} className="more_img" />
+                </td>
+
+                {/* <td className="manager-list">
                   <div className="row">
                     <div className="col-lg-4">
                       <Link
@@ -197,7 +235,7 @@ const AccountsList = () => {
                       View more
                     </div>
                   </div>
-                </td>
+                </td> */}
               </tr>
             ))
           )}
