@@ -15,15 +15,9 @@ const AddUser = () => {
   const { userType } = location.state;
   const { userData } = location.state;
 
-  console.log("Data from edit Manager", userData?.UserType);
-
   const loginDetails = useSelector(
     (state) => state.auth?.userDetailsAfterLogin.Details
   );
-
-  console.log("loginDetails", loginDetails?.logindata?.Token);
-
-  console.log(userType);
 
   const [fullName, setFullName] = useState(
     userData?.Name ? userData?.Name : ""
@@ -46,6 +40,22 @@ const AddUser = () => {
     userData?.MonthlySettlement ? userData?.MonthlySettlement : 0
   );
 
+  const isValidEmail = (email) => {
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return emailPattern.test(email);
+  };
+
+  const isValidPhoneNumber = (phone) => {
+    const phonePattern = /^\d{1,10}$/;
+    return phonePattern.test(phone);
+  };
+
+  const isValidPassword = (password) => {
+    // At least one uppercase letter, one digit, and one special character
+    const passwordPattern =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordPattern.test(password);
+  };
   const onsubmit = () => {
     if (
       fullName == "" ||
@@ -56,6 +66,14 @@ const AddUser = () => {
       password == ""
     ) {
       toast.warning("Please fill all the fields");
+    } else if (!isValidEmail(email)) {
+      toast.warning("Please enter a valid email address");
+    } else if (phone.length > 10 || phone.length < 10) {
+      toast.warning("Please enter a valid phone number (up to 10 digits)");
+    } else if (!isValidPassword(password)) {
+      toast.warning(
+        "Password must contain at least one uppercase letter, one digit, and one special character"
+      );
     } else {
       const data = {
         firebaseUUID: "9876590",
@@ -248,9 +266,14 @@ const AddUser = () => {
         </div>
       </div>
       {!userData ? (
-        <div className="mt-5">
-          <button onClick={onsubmit} className="btn btn-primary">
-            Add user
+        <div className="col-lg-6 mb-2 btn-lg mx-auto d-flex justify-content-center ">
+          <button
+            style={{ paddingLeft: "100px", paddingRight: "100px" }}
+            type="submit"
+            className="btn btn_colour mt-5 btn-lg"
+            onClick={onsubmit}
+          >
+            Add User
           </button>
         </div>
       ) : (

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../../../assets/ManagerList.css";
 import { Link } from "react-router-dom";
-import { getUserDetails, deleteUser } from "../../../Redux/actions/users";
+import { getCouponDetails, deleteCoupon } from "../../../Redux/actions/users";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
@@ -12,16 +12,21 @@ import "react-toastify/dist/ReactToastify.css";
 import { Button, Modal } from "react-bootstrap";
 import more from "../../../assets/Images/more.png";
 
-const DriverList = () => {
+const CouponsList = () => {
   const dispatch = useDispatch();
 
   const loginDetails = useSelector(
     (state) => state.auth?.userDetailsAfterLogin.Details
   );
 
-  const [driver, setDriver] = useState([]);
+  const [packageDetails, setPackageDetails] = useState([]);
+  const [filterPackageDetails, setFilterPackageDetails] = useState([]);
+
+  const [couponDetails, setCouponDetails] = useState([]);
+  const [filteredCouponDetails, setFilteredCouponDetails] = useState([]);
 
   const [loading, setLoading] = useState(true);
+
   const [userId, setUserId] = useState("");
 
   const handleClose = () => setShowModal(false);
@@ -31,54 +36,52 @@ const DriverList = () => {
     setUserId(Id);
   };
 
-  const fetchDriverDetails = () => {
+  const fetchCouponDetails = () => {
     dispatch(
-      getUserDetails(loginDetails?.logindata?.Token, 6, (callback) => {
+      getCouponDetails(loginDetails?.logindata?.Token, 4, (callback) => {
         if (callback.status) {
           setLoading(false);
           console.log(
-            "Callback---------get MasterAgent list",
+            "Callback---------get Coupon Details",
             callback?.response
           );
-          setDriver(callback?.response?.Details);
-          setFilterDriverList(callback?.response?.Details);
+
+          setFilterPackageDetails(callback?.response?.Details);
+          setCouponDetails(callback?.response?.Details);
+          setFilteredCouponDetails(callback?.response?.Details);
         }
       })
     );
   };
 
   useEffect(() => {
-    fetchDriverDetails();
+    fetchCouponDetails();
   }, [dispatch]);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredManagerDetails, setFilteredManagerDetails] = useState([]);
-  const [filterDriverList, setFilterDriverList] = useState([]);
+
   const [showModal, setShowModal] = useState(false);
 
-  const filterDriverDetails = () => {
+  const filterCouponListDetails = () => {
     if (searchQuery.trim() === "") {
-      setFilterDriverList([]);
+      setFilteredCouponDetails([]);
     } else {
       const lowerCaseQuery = searchQuery.toLowerCase();
-      const filtered = driver.filter(
-        (item) =>
-          item.Name.toLowerCase().includes(lowerCaseQuery) ||
-          item.Phone.includes(searchQuery) ||
-          item.Email.toLowerCase().includes(lowerCaseQuery)
+      const filtered = couponDetails.filter((item) =>
+        item?.CouponTitle.toLowerCase().includes(lowerCaseQuery)
       );
-      setFilterDriverList(filtered);
+      setFilteredCouponDetails(filtered);
     }
   };
 
-  const deleteUserFunction = () => {
+  const deleteCouponFn = () => {
     dispatch(
-      deleteUser(loginDetails?.logindata?.Token, userId, (callback) => {
+      deleteCoupon(loginDetails?.logindata?.Token, userId, (callback) => {
         if (callback.status) {
-          console.log("Callback---------get Delete user ", callback?.response);
+          console.log("Callback--------- Delete Coupon ", callback?.response);
           setShowModal(false);
-          fetchDriverDetails();
-          toast.success("Master Agent Deleted");
+          fetchCouponDetails();
+          toast.success("Coupon Deleted");
         }
       })
     );
@@ -97,9 +100,15 @@ const DriverList = () => {
     setSelectedUserDetails({});
   };
 
+  const [isToggled, setIsToggled] = useState(false);
+
+  const handleToggle = (PackageId) => {
+    console.log("PackageId", PackageId);
+  };
+
   return (
     <div>
-      <h3 className="mb-4">Drivers List</h3>
+      <h3 className="mb-4">Coupon List</h3>
       <div className="container">
         <div className="row">
           <div className="col-md-8 col-lg-6 mb-3">
@@ -110,7 +119,7 @@ const DriverList = () => {
                 placeholder="Search"
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  filterDriverDetails();
+                  filterCouponListDetails();
                 }}
               />
             </div>
@@ -118,11 +127,11 @@ const DriverList = () => {
           <div className="col-md-4 col-lg-6 d-flex justify-content-end mb-3">
             <button className="btn btn-primary">
               <Link
-                to="/AddUser"
-                state={{ userType: "6" }}
+                to="/AddCoupon"
+                state={{ userType: "4" }}
                 className="addLinks"
               >
-                Add Driver
+                Add Coupon
               </Link>
             </button>
           </div>
@@ -132,13 +141,22 @@ const DriverList = () => {
         <thead>
           <tr>
             <th scope="col" className="text-center table_heading">
-              Name
+              Coupon Name
             </th>
             <th scope="col" className="text-center table_heading">
-              Phone Number
+              Series Start
             </th>
             <th scope="col" className="text-center table_heading">
-              Email
+              Series End
+            </th>
+            <th scope="col" className="text-center table_heading">
+              Start Date
+            </th>
+            <th scope="col" className="text-center table_heading">
+              End Date
+            </th>
+            <th scope="col" className="text-center table_heading">
+              Status
             </th>
             <th scope="col" className="text-center table_heading">
               Edit
@@ -147,7 +165,7 @@ const DriverList = () => {
               Delete
             </th>
             <th scope="col" className="text-center table_heading">
-              View More
+              View more
             </th>
           </tr>
         </thead>
@@ -176,22 +194,28 @@ const DriverList = () => {
                 </div>
               </td>
             </tr>
-          ) : filterDriverList.length === 0 ? (
+          ) : filteredCouponDetails.length === 0 ? (
             <tr>
               <td colSpan="4" className="text-center">
                 No data found.
               </td>
             </tr>
           ) : (
-            filterDriverList.map((item) => (
+            filteredCouponDetails.map((item) => (
               <tr key={item.id}>
-                <td className="manager-list ">{item.Name}</td>
-                <td className="manager-list">{item.Phone}</td>
-                <td className="manager-list">{item.Email}</td>
+                <td className="manager-list ">{item.CouponTitle}</td>
+                <td className="manager-list">{item.SeriesStart}</td>
+                <td className="manager-list">{item.SeriesEnd}</td>
+                <td className="manager-list">{item.StartDate}</td>
+                <td className="manager-list">{item.EndDate}</td>
+
                 <td className="manager-list">
-                  {" "}
+                  {item.IsCouponEnabled === 1 ? "Active" : "In Active"}
+                </td>
+
+                <td className="manager-list">
                   <Link
-                    to="/AddUser"
+                    to="/AddCoupon"
                     state={{ userData: item }}
                     className="links"
                   >
@@ -200,11 +224,9 @@ const DriverList = () => {
                     />
                   </Link>
                 </td>
-                <td
-                  className="manager-list"
-                  onClick={() => handleShow(item.Id)}
-                >
+                <td className="manager-list">
                   <AiFillDelete
+                    onClick={() => handleShow(item.Id)}
                     style={{ color: "#C5CEE0", fontSize: "20px" }}
                   />
                 </td>
@@ -212,7 +234,6 @@ const DriverList = () => {
                   className="manager-list"
                   onClick={() => handleViewMore(item)}
                 >
-                  {" "}
                   <img src={more} className="more_img" />
                 </td>
 
@@ -220,18 +241,15 @@ const DriverList = () => {
                   <div className="row">
                     <div className="col-lg-4">
                       <Link
-                        to="/AddUser"
+                        to="/AddPackage"
                         state={{ userData: item }}
                         className="links"
                       >
                         <AiFillEdit />
                       </Link>
                     </div>
-                    <div
-                      className="col-lg-4"
-                      onClick={() => handleShow(item.Id)}
-                    >
-                      <AiFillDelete />
+                    <div className="col-lg-4">
+                      <AiFillDelete onClick={() => handleShow(item.Id)} />
                     </div>
                     <div
                       className="col-lg-4"
@@ -246,20 +264,14 @@ const DriverList = () => {
           )}
         </tbody>
       </table>
-
       <ToastContainer />
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Delete Manager</Modal.Title>
+          <Modal.Title>Delete Coupon</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete this Driver Agent?
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to delete this Coupon?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="danger" onClick={deleteUserFunction}>
+          <Button variant="danger" onClick={deleteCouponFn}>
             Delete
           </Button>
         </Modal.Footer>
@@ -267,30 +279,39 @@ const DriverList = () => {
 
       <Modal show={showViewMoreModal} onHide={handleCloseViewMore}>
         <Modal.Header closeButton>
-          <Modal.Title>Driver Details</Modal.Title>
+          <Modal.Title>Coupon Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p className="manager-list ">Name: {selectedUserDetails.Name}</p>
-          <p className="manager-list ">Phone: {selectedUserDetails.Phone}</p>
-          <p className="manager-list ">Email: {selectedUserDetails.Email}</p>
           <p className="manager-list ">
-            Address: {selectedUserDetails.Address}
+            Coupon Title: {selectedUserDetails.CouponTitle}
           </p>
           <p className="manager-list ">
-            Password: {selectedUserDetails.Password}
+            Initial : {selectedUserDetails.Initial}
           </p>
           <p className="manager-list ">
-            Username: {selectedUserDetails.Username}
+            Series Start: {selectedUserDetails.SeriesStart}
+          </p>
+          <p className="manager-list ">
+            Series End: {selectedUserDetails.SeriesEnd}
+          </p>
+          <p className="manager-list ">
+            Start Date: {selectedUserDetails.StartDate}
+          </p>
+          <p className="manager-list ">
+            End Date: {selectedUserDetails.EndDate}
+          </p>
+
+          <p className="manager-list ">
+            Remaining Coupons: {selectedUserDetails.RemainingCoupons}
+          </p>
+          <p className="manager-list ">
+            Total Coupons: {selectedUserDetails.TotalCoupons}
           </p>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseViewMore}>
-            Close
-          </Button>
-        </Modal.Footer>
+        <Modal.Footer></Modal.Footer>
       </Modal>
     </div>
   );
 };
 
-export default DriverList;
+export default CouponsList;

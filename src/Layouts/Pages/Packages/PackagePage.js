@@ -1,0 +1,311 @@
+import React, { useState, useEffect } from "react";
+import "../../../assets/packagePage.css";
+import { Button, Modal } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { OTPpackage } from "../../Components/OTPpackage";
+// import { getPackageDetails } from "../../../Redux/actions/users";
+import { getPackagesDetails } from "../../../Redux/actions/booking";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import NewBooking from "../../Components/NewBooking";
+
+// import DecemberPackages from "../Components/DecemberPackages";
+// import Title from "../Components/Title";
+// import FinalPackage from "../Components/FinalPackage";
+
+const PackagesPage = ({
+  setamount,
+  setPackageIds,
+  setPackageGuestCount,
+  setNumberofteens,
+  settoalGuestCount,
+}) => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleCloseModal = () => setShowModal(false);
+  const handleShowModal = () => setShowModal(true);
+
+  const [packageDetails, setPackageDetails] = useState([]);
+  const [filterPackageDetails, setFilterPackageDetails] = useState([]);
+  const [itemDetails, setItemDetails] = useState([]);
+
+  const loginDetails = useSelector(
+    (state) => state.auth?.userDetailsAfterLogin.Details
+  );
+
+  const fetchPackageDetails = () => {
+    dispatch(
+      getPackagesDetails(loginDetails?.logindata?.Token, 4, (callback) => {
+        if (callback.status) {
+          setLoading(false);
+
+          setFilterPackageDetails(callback?.response?.Details?.packageDetails);
+          setPackageDetails(callback?.response?.Details?.packageDetails);
+          setItemDetails(callback?.response?.Details?.packageItemDetails);
+        }
+      })
+    );
+  };
+
+  useEffect(() => {
+    fetchPackageDetails();
+  }, [dispatch]);
+
+  const groupedData = packageDetails.map((packageDetail) => {
+    const matchingPackageItems = itemDetails.filter(
+      (itemDetail) => itemDetail.PackageId === packageDetail.Id
+    );
+    return {
+      ...packageDetail,
+      packageItems: matchingPackageItems,
+    };
+  });
+
+  console.log("T%eens price>", groupedData[0]?.PackageTeensPrice);
+
+  const [selectedPackages, setSelectedPackages] = useState({});
+
+  const handleCounterChange = (
+    packageId,
+    counterType,
+    increment,
+    PackageWeekdayPrice,
+    PackageWeekendPrice
+  ) => {
+    console.log("weekday", PackageWeekdayPrice);
+    console.log("weekend", PackageWeekendPrice);
+
+    setSelectedPackages((prevSelectedPackages) => {
+      const updatedPackages = { ...prevSelectedPackages };
+
+      const currentCount = updatedPackages[packageId]?.[counterType] || 0;
+
+      if (increment || currentCount > 0) {
+        updatedPackages[packageId] = {
+          ...updatedPackages[packageId],
+          [counterType]: currentCount + (increment ? 1 : -1),
+        };
+
+        if (updatedPackages[packageId][counterType] <= 0) {
+          delete updatedPackages[packageId];
+        }
+      } else {
+        delete updatedPackages[packageId];
+      }
+
+      return updatedPackages;
+    });
+  };
+
+  const packageIds = [];
+  const packageGuestCounts = [];
+  const packagePrices = [];
+
+  Object.keys(selectedPackages).forEach((packageId) => {
+    const packageData = selectedPackages[packageId];
+    packageIds.push(parseInt(packageId));
+    packageGuestCounts.push(packageData.adults || 0);
+
+    // Find the correct package detail based on packageId
+    const groupedData = packageDetails.find(
+      (detail) => detail.Id === parseInt(packageId)
+    );
+
+    if (groupedData) {
+      // Calculate package price based on weekdays or weekends
+      const packagePrice =
+        (packageData.adults || 0) *
+        (packageData.weekendSelected
+          ? groupedData.PackageWeekendPrice || 0
+          : groupedData.PackageWeekdayPrice || 0);
+
+      packagePrices.push(packagePrice);
+    }
+  });
+
+  const formattedData = {
+    packageId: packageIds,
+    packageGuestCount: packageGuestCounts,
+  };
+
+  console.log("packageGuestCount:\n", formattedData.packageGuestCount);
+  console.log("packageId:\n", formattedData.packageId);
+  console.log("packagePrices:\n", packagePrices);
+
+  const handleBookNow = () => {
+    console.log("Selected Packages:", selectedPackages);
+  };
+
+  const [teensCount, setTeensCount] = useState(0);
+  const [teensPrice, setTeensPrice] = useState(0);
+
+  const handleIncrement = () => {
+    setTeensCount((prevCount) => prevCount + 1);
+  };
+
+  const handleDecrement = () => {
+    if (teensCount > 0) {
+      setTeensCount((prevCount) => prevCount - 1);
+      setNumberofteens((prevCount) => prevCount - 1);
+    }
+  };
+
+  const TotalAmount = packagePrices.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0
+  );
+
+  const TotalAdultGustCount = formattedData.packageGuestCount.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0
+  );
+
+  console.log("teensCount-->", teensCount);
+  console.log("TotalAdultGustCount-->", TotalAdultGustCount);
+
+  const totalTeensPrice = teensCount * groupedData[0]?.PackageTeensPrice;
+  console.log("totalTeensPrice->", totalTeensPrice);
+
+  const totalAmountOfAllPackages = totalTeensPrice + TotalAmount;
+
+  const totalCountofCustomer = teensCount + TotalAdultGustCount;
+
+  useEffect(() => {
+    setamount(totalAmountOfAllPackages);
+    setPackageIds(formattedData.packageId);
+    setPackageGuestCount(formattedData.packageGuestCount);
+    settoalGuestCount(totalCountofCustomer);
+  }, [TotalAmount, teensCount]);
+
+  return (
+    <div>
+      <section class="mt-5 text-center"></section>
+
+      <div class="container">
+        <div class="tab-panel">
+          <div class="tab-content">
+            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+              <div class="row d-flex justify-content-center">
+                <div className="container mt-4 col-lg-7"></div>
+                <div className="row">
+                  {groupedData.map((packageDetail, index) => (
+                    <OTPpackage
+                      key={index}
+                      packageDetail={packageDetail}
+                      handleCounterChange={handleCounterChange}
+                      setSelectedPackages={setSelectedPackages}
+                      selectedPackages={selectedPackages}
+                      handleBookNow={handleBookNow}
+                    />
+                  ))}
+                </div>
+
+                <div className="card col-4 mt-4">
+                  <div className="card-body">
+                    <div className="row">
+                      <div className="text-center col-lg-3 col-md-3 col-sm-3 col-3">
+                        <button
+                          onClick={handleDecrement}
+                          style={{
+                            borderRadius: "50%",
+                            width: "40px",
+                            height: "40px",
+                            color: "",
+                            backgroundColor: "#cbb883",
+                            border: "none",
+                            padding: "0",
+                            fontSize: "16px",
+                            lineHeight: "40px",
+                            textAlign: "center",
+                            cursor: "pointer",
+                          }}
+                        >
+                          -
+                        </button>
+                      </div>
+
+                      <div className="text-center col-lg-6 col-md-6 col-sm-6 col-6">
+                        <p
+                          className="text-uppercase"
+                          style={{
+                            fontSize: "12px",
+                            textAlign: "center",
+                            verticalAlign: "center",
+                            marginTop: "10px",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Teens: {teensCount}
+                        </p>
+                      </div>
+                      <div className="text-center col-lg-3 col-md-3 col-sm-3 col-3">
+                        <button
+                          onClick={handleIncrement}
+                          style={{
+                            borderRadius: "50%",
+                            width: "40px",
+                            height: "40px",
+                            color: "",
+                            backgroundColor: "#cbb883",
+                            border: "none",
+                            padding: "0",
+                            fontSize: "16px",
+                            lineHeight: "40px",
+                            textAlign: "center",
+                            cursor: "pointer",
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="selected-packages row">
+                  {Object.entries(selectedPackages).map(
+                    ([packageName, counts], index) => (
+                      // <FinalPackage
+                      //   packageName={packageName}
+                      //   adults={counts.adults || 0}
+                      //   teens={counts.teens || 0}
+                      //   kids={counts.kids || 0}
+                      // />
+
+                      <div className="card col-4 mt-4" key={index}>
+                        <div className="card-body">
+                          <h5 className="card-title">{packageName}</h5>
+                          <div className="row">
+                            <div className="col">
+                              <p className="mb-0">
+                                <span className="detail">Adults:</span>{" "}
+                                {counts.adults || 0}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+
+                {/* <div class="row justify-content-center">
+                  <div class="col-md-8" onClick={handleMultiply}>
+                    <p class="primary-btn gradient-btn d-block mb-4">
+                      <Link to="/bookingpage"> Book now</Link>
+                      Book Now
+                    </p>
+                  </div>
+                </div> */}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PackagesPage;
