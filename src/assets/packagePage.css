@@ -1787,3 +1787,11 @@ footer {
 .detail {
   font-weight: bold;
 }
+
+.css-13cymwt-control {
+  border-color: #cbb883 !important;
+  border-style: solid !important;
+  height: 52px !important;
+  padding: 0% !important;
+  border-radius: 0px !important;
+}

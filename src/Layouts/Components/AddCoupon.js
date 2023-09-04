@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../assets/global.css";
+import moment from "moment";
 
 const AddCoupon = () => {
   const location = useLocation();
@@ -40,9 +41,26 @@ const AddCoupon = () => {
   const [endDate, setendDate] = useState(
     userData?.EndDate ? userData?.EndDate : ""
   );
+
+  const [isChecked, setIsChecked] = useState(
+    userData?.IsCouponEnabled ? userData?.IsCouponEnabled : 0
+  );
+
   //   const [totalCoupons, settotalCoupons] = useState("");
   const [usedCoupons, setusedCoupons] = useState([]);
   const [remainingCoupons, setremainingCoupons] = useState("");
+
+  const handleToggle = () => {
+    setIsChecked(!isChecked);
+  };
+
+  const addWeekToDate = (dateString) => {
+    const parsedDate = moment(dateString);
+    const newDate = parsedDate.add(7, "days");
+    return newDate.format("YYYY-MM-DD");
+  };
+
+  const todayDate = moment().format("YYYY-MM-DD");
 
   const onsubmit = () => {
     const startNumber = parseInt(seriesStart);
@@ -113,14 +131,16 @@ const AddCoupon = () => {
         initial: initial,
         seriesStart: seriesStart,
         seriesEnd: seriesEnd,
-        startDate: startDate,
-        endDate: endDate,
+        startDate: addWeekToDate(startDate),
+        endDate: addWeekToDate(endDate),
         totalCoupons: totalCoupons,
         usedCoupons: "[]",
         remainingCoupons: totalCoupons,
         isActive: 1,
-        isCouponEnabled: 1,
+        isCouponEnabled: isChecked,
       };
+
+      console.log("dataaaaaaaaa-----", data);
 
       dispatch(
         EditCouponDetails(data, loginDetails?.logindata?.Token, (callback) => {
@@ -144,7 +164,7 @@ const AddCoupon = () => {
         <h3 className="mb-4">Add Coupon</h3>
         <div className="col-lg-6 mt-3 mt-3">
           <label for="formGroupExampleInput " className="form_text">
-            Coupon Title
+            Coupon Title <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2 "
@@ -154,25 +174,10 @@ const AddCoupon = () => {
             defaultValue={userData?.CouponTitle}
           />
         </div>
-        <div className="col-lg-6 mt-3">
-          <label
-            for="formGroupExampleInput "
-            className="form_text"
-            style={{ fontSize: "15px", fontWeight: "600" }}
-          >
-            Coupon Discount
-          </label>
-          <input
-            class="form-control mt-2"
-            type="text"
-            placeholder="Coupon Discount"
-            onChange={(e) => setcouponDiscount(e.target.value)}
-            defaultValue={userData?.CouponDiscount}
-          />
-        </div>
+
         <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
-            Initial
+            Initial <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2"
@@ -185,11 +190,11 @@ const AddCoupon = () => {
 
         <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
-            Series Start
+            Series Start <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2"
-            type="text"
+            type="number"
             placeholder="Enter  Series Start"
             onChange={(e) => setseriesStart(e.target.value)}
             defaultValue={userData?.SeriesStart}
@@ -197,11 +202,11 @@ const AddCoupon = () => {
         </div>
         <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
-            Series End
+            Series End <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2"
-            type="text"
+            type="number"
             placeholder="Enter Series End"
             onChange={(e) => setseriesEnd(e.target.value)}
             defaultValue={userData?.SeriesEnd}
@@ -210,67 +215,62 @@ const AddCoupon = () => {
 
         <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
-            Start Date
+            Start Date <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2"
             type="date"
             placeholder="Enter   Start Date"
             onChange={(e) => setstartDate(e.target.value)}
-            defaultValue={userData?.StartDate}
+            defaultValue={addWeekToDate(userData?.StartDate)}
+            min={todayDate}
           />
         </div>
         <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
-            End Date
+            End Date <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2"
             type="date"
             placeholder=" End Date"
             onChange={(e) => setendDate(e.target.value)}
-            defaultValue={userData?.EndDate}
+            defaultValue={addWeekToDate(userData?.EndDate)}
+            min={todayDate}
           />
         </div>
 
-        {/* <div className="col-lg-6 mt-3">
-          <label for="formGroupExampleInput " className="form_text">
-            Total Coupons
-          </label>
-          <input
-            class="form-control mt-2"
-            type="text"
-            placeholder="password"
-            onChange={(e) => settotalCoupons(e.target.value)}
-            //   defaultValue={userData?.Password}
-          />
-        </div> */}
-
-        {/* <div className="col-lg-6 mt-3">
-          <label for="formGroupExampleInput " className="form_text">
-            Used Coupons
-          </label>
-          <input
-            class="form-control mt-2"
-            type="text"
-            placeholder="password"
-            onChange={(e) => setusedCoupons(e.target.value)}
-            //   defaultValue={userData?.Password}
-          />
-        </div> */}
-        {/* 
         <div className="col-lg-6 mt-3">
-          <label for="formGroupExampleInput " className="form_text">
-            Remaining Coupons
+          <label
+            for="formGroupExampleInput "
+            className="form_text"
+            style={{ fontSize: "15px", fontWeight: "600" }}
+          >
+            Coupon Discount <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2"
             type="text"
-            placeholder="password"
-            onChange={(e) => setremainingCoupons(e.target.value)}
-            //   defaultValue={userData?.Password}
+            placeholder="Coupon Discount"
+            onChange={(e) => setcouponDiscount(e.target.value)}
+            defaultValue={userData?.CouponDiscount}
           />
-        </div> */}
+        </div>
+
+        <div className="col-lg-6 mt-5">
+          <div className="form-check form-switch">
+            <label for="formGroupExampleInput " className="form_text">
+              Is Coupon active
+            </label>
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="switch"
+              checked={isChecked}
+              onChange={handleToggle}
+            />
+          </div>
+        </div>
 
         {!userData ? (
           <div className="mt-5">

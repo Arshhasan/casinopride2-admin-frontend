@@ -11,6 +11,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button, Modal } from "react-bootstrap";
 import more from "../../../assets/Images/more.png";
+import moment from "moment";
 
 const CouponsList = () => {
   const dispatch = useDispatch();
@@ -74,19 +75,6 @@ const CouponsList = () => {
     }
   };
 
-  const deleteCouponFn = () => {
-    dispatch(
-      deleteCoupon(loginDetails?.logindata?.Token, userId, (callback) => {
-        if (callback.status) {
-          console.log("Callback--------- Delete Coupon ", callback?.response);
-          setShowModal(false);
-          fetchCouponDetails();
-          toast.success("Coupon Deleted");
-        }
-      })
-    );
-  };
-
   const [showViewMoreModal, setShowViewMoreModal] = useState(false);
   const [selectedUserDetails, setSelectedUserDetails] = useState({});
 
@@ -104,6 +92,25 @@ const CouponsList = () => {
 
   const handleToggle = (PackageId) => {
     console.log("PackageId", PackageId);
+  };
+
+  const originalDate = "2023-09-08T18:30:00.000Z";
+
+  // Use moment to parse the original date string
+  const parsedDate = moment(originalDate);
+
+  // Add a week to the parsed date
+  const newDate = parsedDate.add(7, "days");
+
+  // Format the new date as 'YYYY-MM-DD'
+  const formattedDate = newDate.format("YYYY-MM-DD");
+
+  console.log("startDate--------------->", formattedDate);
+
+  const addWeekToDate = (dateString) => {
+    const parsedDate = moment(dateString);
+    const newDate = parsedDate.add(7, "days");
+    return newDate.format("YYYY-MM-DD");
   };
 
   return (
@@ -161,9 +168,7 @@ const CouponsList = () => {
             <th scope="col" className="text-center table_heading">
               Edit
             </th>
-            <th scope="col" className="text-center table_heading">
-              Delete
-            </th>
+
             <th scope="col" className="text-center table_heading">
               View more
             </th>
@@ -206,11 +211,17 @@ const CouponsList = () => {
                 <td className="manager-list ">{item.CouponTitle}</td>
                 <td className="manager-list">{item.SeriesStart}</td>
                 <td className="manager-list">{item.SeriesEnd}</td>
-                <td className="manager-list">{item.StartDate}</td>
-                <td className="manager-list">{item.EndDate}</td>
+                <td className="manager-list">
+                  {addWeekToDate(item.StartDate)}
+                </td>
+                <td className="manager-list">{addWeekToDate(item.EndDate)}</td>
 
                 <td className="manager-list">
-                  {item.IsCouponEnabled === 1 ? "Active" : "In Active"}
+                  {item.IsCouponEnabled === 1 ? (
+                    <span style={{ color: "green" }}>Active</span>
+                  ) : (
+                    <span style={{ color: "red" }}>In Active</span>
+                  )}
                 </td>
 
                 <td className="manager-list">
@@ -224,12 +235,7 @@ const CouponsList = () => {
                     />
                   </Link>
                 </td>
-                <td className="manager-list">
-                  <AiFillDelete
-                    onClick={() => handleShow(item.Id)}
-                    style={{ color: "#C5CEE0", fontSize: "20px" }}
-                  />
-                </td>
+
                 <td
                   className="manager-list"
                   onClick={() => handleViewMore(item)}
@@ -265,17 +271,6 @@ const CouponsList = () => {
         </tbody>
       </table>
       <ToastContainer />
-      <Modal show={showModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Delete Coupon</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this Coupon?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="danger" onClick={deleteCouponFn}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
 
       <Modal show={showViewMoreModal} onHide={handleCloseViewMore}>
         <Modal.Header closeButton>
@@ -295,10 +290,10 @@ const CouponsList = () => {
             Series End: {selectedUserDetails.SeriesEnd}
           </p>
           <p className="manager-list ">
-            Start Date: {selectedUserDetails.StartDate}
+            Start Date: {addWeekToDate(selectedUserDetails.StartDate)}
           </p>
           <p className="manager-list ">
-            End Date: {selectedUserDetails.EndDate}
+            End Date: {addWeekToDate(selectedUserDetails.EndDate)}
           </p>
 
           <p className="manager-list ">

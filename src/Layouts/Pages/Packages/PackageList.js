@@ -283,7 +283,7 @@ const PackageList = () => {
 
       <Modal show={showViewMoreModal} onHide={handleCloseViewMore}>
         <Modal.Header closeButton>
-          <Modal.Title>Master Agent Details</Modal.Title>
+          <Modal.Title>Package Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p className="manager-list ">

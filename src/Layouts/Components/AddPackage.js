@@ -100,10 +100,15 @@ const AddPackage = () => {
         itemTax
       );
 
-      updatedItems[index].itemWeekdayRate = calculatedWeekdayRate;
-      updatedItems[index].itemWeekendRate = calculatedWeekendRate;
-    }
+      console.log("calculatedWeekdayRate----------->", calculatedWeekdayRate);
+      console.log("calculatedWeekendRate----------->", calculatedWeekendRate);
 
+      updatedItems[index].itemWeekdayRate =
+        Math.round(calculatedWeekdayRate * 100) / 100;
+      updatedItems[index].itemWeekendRate =
+        Math.round(calculatedWeekendRate * 100) / 100;
+    }
+    console.log("updatedItems------------->", updatedItems);
     setPackageItems(updatedItems);
   };
 
@@ -145,9 +150,11 @@ const AddPackage = () => {
     // Ensure taxRate is a percentage (e.g., 28% as 0.28)
     // Calculate the invoice amount
     const invoiceAmount = (packagePrice * 100) / (100 + taxRate);
+    console.log("<---------------invoiceAmount------------->", invoiceAmount);
     return invoiceAmount;
   }
   const invoiceAmount = calculateInvoiceAmount(packagePrice, taxRate);
+
   // console.log("package price--->", packagePrice);
   // console.log("tax--->", taxRate);
   // console.log("tax amount--->", invoiceAmount.toFixed(2));

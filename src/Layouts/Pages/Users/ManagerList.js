@@ -109,7 +109,7 @@ const ManagerList = () => {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search"
+                placeholder="Search name"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -145,9 +145,7 @@ const ManagerList = () => {
               <th scope="col" className="text-center table_heading">
                 Edit
               </th>
-              <th scope="col" className="text-center table_heading">
-                Delete
-              </th>
+
               <th scope="col" className="text-center table_heading">
                 View More
               </th>
@@ -201,15 +199,6 @@ const ManagerList = () => {
                         style={{ color: "#C5CEE0", fontSize: "20px" }}
                       />
                     </Link>
-                  </td>
-
-                  <td
-                    className="manager-list"
-                    onClick={() => handleShow(item.Id)}
-                  >
-                    <AiFillDelete
-                      style={{ color: "#C5CEE0", fontSize: "20px" }}
-                    />
                   </td>
 
                   <td
@@ -299,11 +288,7 @@ const ManagerList = () => {
             Username: {selectedUserDetails.Username}
           </p>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseViewMore}>
-            Close
-          </Button>
-        </Modal.Footer>
+        <Modal.Footer></Modal.Footer>
       </Modal>
     </div>
   );

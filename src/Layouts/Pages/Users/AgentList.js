@@ -70,19 +70,6 @@ const AgentList = () => {
     }
   };
 
-  const deleteUserFunction = () => {
-    dispatch(
-      deleteUser(loginDetails?.logindata?.Token, userId, (callback) => {
-        if (callback.status) {
-          console.log("Callback---------get Delete user ", callback?.response);
-          setShowModal(false);
-          fetchAgentDetails();
-          toast.success("Master Agent Deleted");
-        }
-      })
-    );
-  };
-
   const [showViewMoreModal, setShowViewMoreModal] = useState(false);
   const [selectedUserDetails, setSelectedUserDetails] = useState({});
 
@@ -142,9 +129,7 @@ const AgentList = () => {
             <th scope="col" className="text-center table_heading">
               Edit
             </th>
-            <th scope="col" className="text-center table_heading">
-              Delete
-            </th>
+
             <th scope="col" className="text-center table_heading">
               View More
             </th>
@@ -198,14 +183,7 @@ const AgentList = () => {
                     />
                   </Link>
                 </td>
-                <td
-                  className="manager-list"
-                  onClick={() => handleShow(item.Id)}
-                >
-                  <AiFillDelete
-                    style={{ color: "#C5CEE0", fontSize: "20px" }}
-                  />
-                </td>
+
                 <td
                   className="manager-list"
                   onClick={() => handleViewMore(item)}
@@ -246,20 +224,6 @@ const AgentList = () => {
         </tbody>
       </table>
       <ToastContainer />
-      <Modal show={showModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Delete Manager</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this Agent?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="danger" onClick={deleteUserFunction}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
 
       <Modal show={showViewMoreModal} onHide={handleCloseViewMore}>
         <Modal.Header closeButton>

@@ -3,7 +3,10 @@ import { Country, State, City } from "country-state-city";
 import Select from "react-select";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { getCouponsbyInitials } from "../../Redux/actions/users";
+import {
+  getCouponsbyInitials,
+  getPanelDiscounts,
+} from "../../Redux/actions/users";
 import { AddBookingFn } from "../../Redux/actions/booking";
 import { connect, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +15,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../assets/global.css";
 import PackagesPage from "../Pages/Packages/PackagePage";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const NewBooking = () => {
   const location = useLocation();
@@ -43,15 +47,36 @@ const NewBooking = () => {
   const [packageGuestCount, setPackageGuestCount] = useState([]);
   const [amountAfterDiscount, setamountAfterDiscount] = useState("");
   const [referredBy, setreferredBy] = useState("");
+  const [couponId, setCouponId] = useState("");
 
   const [discountToggle, setDiscountToggle] = useState(false);
   const [couponToggle, setCouponToggle] = useState(false);
   const [referredByToggle, setReferredByToggle] = useState(false);
 
+  const [panelDiscounts, setPanelDiscounts] = useState("");
+
   const handleToggle = (field) => {
-    setDiscountToggle(field === "discount");
-    setCouponToggle(field === "coupon");
-    setReferredByToggle(field === "referredBy");
+    // Toggle the state of the corresponding field
+    if (field === "discount") {
+      setDiscountToggle(!discountToggle); // Toggle the state
+      if (!discountToggle) {
+        // If the discount toggle is being enabled, disable the others
+        setCouponToggle(false);
+        setReferredByToggle(false);
+      }
+    } else if (field === "coupon") {
+      setCouponToggle(!couponToggle);
+      if (!couponToggle) {
+        setDiscountToggle(false);
+        setReferredByToggle(false);
+      }
+    } else if (field === "referredBy") {
+      setReferredByToggle(!referredByToggle);
+      if (!referredByToggle) {
+        setDiscountToggle(false);
+        setCouponToggle(false);
+      }
+    }
   };
 
   const [selectedCountry, setSelectedCountry] = useState(null);
@@ -68,8 +93,17 @@ const NewBooking = () => {
     dispatch(
       getCouponsbyInitials(loginDetails?.logindata?.Token, 4, (callback) => {
         if (callback.status) {
-          // setLoading(false);
           console.log("Callback---------get coupons", callback?.response);
+        }
+      })
+    );
+  };
+
+  const fetchPanelDiscounts = () => {
+    dispatch(
+      getPanelDiscounts(loginDetails?.logindata?.Token, (callback) => {
+        if (callback.status) {
+          setPanelDiscounts(callback?.response?.Details);
         }
       })
     );
@@ -82,10 +116,9 @@ const NewBooking = () => {
 
   const formattedDate = `${year}-${month}-${day}`;
 
-  console.log(formattedDate);
-
   useEffect(() => {
     fetchCouponCodes();
+    fetchPanelDiscounts();
   }, [dispatch]);
 
   const separateInitials = () => {
@@ -109,10 +142,22 @@ const NewBooking = () => {
           (callback) => {
             if (callback.status) {
               console.log(
-                "Callback---------Coupun initail details",
-                callback?.response
+                "Coupon Details ---------->",
+                callback?.response?.Details?.Id
               );
-              toast.success("Coupon is valid");
+              setCouponId(callback?.response?.Details?.Id);
+
+              const inputString = callback?.response?.Details?.UsedCoupons;
+              const stringWithoutBrackets = inputString.slice(1, -1);
+              const arrayFromString = stringWithoutBrackets.split(",");
+              const isCouponUsed = arrayFromString.includes(couponCode);
+              console.log("isCouponUsed-------------->", isCouponUsed);
+
+              if (isCouponUsed) {
+                toast.error("Coupon code is already used");
+              } else {
+                toast.success("Coupon code is available");
+              }
             } else {
               toast.error(callback.error);
             }
@@ -142,8 +187,8 @@ const NewBooking = () => {
         totalGuestCount: totalGuestCount,
         numOfTeens: numberofteens,
         // discountId:2,
-        // panelDiscountId:1,
-        // couponId:1,
+        panelDiscountId: couponCode,
+        couponId: couponId,
         referredBy: referredBy,
         settledByCompany: 0,
         packageId: JSON.stringify(packageIds),
@@ -157,12 +202,13 @@ const NewBooking = () => {
         isActive: 1,
       };
 
-      console.log("data--------->", data);
-      console.log("tojken--------->", loginDetails);
-
       dispatch(
         AddBookingFn(loginDetails?.logindata?.Token, data, (callback) => {
           if (callback.status) {
+            console.log(
+              "booking details --------------?",
+              callback?.response?.Details
+            );
             toast.success("Booking details success");
             navigate(-1);
             toast.error(callback.error);
@@ -174,8 +220,11 @@ const NewBooking = () => {
     }
   };
 
-  console.log("numberofteens", numberofteens);
-  console.log("totalGuestCount", totalGuestCount);
+  const [selectedOption, setSelectedOption] = useState("");
+
+  const handleSelectChange = (e) => {
+    setSelectedOption(e.target.value);
+  };
 
   return (
     <div>
@@ -192,7 +241,7 @@ const NewBooking = () => {
         />
         <div className="col-lg-6 mt-3 mt-3">
           <label for="formGroupExampleInput " className="form_text">
-            Guest Name
+            Guest Name <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2 "
@@ -200,6 +249,19 @@ const NewBooking = () => {
             placeholder="Full Name"
             onChange={(e) => setGuestName(e.target.value)}
             // defaultValue={userData?.Name}
+          />
+        </div>
+
+        <div className="col-lg-6 mt-3">
+          <label for="formGroupExampleInput " className="form_text">
+            Phone <span style={{ color: "red" }}>*</span>
+          </label>
+          <input
+            class="form-control mt-2"
+            type="number"
+            placeholder="Enter phone"
+            onChange={(e) => setPhone(e.target.value)}
+            defaultValue={userData?.Phone}
           />
         </div>
         <div className="col-lg-6 mt-3">
@@ -218,25 +280,13 @@ const NewBooking = () => {
             defaultValue={userData?.Email}
           />
         </div>
-        <div className="col-lg-6 mt-3">
-          <label for="formGroupExampleInput " className="form_text">
-            Phone
-          </label>
-          <input
-            class="form-control mt-2"
-            type="number"
-            placeholder="Enter phone"
-            onChange={(e) => setPhone(e.target.value)}
-            defaultValue={userData?.Phone}
-          />
-        </div>
 
         <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text mb-2">
             Country
           </label>
           <Select
-            className="form-control"
+            // className="form-control"
             options={Country.getAllCountries()}
             getOptionLabel={(options) => {
               return options["name"];
@@ -255,7 +305,7 @@ const NewBooking = () => {
             State
           </label>
           <Select
-            className="form-control"
+            // className="form-control"
             options={State?.getStatesOfCountry(selectedCountry?.isoCode)}
             getOptionLabel={(options) => {
               return options["name"];
@@ -269,30 +319,21 @@ const NewBooking = () => {
             }}
           />
         </div>
-        <div className="col-lg-6 mt-3">
+        <div className="col-lg-6 mt-3 ">
           <label for="formGroupExampleInput " className="form_text mb-2">
             City
           </label>
-          <Select
-            className="form-control"
-            options={City.getCitiesOfState(
-              selectedState?.countryCode,
-              selectedState?.isoCode
-            )}
-            getOptionLabel={(options) => {
-              return options["name"];
-            }}
-            getOptionValue={(options) => {
-              return options["name"];
-            }}
-            value={selectedCity}
-            onChange={(item) => {
-              setSelectedCity(item);
-            }}
+
+          <input
+            class="form-control "
+            type="text"
+            placeholder="Enter your city"
+            onChange={(e) => setSelectedCity(e.target.value)}
+            // defaultValue={userData?.Address}
           />
         </div>
 
-        <div className="col-lg-12 mt-3">
+        <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
             Address
           </label>
@@ -318,58 +359,17 @@ const NewBooking = () => {
           />
         </div>
 
-        <div className="col-lg-6 mt-3">
-          <label for="formGroupExampleInput " className="form_text">
-            Referred By
-          </label>
-          <input
-            class="form-control mt-2"
-            type="text"
-            placeholder="Referred By"
-            onChange={(e) => setAddress(e.target.value)}
-            defaultValue={userData?.Address}
-          />
-        </div>
-
         {/* <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
-            Total Guest Count
-          </label>
-          <input
-            class="form-control mt-2"
-            type="number"
-            placeholder=" Total Guest Count"
-            onChange={(e) => settoalGuestCount(e.target.value)}
-            // defaultValue={userData?.Username}
-          />
-        </div> */}
-
-        <div className="col-lg-6 mt-3">
-          <label for="formGroupExampleInput " className="form_text">
-            Settled by company
-          </label>
-          <input
-            class="form-control mt-2"
-            type="number"
-            placeholder=" Total Guest Count"
-            onChange={(e) => settoalGuestCount(e.target.value)}
-            // defaultValue={userData?.Username}
-          />
-        </div>
-
-        <div className="col-lg-6 mt-3">
-          <label for="formGroupExampleInput " className="form_text">
-            Coupon Code
+            Refrrred by
           </label>
           <input
             class="form-control mt-2"
             type="text"
-            placeholder="Coupon Code"
-            onChange={(e) => setCouponCode(e.target.value)}
-            // defaultValue={userData?.Username}
+            placeholder=" Refrrred by"
+            onChange={(e) => settoalGuestCount(e.target.value)}
           />
-          <button onClick={separateInitials}>Check</button>
-        </div>
+        </div> */}
 
         <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
@@ -383,83 +383,114 @@ const NewBooking = () => {
             // defaultValue={userData?.StartDate}
           />
         </div>
-        {/* <div className="col-lg-6 mt-3">
-          <label for="formGroupExampleInput " className="form_text">
-            No of teens
-          </label>
-          <input
-            class="form-control mt-2"
-            type="number"
-            placeholder=" No of teens"
-            onChange={(e) => setNumberofteens(e.target.value)}
-            // defaultValue={userData?.Password}
-          />
-        </div> */}
+        <div className="row mt-3">
+          <div className="col-lg-6 mt-3">
+            <div className="row">
+              <div className="col-4">
+                <label for="formGroupExampleInput " className="form_text">
+                  Dicount
+                </label>
 
-        <div className="col-lg-6 mt-3">
-          <div className="row">
-            <div className="col-4">
-              <label for="formGroupExampleInput " className="form_text">
-                Dicount
-              </label>
-
-              <div className="form-check form-switch">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="discountSwitch"
-                  checked={discountToggle}
-                  onChange={() => handleToggle("discount")}
-                />
+                <div className="form-check form-switch">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="discountSwitch"
+                    checked={discountToggle}
+                    onChange={() => handleToggle("discount")}
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="col-4">
-              <label for="formGroupExampleInput " className="form_text">
-                Coupon
-              </label>
+              <div className="col-4">
+                <label for="formGroupExampleInput " className="form_text">
+                  Coupon
+                </label>
 
-              <div className="form-check form-switch">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="couponSwitch"
-                  checked={couponToggle}
-                  onChange={() => handleToggle("coupon")}
-                />
+                <div className="form-check form-switch">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="couponSwitch"
+                    checked={couponToggle}
+                    onChange={() => handleToggle("coupon")}
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="col-4">
-              <label for="formGroupExampleInput " className="form_text">
-                Referred By
-              </label>
+              <div className="col-4">
+                <label for="formGroupExampleInput " className="form_text">
+                  Settled by company
+                </label>
 
-              <div className="form-check form-switch">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="referredBySwitch"
-                  checked={referredByToggle}
-                  onChange={() => handleToggle("referredBy")}
-                />
+                <div className="form-check form-switch">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="referredBySwitch"
+                    checked={referredByToggle}
+                    onChange={() => handleToggle("referredBy")}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* <div className="col-lg-6 mt-3">
-          <label for="formGroupExampleInput " className="form_text">
-            Settlement by company
-          </label>
-          <input
-            class="form-control mt-2"
-            type="text"
-            placeholder="Settlement by company"
-            onChange={(e) => setSettlementbycompany(e.target.value)}
-            // defaultValue={userData?.Username}
-          />
-        </div> */}
+          {couponToggle ? (
+            <div className="col-lg-6 mt-3">
+              <label for="formGroupExampleInput " className="form_text">
+                Coupon Code
+              </label>
+              <input
+                class="form-control mt-2"
+                type="text"
+                placeholder="Coupon Code"
+                onChange={(e) => setCouponCode(e.target.value)}
+              />
+              <button onClick={separateInitials}>Check</button>
+            </div>
+          ) : (
+            <></>
+          )}
+
+          {discountToggle ? (
+            <div className="col-lg-6 mt-3">
+              <label for="formGroupExampleInput mt-3" className="form_text">
+                Discount
+              </label>
+              <select
+                className="form-select form-control mt-2"
+                value={selectedOption}
+                onChange={handleSelectChange}
+              >
+                <option value="">Select an option</option>
+                {panelDiscounts.map((item, index) => (
+                  <option key={index} value={item?.Id}>
+                    {item?.PanelDiscountTitle}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <></>
+          )}
+
+          {referredByToggle || discountToggle ? (
+            <div className="col-lg-6 mt-3">
+              <label for="formGroupExampleInput " className="form_text">
+                Referred By
+              </label>
+              <input
+                class="form-control mt-2"
+                type="text"
+                placeholder="Referred By"
+                onChange={(e) => setreferredBy(e.target.value)}
+              />
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
       </div>
       <div className="col-lg-6 mb-2 btn-lg mx-auto d-flex justify-content-center ">
         <button

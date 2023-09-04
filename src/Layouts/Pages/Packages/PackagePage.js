@@ -3,15 +3,11 @@ import "../../../assets/packagePage.css";
 import { Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { OTPpackage } from "../../Components/OTPpackage";
-// import { getPackageDetails } from "../../../Redux/actions/users";
 import { getPackagesDetails } from "../../../Redux/actions/booking";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import NewBooking from "../../Components/NewBooking";
-
-// import DecemberPackages from "../Components/DecemberPackages";
-// import Title from "../Components/Title";
-// import FinalPackage from "../Components/FinalPackage";
+import { Oval } from "react-loader-spinner";
 
 const PackagesPage = ({
   setamount,
@@ -63,7 +59,7 @@ const PackagesPage = ({
     };
   });
 
-  console.log("T%eens price>", groupedData[0]?.PackageTeensPrice);
+  console.log("T%eens price>", groupedData);
 
   const [selectedPackages, setSelectedPackages] = useState({});
 
@@ -74,9 +70,6 @@ const PackagesPage = ({
     PackageWeekdayPrice,
     PackageWeekendPrice
   ) => {
-    console.log("weekday", PackageWeekdayPrice);
-    console.log("weekend", PackageWeekendPrice);
-
     setSelectedPackages((prevSelectedPackages) => {
       const updatedPackages = { ...prevSelectedPackages };
 
@@ -103,6 +96,23 @@ const PackagesPage = ({
   const packageGuestCounts = [];
   const packagePrices = [];
 
+  function isWeekday(date) {
+    const day = date.getDay();
+
+    return day >= 1 && day <= 5;
+  }
+
+  function isWeekday(date) {
+    const day = date.getDay();
+
+    return day >= 1 && day <= 5;
+  }
+
+  const today = new Date();
+  const isTodayWeekday = isWeekday(today);
+
+  console.log(isTodayWeekday);
+
   Object.keys(selectedPackages).forEach((packageId) => {
     const packageData = selectedPackages[packageId];
     packageIds.push(parseInt(packageId));
@@ -114,10 +124,14 @@ const PackagesPage = ({
     );
 
     if (groupedData) {
-      // Calculate package price based on weekdays or weekends
+      console.log(
+        "<<<<<<<<<<<<<<<<<-packageData---------------->",
+        packageData
+      );
+
       const packagePrice =
         (packageData.adults || 0) *
-        (packageData.weekendSelected
+        (!isTodayWeekday
           ? groupedData.PackageWeekendPrice || 0
           : groupedData.PackageWeekdayPrice || 0);
 
@@ -129,10 +143,6 @@ const PackagesPage = ({
     packageId: packageIds,
     packageGuestCount: packageGuestCounts,
   };
-
-  console.log("packageGuestCount:\n", formattedData.packageGuestCount);
-  console.log("packageId:\n", formattedData.packageId);
-  console.log("packagePrices:\n", packagePrices);
 
   const handleBookNow = () => {
     console.log("Selected Packages:", selectedPackages);
@@ -162,11 +172,7 @@ const PackagesPage = ({
     0
   );
 
-  console.log("teensCount-->", teensCount);
-  console.log("TotalAdultGustCount-->", TotalAdultGustCount);
-
   const totalTeensPrice = teensCount * groupedData[0]?.PackageTeensPrice;
-  console.log("totalTeensPrice->", totalTeensPrice);
 
   const totalAmountOfAllPackages = totalTeensPrice + TotalAmount;
 
@@ -179,119 +185,146 @@ const PackagesPage = ({
     settoalGuestCount(totalCountofCustomer);
   }, [TotalAmount, teensCount]);
 
+  console.log("total amount-------->", TotalAmount);
+  console.log(
+    "total totalAmountOfAllPackages-------->",
+    totalAmountOfAllPackages
+  );
+
   return (
     <div>
       <section class="mt-5 text-center"></section>
 
-      <div class="container">
-        <div class="tab-panel">
-          <div class="tab-content">
-            <div class="tab-pane active" id="tabs-1" role="tabpanel">
-              <div class="row d-flex justify-content-center">
-                <div className="container mt-4 col-lg-7"></div>
-                <div className="row">
-                  {groupedData.map((packageDetail, index) => (
-                    <OTPpackage
-                      key={index}
-                      packageDetail={packageDetail}
-                      handleCounterChange={handleCounterChange}
-                      setSelectedPackages={setSelectedPackages}
-                      selectedPackages={selectedPackages}
-                      handleBookNow={handleBookNow}
-                    />
-                  ))}
-                </div>
+      {loading ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <Oval
+            height={80}
+            width={50}
+            color="#4fa94d"
+            visible={true}
+            ariaLabel="oval-loading"
+            secondaryColor="#4fa94d"
+            strokeWidth={2}
+            strokeWidthSecondary={2}
+          />
+        </div>
+      ) : (
+        <div class="container">
+          <div class="tab-panel">
+            <div class="tab-content">
+              <div class="tab-pane active" id="tabs-1" role="tabpanel">
+                <div class="row d-flex justify-content-center">
+                  <div className="container mt-4 col-lg-7"></div>
+                  <div className="row">
+                    {groupedData.map((packageDetail, index) => (
+                      <OTPpackage
+                        key={index}
+                        packageDetail={packageDetail}
+                        handleCounterChange={handleCounterChange}
+                        setSelectedPackages={setSelectedPackages}
+                        selectedPackages={selectedPackages}
+                        handleBookNow={handleBookNow}
+                      />
+                    ))}
+                  </div>
 
-                <div className="card col-4 mt-4">
-                  <div className="card-body">
-                    <div className="row">
-                      <div className="text-center col-lg-3 col-md-3 col-sm-3 col-3">
-                        <button
-                          onClick={handleDecrement}
-                          style={{
-                            borderRadius: "50%",
-                            width: "40px",
-                            height: "40px",
-                            color: "",
-                            backgroundColor: "#cbb883",
-                            border: "none",
-                            padding: "0",
-                            fontSize: "16px",
-                            lineHeight: "40px",
-                            textAlign: "center",
-                            cursor: "pointer",
-                          }}
-                        >
-                          -
-                        </button>
-                      </div>
+                  <div className="card col-4 mt-4">
+                    <div className="card-body">
+                      <div className="row">
+                        <div className="text-center col-lg-3 col-md-3 col-sm-3 col-3">
+                          <button
+                            onClick={handleDecrement}
+                            style={{
+                              borderRadius: "50%",
+                              width: "40px",
+                              height: "40px",
+                              color: "",
+                              backgroundColor: "#cbb883",
+                              border: "none",
+                              padding: "0",
+                              fontSize: "16px",
+                              lineHeight: "40px",
+                              textAlign: "center",
+                              cursor: "pointer",
+                            }}
+                          >
+                            -
+                          </button>
+                        </div>
 
-                      <div className="text-center col-lg-6 col-md-6 col-sm-6 col-6">
-                        <p
-                          className="text-uppercase"
-                          style={{
-                            fontSize: "12px",
-                            textAlign: "center",
-                            verticalAlign: "center",
-                            marginTop: "10px",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Teens: {teensCount}
-                        </p>
-                      </div>
-                      <div className="text-center col-lg-3 col-md-3 col-sm-3 col-3">
-                        <button
-                          onClick={handleIncrement}
-                          style={{
-                            borderRadius: "50%",
-                            width: "40px",
-                            height: "40px",
-                            color: "",
-                            backgroundColor: "#cbb883",
-                            border: "none",
-                            padding: "0",
-                            fontSize: "16px",
-                            lineHeight: "40px",
-                            textAlign: "center",
-                            cursor: "pointer",
-                          }}
-                        >
-                          +
-                        </button>
+                        <div className="text-center col-lg-6 col-md-6 col-sm-6 col-6">
+                          <p
+                            className="text-uppercase"
+                            style={{
+                              fontSize: "12px",
+                              textAlign: "center",
+                              verticalAlign: "center",
+                              marginTop: "10px",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Teens: {teensCount}
+                          </p>
+                        </div>
+                        <div className="text-center col-lg-3 col-md-3 col-sm-3 col-3">
+                          <button
+                            onClick={handleIncrement}
+                            style={{
+                              borderRadius: "50%",
+                              width: "40px",
+                              height: "40px",
+                              color: "",
+                              backgroundColor: "#cbb883",
+                              border: "none",
+                              padding: "0",
+                              fontSize: "16px",
+                              lineHeight: "40px",
+                              textAlign: "center",
+                              cursor: "pointer",
+                            }}
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="selected-packages row">
-                  {Object.entries(selectedPackages).map(
-                    ([packageName, counts], index) => (
-                      // <FinalPackage
-                      //   packageName={packageName}
-                      //   adults={counts.adults || 0}
-                      //   teens={counts.teens || 0}
-                      //   kids={counts.kids || 0}
-                      // />
+                  <div className="selected-packages row">
+                    {Object.entries(selectedPackages).map(
+                      ([packageName, counts], index) => (
+                        // <FinalPackage
+                        //   packageName={packageName}
+                        //   adults={counts.adults || 0}
+                        //   teens={counts.teens || 0}
+                        //   kids={counts.kids || 0}
+                        // />
 
-                      <div className="card col-4 mt-4" key={index}>
-                        <div className="card-body">
-                          <h5 className="card-title">{packageName}</h5>
-                          <div className="row">
-                            <div className="col">
-                              <p className="mb-0">
-                                <span className="detail">Adults:</span>{" "}
-                                {counts.adults || 0}
-                              </p>
+                        <div className="card col-4 mt-4" key={index}>
+                          <div className="card-body">
+                            <h5 className="card-title">{packageName}</h5>
+                            <div className="row">
+                              <div className="col">
+                                <p className="mb-0">
+                                  <span className="detail">Adults:</span>{" "}
+                                  {counts.adults || 0}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    )
-                  )}
-                </div>
+                      )
+                    )}
+                  </div>
 
-                {/* <div class="row justify-content-center">
+                  {/* <div class="row justify-content-center">
                   <div class="col-md-8" onClick={handleMultiply}>
                     <p class="primary-btn gradient-btn d-block mb-4">
                       <Link to="/bookingpage"> Book now</Link>
@@ -299,11 +332,12 @@ const PackagesPage = ({
                     </p>
                   </div>
                 </div> */}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
