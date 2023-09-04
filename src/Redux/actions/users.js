@@ -461,3 +461,29 @@ export const getCouponsbyInitials =
         }
       });
   };
+
+export const getPanelDiscounts = (token, callback) => async (dispatch) => {
+  api.CORE_PORT.get("/core/panelDiscount", {
+    headers: { AuthToken: token },
+  })
+    .then((response) => {
+      console.log("Get panelDiscount ->", response.data);
+      if (response.data?.Details) {
+        console.log(response.data?.Details);
+        callback({
+          status: true,
+          response: response?.data,
+        });
+      } else if (response.data?.Error) {
+        callback({
+          status: false,
+          error: response.data?.Error?.ErrorMessage,
+        });
+      }
+    })
+    .catch((err) => {
+      {
+        console.log("error", err);
+      }
+    });
+};

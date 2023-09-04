@@ -74,26 +74,6 @@ const Discountonwebsite = () => {
     }
   };
 
-  const deleteCouponFn = () => {
-    dispatch(
-      deleteWebsiteDiscount(
-        loginDetails?.logindata?.Token,
-        userId,
-        (callback) => {
-          if (callback.status) {
-            console.log(
-              "Callback--------- Delete discount ",
-              callback?.response
-            );
-            setShowModal(false);
-            fetchDiscountDetails();
-            toast.success("Dsicount Deleted");
-          }
-        }
-      )
-    );
-  };
-
   const [showViewMoreModal, setShowViewMoreModal] = useState(false);
   const [selectedUserDetails, setSelectedUserDetails] = useState({});
 
@@ -163,9 +143,7 @@ const Discountonwebsite = () => {
             <th scope="col" className="text-center table_heading">
               Edit
             </th>
-            <th scope="col" className="text-center table_heading">
-              Delete
-            </th>
+
             {/* <th scope="col" className="text-center table_heading">
               View more
             </th> */}
@@ -221,12 +199,7 @@ const Discountonwebsite = () => {
                     />
                   </Link>
                 </td>
-                <td className="manager-list">
-                  <AiFillDelete
-                    onClick={() => handleShow(item.Id)}
-                    style={{ color: "#C5CEE0", fontSize: "20px" }}
-                  />
-                </td>
+
                 {/* <td
                   className="manager-list"
                   onClick={() => handleViewMore(item)}
@@ -262,19 +235,6 @@ const Discountonwebsite = () => {
         </tbody>
       </table>
       <ToastContainer />
-      <Modal show={showModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Delete Website Discount</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete this Website Discount?
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="danger" onClick={deleteCouponFn}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
 
       {/* <Modal show={showViewMoreModal} onHide={handleCloseViewMore}>
         <Modal.Header closeButton>

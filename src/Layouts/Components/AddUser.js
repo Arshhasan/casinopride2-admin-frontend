@@ -144,21 +144,39 @@ const AddUser = () => {
     }
   };
 
+  const [disabled, setDisabled] = useState(true);
+
   return (
     <div>
       <ToastContainer />
       <div className="row">
         <h3 className="mb-4">Add User</h3>
+
         <div className="col-lg-6 mt-3 mt-3">
           <label for="formGroupExampleInput " className="form_text">
-            Full Name
+            Full Name <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2 "
             type="text"
+            disabled={userData ? disabled : ""}
             placeholder="Full Name"
             onChange={(e) => setFullName(e.target.value)}
             defaultValue={userData?.Name}
+          />
+        </div>
+
+        <div className="col-lg-6 mt-3">
+          <label for="formGroupExampleInput " className="form_text">
+            Phone <span style={{ color: "red" }}>*</span>
+          </label>
+          <input
+            class="form-control mt-2"
+            type="number"
+            disabled={userData ? disabled : ""}
+            placeholder="Enter phone"
+            onChange={(e) => setPhone(e.target.value)}
+            defaultValue={userData?.Phone}
           />
         </div>
         <div className="col-lg-6 mt-3">
@@ -167,7 +185,7 @@ const AddUser = () => {
             className="form_text"
             style={{ fontSize: "15px", fontWeight: "600" }}
           >
-            Email
+            Email <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2"
@@ -177,22 +195,23 @@ const AddUser = () => {
             defaultValue={userData?.Email}
           />
         </div>
+
         <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
-            Phone
+            Address <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2"
-            type="number"
-            placeholder="Enter phone"
-            onChange={(e) => setPhone(e.target.value)}
-            defaultValue={userData?.Phone}
+            type="text"
+            placeholder="Enter your address"
+            onChange={(e) => setAddress(e.target.value)}
+            defaultValue={userData?.Address}
           />
         </div>
 
         <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
-            Username
+            Username <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2"
@@ -202,9 +221,10 @@ const AddUser = () => {
             defaultValue={userData?.Username}
           />
         </div>
+
         <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
-            Password
+            Password <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2"
@@ -214,13 +234,14 @@ const AddUser = () => {
             defaultValue={userData?.Password}
           />
         </div>
+
         {userType == "5" ||
         userType == "6" ||
         userData?.UserType == "5" ||
         userData?.UserType == "6" ? (
           <div className="col-lg-6 mt-3">
             <label for="formGroupExampleInput " className="form_text">
-              Discount Percentage
+              Discount Percentage <span style={{ color: "red" }}>*</span>
             </label>
             <input
               class="form-control mt-2"
@@ -252,18 +273,6 @@ const AddUser = () => {
         ) : (
           <></>
         )}
-        <div className="col-lg-12 mt-3">
-          <label for="formGroupExampleInput " className="form_text">
-            Address
-          </label>
-          <input
-            class="form-control mt-2"
-            type="text"
-            placeholder="Enter your address"
-            onChange={(e) => setAddress(e.target.value)}
-            defaultValue={userData?.Address}
-          />
-        </div>
       </div>
       {!userData ? (
         <div className="col-lg-6 mb-2 btn-lg mx-auto d-flex justify-content-center ">
@@ -277,9 +286,14 @@ const AddUser = () => {
           </button>
         </div>
       ) : (
-        <div className="mt-5">
-          <button onClick={onSubmitEdit} className="btn btn-primary">
-            Edit user
+        <div className="col-lg-6 mb-2 btn-lg mx-auto d-flex justify-content-center ">
+          <button
+            style={{ paddingLeft: "100px", paddingRight: "100px" }}
+            type="submit"
+            className="btn btn_colour mt-5 btn-lg"
+            onClick={onSubmitEdit}
+          >
+            Edit User
           </button>
         </div>
       )}
