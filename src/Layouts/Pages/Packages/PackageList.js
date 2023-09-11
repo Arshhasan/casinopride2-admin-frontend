@@ -353,6 +353,13 @@ const PackageList = () => {
                 >
                   Item Weekend Rate (Exclusive of tax): {item.ItemWeekendRate}
                 </p>
+
+                <p
+                  className="manager-list"
+                  style={{ fontSize: "14px", marginBottom: "5px" }}
+                >
+                  Item Tax Name: {item.ItemTaxName}
+                </p>
               </div>
             ))}
           </div>

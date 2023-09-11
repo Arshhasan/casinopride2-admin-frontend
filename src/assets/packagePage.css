@@ -1795,3 +1795,41 @@ footer {
   padding: 0% !important;
   border-radius: 0px !important;
 }
+
+/* CSS */
+.selected-packages {
+  padding: 20px;
+}
+
+.card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.package-item {
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+}
+
+.detail {
+  font-weight: bold !important;
+}
+
+/* Style for Teens and Total section */
+.col.mx-auto {
+  text-align: center;
+}
+
+/* Style for Total price */
+.col.mx-auto .detail {
+  color: #333;
+  font-size: 18px;
+}

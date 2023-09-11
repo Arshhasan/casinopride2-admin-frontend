@@ -60,10 +60,7 @@ const PackagesPage = ({
   });
 
   const [selectedPackages, setSelectedPackages] = useState({});
-  console.log(
-    "selectedPackages length-------------->",
-    selectedPackages.length
-  );
+  // console.log("selectedPackages -------------->", selectedPackages);
 
   const handleCounterChange = (
     packageId,
@@ -83,11 +80,19 @@ const PackagesPage = ({
         PackageName
       );
 
+      console.log(
+        "PackageWeekdayPrice------------------------------<<>>>>>>>>>>><<<<<<<<<<>>>>>>>>>>>>",
+        PackageWeekdayPrice,
+        PackageWeekendPrice
+      );
+
       if (increment || currentCount > 0) {
         updatedPackages[packageId] = {
           ...updatedPackages[packageId],
           [counterType]: currentCount + (increment ? 1 : -1),
           PackageName,
+          PackageWeekdayPrice,
+          PackageWeekendPrice,
         };
 
         if (updatedPackages[packageId][counterType] <= 0) {
@@ -313,28 +318,8 @@ const PackagesPage = ({
                       </div>
                     </div>
                   </div>
-                  {/* 
-                  <div className="selected-packages row">
-                    {Object.entries(selectedPackages).map(
-                      ([packageName, counts], index) => (
-                        <div className="card col-4 mt-4" key={index}>
-                          <div className="card-body">
-                            <h5 className="card-title">{packageName}hiii</h5>
-                            <div className="row">
-                              <div className="col">
-                                <p className="mb-0">
-                                  <span className="detail">Adults:</span>{" "}
-                                  {counts.adults || 0}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    )}
-                  </div> */}
 
-                  {Object.keys(selectedPackages).length > 0 ? (
+                  {/* {Object.keys(selectedPackages).length > 0 ? (
                     <div className="selected-packages row">
                       <div className="card col-12 mt-4">
                         <div className="card-body">
@@ -356,9 +341,94 @@ const PackagesPage = ({
                                     {item.adults}
                                   </p>
                                 </div>
+                                <div className="col">
+                                  <p className="mb-0">
+                                    <span className="detail">Price:</span>{" "}
+                                    {item.adults *
+                                      (!isTodayWeekday
+                                        ? item.PackageWeekendPrice
+                                        : item.PackageWeekdayPrice)}
+                                  </p>
+                                </div>
                               </div>
                             )
                           )}
+                        </div>
+
+                        <div className="col mx-auto">
+                          <p className="mb-0">
+                            <span className="detail">Teens:</span> {teensCount}
+                          </p>
+                        </div>
+                        <div className="col mx-auto">
+                          <p className="mb-0">
+                            <span className="detail">Total:</span>{" "}
+                            {totalAmountOfAllPackages}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )} */}
+
+                  {Object.keys(selectedPackages).length > 0 ||
+                  teensCount > 0 ? (
+                    <div className="selected-packages row">
+                      <div className="card col-12 mt-4">
+                        <div className="card-body">
+                          <h5 className="card-title">Selected Packages</h5>
+                          {Object.entries(selectedPackages).map(
+                            ([index, item]) => (
+                              <div className="row package-item" key={index}>
+                                <div className="col-4">
+                                  <p className="mb-0 detail">
+                                    <span className="detail">
+                                      Package Name:
+                                    </span>{" "}
+                                    {item.PackageName}
+                                  </p>
+                                </div>
+                                <div className="col-4">
+                                  <p className="mb-0 detail">
+                                    <span className="detail">Adults:</span>{" "}
+                                    {item.adults}
+                                  </p>
+                                </div>
+                                <div className="col-4">
+                                  <p className="mb-0 detail">
+                                    <span className="detail detail">
+                                      Price:
+                                    </span>
+                                    {item.adults *
+                                      (!isTodayWeekday
+                                        ? item.PackageWeekendPrice
+                                        : item.PackageWeekdayPrice)}
+                                  </p>
+                                </div>
+                              </div>
+                            )
+                          )}
+                          <div className="row package-item">
+                            <div className="col-4 ">
+                              <p className="mb-0 detail">
+                                <span className="detail">Teens:</span>{" "}
+                                {teensCount}
+                              </p>
+                            </div>
+                            <div className="col-4 ">
+                              <p className="mb-0 detail">
+                                <span className="detail">Teens count:</span>{" "}
+                                {teensCount}
+                              </p>
+                            </div>
+                            <div className="col-4 ">
+                              <p className="mb-0 detail">
+                                <span className="detail">Total Amount:</span>
+                                {totalAmountOfAllPackages}
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>

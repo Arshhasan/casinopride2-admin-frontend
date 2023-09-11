@@ -30,6 +30,7 @@ const AddPackage = () => {
     itemWeekdayRate: item?.ItemWeekdayRate,
     itemWeekendRate: item?.ItemWeekendRate,
     itemTax: item.ItemTax,
+    itemTaxName: item.ItemTaxName,
     isDeductable: item.IsDeductable,
   }));
 
@@ -76,6 +77,7 @@ const AddPackage = () => {
         isDeductable: 0,
         itemWeekdayRate: 0,
         itemWeekendRate: 0,
+        itemTaxName: "",
       },
     ]);
   };
@@ -385,6 +387,19 @@ const AddPackage = () => {
                     )
                   }
                 />
+
+                <label for="formGroupExampleInput " className="form_text">
+                  Tax Name
+                </label>
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  placeholder="Item Tax Name"
+                  value={item.itemTaxName}
+                  onChange={(e) =>
+                    handleItemInputChange(index, "itemTaxName", e.target.value)
+                  }
+                />
                 <label for="formGroupExampleInput " className="form_text">
                   Tax %
                 </label>
@@ -493,8 +508,21 @@ const AddPackage = () => {
                     )
                   }
                 />
+
                 <label for="formGroupExampleInput " className="form_text">
-                  Tax
+                  Tax Name
+                </label>
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  placeholder="Item Tax Name"
+                  value={item.itemTaxName}
+                  onChange={(e) =>
+                    handleItemInputChange(index, "itemTaxName", e.target.value)
+                  }
+                />
+                <label for="formGroupExampleInput " className="form_text">
+                  Tax %
                 </label>
                 <input
                   type="number"
