@@ -307,11 +307,15 @@ const BookingList = () => {
                 Actual Amount: {selectedUserDetails.ActualAmount}
               </p>
             </div>{" "}
-            <div className="col-6">
-              <p className="table-modal-list ">
-                Date of Birth: {selectedUserDetails.DOB}
-              </p>
-            </div>{" "}
+            {selectedUserDetails.DOB == "" ? (
+              <div className="col-6">
+                <p className="table-modal-list ">
+                  Date of Birth: {selectedUserDetails.DOB}
+                </p>
+              </div>
+            ) : (
+              <></>
+            )}
             {selectedUserDetails.PanelDiscount > 0 ? (
               <div className="col-6">
                 <p className="table-modal-list ">

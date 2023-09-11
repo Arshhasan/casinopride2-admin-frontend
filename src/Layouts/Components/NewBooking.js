@@ -70,18 +70,24 @@ const NewBooking = () => {
         // If the discount toggle is being enabled, disable the others
         setCouponToggle(false);
         setReferredByToggle(false);
+        setCouponCode("");
+        setSelectedOption("");
       }
     } else if (field === "coupon") {
       setCouponToggle(!couponToggle);
       if (!couponToggle) {
         setDiscountToggle(false);
         setReferredByToggle(false);
+        setCouponCode("");
+        setSelectedOption("");
       }
     } else if (field === "referredBy") {
       setReferredByToggle(!referredByToggle);
       if (!referredByToggle) {
         setDiscountToggle(false);
         setCouponToggle(false);
+        setCouponCode("");
+        setSelectedOption("");
       }
     }
   };
@@ -503,22 +509,31 @@ const NewBooking = () => {
             </div>
           </div>
 
-          {couponToggle ? (
-            <div className="col-lg-6 mt-3">
-              <label for="formGroupExampleInput " className="form_text">
-                Coupon Code
-              </label>
-              <input
-                class="form-control mt-2"
-                type="text"
-                placeholder="Coupon Code"
-                onChange={(e) => setCouponCode(e.target.value)}
-              />
-              <button onClick={separateInitials}>Check</button>
-            </div>
-          ) : (
-            <></>
-          )}
+          <div className="row">
+            {couponToggle ? (
+              <div className="col-lg-6 mt-3">
+                <div className="input-group">
+                  <input
+                    className="form-control mt-2"
+                    type="text"
+                    placeholder="Coupon Code"
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    value={couponCode}
+                  />
+                  <button
+                    className="btn btn-primary"
+                    style={{ marginTop: "8px" }}
+                    type="button"
+                    onClick={separateInitials}
+                  >
+                    Check
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
 
           {discountToggle ? (
             <div className="col-lg-6 mt-3">
