@@ -41,7 +41,10 @@ export const OTPpackage = ({
           {packageDetail?.PackageName}
         </h5>
         <div class="family-box-inner ">
-          <p class="font-weight-bold text-center">
+          <p
+            class="font-weight-bold text-center"
+            style={{ fontWeight: "Medium" }}
+          >
             {packageDetail?.PackageDescription}
           </p>
           <p class="font-weight-bold text-center"></p>

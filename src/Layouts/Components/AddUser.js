@@ -330,20 +330,24 @@ const AddUser = () => {
           <></>
         )}
 
-        <div className="col-lg-6 mt-5">
-          <div className="form-check form-switch">
-            <label for="formGroupExampleInput " className="form_text">
-              Is user enabled?
-            </label>
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="switch"
-              checked={isChecked === 1}
-              onChange={handleToggle}
-            />
+        {userData ? (
+          <div className="col-lg-6 mt-5">
+            <div className="form-check form-switch">
+              <label for="formGroupExampleInput " className="form_text">
+                Is user enabled?
+              </label>
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="switch"
+                checked={isChecked === 1}
+                onChange={handleToggle}
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          <></>
+        )}
       </div>
       {!userData ? (
         <div className="col-lg-6 mb-2 btn-lg mx-auto d-flex justify-content-center ">

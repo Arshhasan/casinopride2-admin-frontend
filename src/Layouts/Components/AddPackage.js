@@ -105,10 +105,8 @@ const AddPackage = () => {
       console.log("calculatedWeekdayRate----------->", calculatedWeekdayRate);
       console.log("calculatedWeekendRate----------->", calculatedWeekendRate);
 
-      updatedItems[index].itemWeekdayRate =
-        Math.round(calculatedWeekdayRate * 100) / 100;
-      updatedItems[index].itemWeekendRate =
-        Math.round(calculatedWeekendRate * 100) / 100;
+      updatedItems[index].itemWeekdayRate = (calculatedWeekdayRate * 100) / 100;
+      updatedItems[index].itemWeekendRate = (calculatedWeekendRate * 100) / 100;
     }
     console.log("updatedItems------------->", updatedItems);
     setPackageItems(updatedItems);
@@ -146,20 +144,11 @@ const AddPackage = () => {
     setIsChecked(!isChecked);
   };
 
-  const taxRate = 28;
-  const packagePrice = 2000;
   function calculateInvoiceAmount(packagePrice, taxRate) {
-    // Ensure taxRate is a percentage (e.g., 28% as 0.28)
-    // Calculate the invoice amount
     const invoiceAmount = (packagePrice * 100) / (100 + taxRate);
     console.log("<---------------invoiceAmount------------->", invoiceAmount);
     return invoiceAmount;
   }
-  const invoiceAmount = calculateInvoiceAmount(packagePrice, taxRate);
-
-  // console.log("package price--->", packagePrice);
-  // console.log("tax--->", taxRate);
-  // console.log("tax amount--->", invoiceAmount.toFixed(2));
 
   const handleSubmit = () => {
     if (
@@ -235,6 +224,8 @@ const AddPackage = () => {
     setPackageItems(updatedItems);
     console.log("Updated Items------------------>", updatedItems);
   };
+
+  console.log("packageItems---->", packageItems);
 
   return (
     <div>

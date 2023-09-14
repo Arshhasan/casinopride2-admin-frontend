@@ -142,6 +142,10 @@ const ManagerList = () => {
               <th scope="col" className="text-center table_heading">
                 Email
               </th>
+
+              <th scope="col" className="text-center table_heading">
+                Status
+              </th>
               <th scope="col" className="text-center table_heading">
                 Edit
               </th>
@@ -188,6 +192,14 @@ const ManagerList = () => {
                   <td className="manager-list ">{item.Name}</td>
                   <td className="manager-list">{item.Phone}</td>
                   <td className="manager-list">{item.Email}</td>
+                  <td className="manager-list">
+                    {item.IsUserEnabled ? (
+                      <span style={{ color: "green" }}>Active</span>
+                    ) : (
+                      <span style={{ color: "red" }}>Inactive</span>
+                    )}
+                  </td>
+
                   <td className="manager-list">
                     {" "}
                     <Link

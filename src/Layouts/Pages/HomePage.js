@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 const HomePage = () => {
   return (
     <div>
-      <p>Hi </p>
+      <p>Shifts </p>
     </div>
   );
 };
