@@ -15,6 +15,10 @@ const PackagesPage = ({
   setPackageGuestCount,
   setNumberofteens,
   settoalGuestCount,
+  amountAfterDiscount,
+  couponDiscount,
+  setTotalTeensPrice,
+  setTeenPackageId,
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
@@ -200,6 +204,9 @@ const PackagesPage = ({
     setPackageIds(formattedData.packageId);
     setPackageGuestCount(formattedData.packageGuestCount);
     settoalGuestCount(totalCountofCustomer);
+    setNumberofteens(teensCount);
+    setTotalTeensPrice(totalTeensPrice);
+    setTeenPackageId(groupedData[0]?.PackageId);
   }, [TotalAmount, teensCount]);
 
   console.log("total amount-------->", TotalAmount);
@@ -390,15 +397,21 @@ const PackagesPage = ({
                                   </p>
                                 </div>
                                 <div className="col-4">
-                                  <p className="mb-0 detail">
+                                  <p
+                                    className="mb-0 detail"
+                                    style={{ textAlign: "center" }}
+                                  >
                                     <span className="detail">Adults:</span>{" "}
                                     {item.adults}
                                   </p>
                                 </div>
                                 <div className="col-4">
-                                  <p className="mb-0 detail">
+                                  <p
+                                    className="mb-0 detail"
+                                    style={{ textAlign: "right" }}
+                                  >
                                     <span className="detail detail">
-                                      Price:
+                                      Total Package Price:
                                     </span>
                                     {item.adults *
                                       (!isTodayWeekday
@@ -417,18 +430,80 @@ const PackagesPage = ({
                               </p>
                             </div>
                             <div className="col-4 ">
-                              <p className="mb-0 detail">
+                              <p
+                                className="mb-0 detail"
+                                style={{ textAlign: "center" }}
+                              >
                                 <span className="detail">Teens count:</span>{" "}
                                 {teensCount}
                               </p>
                             </div>
                             <div className="col-4 ">
-                              <p className="mb-0 detail">
+                              <p
+                                className="mb-0 detail"
+                                style={{ textAlign: "right" }}
+                              >
+                                <span className="detail">
+                                  Total Teens Price:
+                                </span>
+                                {totalTeensPrice}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="row package-item">
+                            <div className="col-4 "></div>
+                            <div className="col-4 "></div>
+                            <div className="col-4 ">
+                              <p
+                                className="mb-0 detail"
+                                style={{ textAlign: "right" }}
+                              >
                                 <span className="detail">Total Amount:</span>
                                 {totalAmountOfAllPackages}
                               </p>
                             </div>
                           </div>
+
+                          {amountAfterDiscount == "" ? (
+                            <></>
+                          ) : (
+                            <div className="row package-item">
+                              <div className="col-4 "></div>
+                              <div className="col-4 "></div>
+                              <div className="col-4 ">
+                                <p
+                                  className="mb-0 detail"
+                                  style={{ textAlign: "right" }}
+                                >
+                                  <span className="detail">
+                                    Amount After Discount :
+                                  </span>
+                                  {amountAfterDiscount}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+
+                          {couponDiscount == "" ? (
+                            <></>
+                          ) : (
+                            <div className="row package-item">
+                              <div className="col-4 "></div>
+                              <div className="col-4 "></div>
+                              <div className="col-4 ">
+                                <p
+                                  className="mb-0 detail"
+                                  style={{ textAlign: "right" }}
+                                >
+                                  <span className="detail">
+                                    Amount After Discount :
+                                  </span>
+                                  {couponDiscount}
+                                </p>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

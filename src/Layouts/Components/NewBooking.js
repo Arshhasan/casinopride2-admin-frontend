@@ -61,6 +61,10 @@ const NewBooking = () => {
 
   const [remainingCoupons, setRemainingCoupons] = useState("");
   const [bookingData, setBookingData] = useState("");
+  const [couponDiscount, setCouponDiscout] = useState("");
+  const [totalteensPrice, setTotalTeensPrice] = useState("");
+
+  const [teenpackageId, setTeenPackageId] = useState("");
 
   const handleToggle = (field) => {
     // Toggle the state of the corresponding field
@@ -72,6 +76,10 @@ const NewBooking = () => {
         setReferredByToggle(false);
         setCouponCode("");
         setSelectedOption("");
+        setamountAfterDiscount("");
+      } else if (discountToggle) {
+        setamountAfterDiscount("");
+        setCouponDiscout("");
       }
     } else if (field === "coupon") {
       setCouponToggle(!couponToggle);
@@ -80,6 +88,9 @@ const NewBooking = () => {
         setReferredByToggle(false);
         setCouponCode("");
         setSelectedOption("");
+        setamountAfterDiscount("");
+      } else if (couponToggle) {
+        setCouponDiscout("");
       }
     } else if (field === "referredBy") {
       setReferredByToggle(!referredByToggle);
@@ -166,6 +177,12 @@ const NewBooking = () => {
                 "Coupon Details ---------->",
                 callback?.response?.Details
               );
+
+              const discount =
+                (amount * callback?.response?.Details?.CouponDiscount) / 100;
+              const discountedAmount = amount - discount;
+              setCouponDiscout(discountedAmount);
+
               setRemainingCoupons(
                 callback?.response?.Details?.RemainingCoupons
               );
@@ -200,6 +217,8 @@ const NewBooking = () => {
 
   const togeneratBill = () => {};
 
+  // setamountAfterDiscount
+
   const onsubmit = () => {
     if (guestName == "" || phone === "") {
       toast.warning("Please fill all the fields");
@@ -221,19 +240,23 @@ const NewBooking = () => {
         governmentId: governmentId,
         totalGuestCount: totalGuestCount,
         numOfTeens: numberofteens,
+        teensPrice: totalteensPrice,
         // discountId:2,
         panelDiscountId: selectedOption,
         couponId: couponId,
         referredBy: referredBy,
         settledByCompany: 0,
-        packageId: JSON.stringify(packageIds),
+        packageId:
+          packageIds == []
+            ? JSON.stringify(teenpackageId)
+            : JSON.stringify(packageIds),
         packageGuestCount: JSON.stringify(packageGuestCount),
         userId: loginDetails?.logindata?.userId,
         userTypeId: loginDetails?.logindata?.UserType,
         // futureDate:2023-10-25,
         shiftId: 2,
         actualAmount: amount,
-        amountAfterDiscount: amount,
+        amountAfterDiscount: amountAfterDiscount,
         isActive: 1,
       };
 
@@ -248,7 +271,11 @@ const NewBooking = () => {
             setBookingData(callback?.response?.Details);
 
             toast.success("Booking details success");
-            couponCodeAppend();
+
+            if (couponToggle) {
+              couponCodeAppend();
+            }
+
             navigate("/GenerateBill", {
               state: { userData: callback?.response?.Details },
             });
@@ -262,12 +289,9 @@ const NewBooking = () => {
     }
   };
 
-  const couponCodeAppend = () => {
-    console.log(
-      "<------------------------------|||||couponCodeAppend|||||------------->",
-      bookingData
-    );
+  console.log("numberofteens-------------------->", numberofteens);
 
+  const couponCodeAppend = () => {
     const updatedCouponData = [...usedCouponArr, couponCode];
     const dataArray = Array.from(
       { length: updatedCouponData.length },
@@ -296,8 +320,21 @@ const NewBooking = () => {
   const [selectedOption, setSelectedOption] = useState("");
 
   const handleSelectChange = (e) => {
+    const selectedValue = e.target.value;
+
+    const selectedPanelDiscount = panelDiscounts.find(
+      (item) => item.Id == selectedValue
+    );
+
     setSelectedOption(e.target.value);
+    const discount = (amount * selectedPanelDiscount?.PanelDiscount) / 100;
+    const discountedAmount = amount - discount;
+    setamountAfterDiscount(discountedAmount);
   };
+
+  console.log("Discount ----->", selectedOption);
+
+  console.log("amountAfterDiscount-------->", amountAfterDiscount);
 
   return (
     <div>
@@ -311,6 +348,10 @@ const NewBooking = () => {
           setPackageGuestCount={setPackageGuestCount}
           setNumberofteens={setNumberofteens}
           settoalGuestCount={settoalGuestCount}
+          amountAfterDiscount={amountAfterDiscount}
+          couponDiscount={couponDiscount}
+          setTotalTeensPrice={setTotalTeensPrice}
+          setTeenPackageId={setTeenPackageId}
         />
         <div className="col-lg-6 mt-3 mt-3">
           <label for="formGroupExampleInput " className="form_text">
@@ -548,7 +589,7 @@ const NewBooking = () => {
                 <option value="">Select an option</option>
                 {panelDiscounts.map((item, index) => (
                   <option key={index} value={item?.Id}>
-                    {item?.Id} %
+                    {item?.PanelDiscount}
                   </option>
                 ))}
               </select>

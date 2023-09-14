@@ -1,6 +1,7 @@
 import React from "react";
 import check from "../../../assets/Images/check.png";
 import { AddBillingDetails } from "../../../Redux/actions/billing";
+import moment from "moment";
 
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -27,6 +28,14 @@ const GenerateBill = () => {
 
   const toPdfgeneratioFn = () => {};
 
+  console.log("FutureDate------->", userData?.FutureDate);
+
+  const bookingdate = userData?.CreatedOn.slice(0, 10);
+
+  const today = moment().format("YYYY-MM-DD");
+
+  console.log("Todays date--->", today);
+
   const onsubmit = () => {
     console.log("loginDetails-------------->", loginDetails?.logindata?.Token);
     const data = {
@@ -34,7 +43,8 @@ const GenerateBill = () => {
       packageId: userData?.PackageId,
       packageGuestCount: userData?.PackageGuestCount,
       totalGuestCount: userData?.TotalGuestCount,
-      bookingDate: "2023-09-07",
+      bookingDate: bookingdate,
+      billingDate: today,
     };
 
     console.log("data------------>", data);
