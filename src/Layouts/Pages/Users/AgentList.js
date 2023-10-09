@@ -85,7 +85,7 @@ const AgentList = () => {
 
   return (
     <div>
-      <h3 className="mb-4"> Agent List</h3>
+      <h3 className="mb-4"> Travel Agent List</h3>
       <div className="container">
         <div className="row">
           <div className="col-md-8 col-lg-6 mb-3">

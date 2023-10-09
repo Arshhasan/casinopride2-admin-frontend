@@ -129,12 +129,12 @@ const SideNav = () => {
                 </Nav.Item>
                 <Nav.Item eventKey="3-4">
                   <Link to="/AgentList" className="links">
-                    Agent
+                    Travel Agent
                   </Link>
                 </Nav.Item>
                 <Nav.Item eventKey="3-4">
                   <Link to="/DriverList" className="links">
-                    Driver
+                    Local Agent
                   </Link>
                 </Nav.Item>
                 <Nav.Item eventKey="3-4">
@@ -169,7 +169,7 @@ const SideNav = () => {
             {loginDetails?.logindata?.UserType == "1" ? (
               <Nav.Item eventKey="7" icon={<DashboardIcon />}>
                 <Link to="/FutureBookingDates" className="links">
-                  Future Bookin gDates
+                  Future Booking Dates
                 </Link>
               </Nav.Item>
             ) : (

@@ -125,7 +125,7 @@ const BookingList = () => {
           </div>
 
           <div className="col-md-2 col-lg-2 mb-2">
-            <p style={{ fontWeight: "bold" }}>Search By Date</p>
+            <p style={{ fontWeight: "bold" }}>Search By Booking Date</p>
             <div className="input-group">
               <input
                 type="date"

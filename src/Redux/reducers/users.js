@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   userDetailsAfterLogin: {},
+  saveShiftDetails: {},
 };
 
 export const userSlice = createSlice({
@@ -11,10 +12,13 @@ export const userSlice = createSlice({
     saveLoginData: (state, action) => {
       state.userDetailsAfterLogin = action.payload;
     },
+    saveShiftDetails: (state, action) => {
+      state.saveShiftDetails = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { saveLoginData } = userSlice.actions;
+export const { saveLoginData, saveShiftDetails } = userSlice.actions;
 
 export default userSlice.reducer;
