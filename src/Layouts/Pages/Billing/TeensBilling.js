@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import html2pdf from "html2pdf.js";
 // import QRCode from "qrcode.react";
 import "../../../assets/Billing.css";
@@ -13,6 +13,8 @@ import { usePDF } from "react-to-pdf";
 import moment from "moment";
 import "../../../assets/global.css";
 import { uploadBillFile } from "../../../Redux/actions/billing";
+import { toPng } from "html-to-image";
+import htmlToImage from "html-to-image";
 
 import QRCode from "qrcode";
 import { PDFDocument, rgb } from "pdf-lib";
@@ -29,28 +31,14 @@ const TeensBilling = () => {
     (state) => state.auth?.userDetailsAfterLogin.Details
   );
 
-  const [totalDiscount, setTotalDiscount] = useState(0);
-
-  const [qrCodeData, setQrCodeData] = useState(
-    "https://smartkhoj.nyc3.digitaloceanspaces.com/Module/BillFile_04-10-2023_09-42-14_combined_bill_%2854%29.pdf"
+  console.log(
+    "BookingDetails[0]?.BookingId--------------------->",
+    BookingDetails[0]?.BookingId
   );
 
   const [qrCodeImage, setQRCodeImage] = useState(null);
 
-  useEffect(() => {
-    QRCode.toCanvas(
-      document.createElement("canvas"),
-      qrCodeData,
-      (error, canvas) => {
-        if (error) {
-          console.error("QR code generation error:", error);
-        } else {
-          const qrCodeDataURL = canvas.toDataURL("image/png");
-          setQRCodeImage(qrCodeDataURL);
-        }
-      }
-    );
-  }, [qrCodeData]);
+  const [loader, setLoader] = useState(false);
 
   const generatePDFAndSend = async () => {
     const elements = document.querySelectorAll(".thermal-bill");
@@ -85,7 +73,7 @@ const TeensBilling = () => {
         new Blob([pdfBlob], { type: "application/pdf" }),
         "bill.pdf"
       );
-      formData.append("bookingId", 69);
+      formData.append("bookingId", BookingDetails[0]?.BookingId);
 
       const callback = await new Promise((resolve, reject) => {
         dispatch(
@@ -118,68 +106,120 @@ const TeensBilling = () => {
     }
   };
 
-  const generatePDF = async () => {
-    const elements = document.querySelectorAll(".thermal-bill");
-    const container = document.createElement("div");
+  const elementRef = useRef(null);
 
-    console.log("Container properties", container);
+  const [updatedQrcodeImage, setUpatedQrcodeImage] = useState("");
 
-    elements.forEach((element) => {
-      container.appendChild(element.cloneNode(true));
-    });
+  const onButtonClick = useCallback(() => {
+    setLoader(true);
+    if (elementRef.current === null) {
+      return;
+    }
 
-    document.body.appendChild(container);
+    toPng(elementRef.current, { cacheBust: true })
+      .then(async (dataUrl) => {
+        // Convert the data URL to a blob
+        const imageBlob = await dataURLtoBlob(dataUrl);
 
-    const opt = {
-      margin: [10, 0, 0, 0],
-      filename: "combined_bill.pdf",
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    };
+        function dataURLtoBlob(dataURL) {
+          const arr = dataURL.split(",");
+          const mime = arr[0].match(/:(.*?);/)[1];
+          const bstr = atob(arr[1]);
+          let n = bstr.length;
+          const u8arr = new Uint8Array(n);
+          while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+          }
+          return new Blob([u8arr], { type: mime });
+        }
 
-    html2pdf().from(container).set(opt).save();
+        // Create a FormData object and append the image blob
+        const formData = new FormData();
+        formData.append("File", imageBlob, "billing.png");
+        formData.append("bookingId", BookingDetails[0]?.BookingId);
 
-    document.body.removeChild(container);
-  };
+        // Make a POST request to your server to upload the image
+        dispatch(
+          uploadBillFile(
+            loginDetails?.logindata?.Token,
+            formData,
+            (callback) => {
+              if (callback.status) {
+                console.log(
+                  "Callback pdf details---->",
+                  callback?.response?.Details
+                );
+                setUpatedQrcodeImage(
+                  callback?.response?.Details[0]?.BillingFile
+                );
+                setLoader(false);
 
-  const pdfRef = useRef(null);
+                const apiUrl = `http://commnestsms.com/api/push.json?apikey=635cd8e64fddd&route=transactional&sender=CPGOAA&mobileno=7972709154&text=Thank%20you%20for%20choosing%20Casino%20Pride.%20View%20e-bill%20of%20Rs%20V@1%20at%20-%20V@2%0ALets%20Play%20with%20Pride%20!%0AGood%20luck%20!%0ACPGOAA`;
+                fetch(apiUrl)
+                  .then((response) => {
+                    if (!response.ok) {
+                      throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json(); // Parse the JSON response
+                  })
+                  .then((data) => {
+                    console.log(data); // Handle the parsed JSON data here
+                  })
+                  .catch((error) => {
+                    console.error("Fetch error:", error);
+                  });
 
-  // Your component or function
-  // const handleDownload = () => {
-  //   const content = pdfRef.current;
+                resolve(callback);
+              } else {
+                toast.error(callback.error);
+                reject(callback);
+              }
+            }
+          )
+        );
 
-  //   const doc = new jsPDF({
-  //     orientation: "portrait", // or 'landscape'
-  //     unit: "mm",
-  //     format: [100, 1220], // [width, height]
-  //     margin: { top: 10, right: 10, bottom: 10, left: 10 }, // Adjust margins
-  //   });
+        if (response.ok) {
+          console.log("Image upload successful.");
+        } else {
+          console.error("Image upload failed:", response.statusText);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [elementRef]);
 
-  //   const opt = {
-  //     margin: [10, 10], // Adjust margins for html2canvas
-  //     filename: "sample.pdf",
-  //     image: { type: "jpeg", quality: 0.98 },
-  //     html2canvas: { scale: 1 }, // Adjust scale as needed
-  //   };
+  useEffect(() => {
+    onButtonClick();
+  }, []);
 
-  //   doc.html(content, {
-  //     callback: function () {
-  //       doc.save("sample.pdf");
-  //     },
-  //     ...opt,
-  //   });
-  // };
+  useEffect(() => {
+    QRCode.toCanvas(
+      document.createElement("canvas"),
+      updatedQrcodeImage,
+      (error, canvas) => {
+        if (error) {
+          console.error("QR code generation error:", error);
+        } else {
+          const qrCodeDataURL = canvas.toDataURL("image/png");
+          setQRCodeImage(qrCodeDataURL);
+        }
+      }
+    );
+  }, [updatedQrcodeImage]);
 
   return (
     <div>
-      <div className="container-fluid">
+      <div className="container-fluid" ref={elementRef}>
         {BookingDetails && BookingDetails.length > 0 ? (
           BookingDetails?.map((item) => (
             <div
               className="thermal-bill"
-              // style={{ height: "1120px", width: "80px" }}
-              ref={pdfRef}
+              style={{
+                backgroundColor: "white",
+                width: "100%",
+                padding: "5%",
+              }}
             >
               <div className="text-center">
                 <img
@@ -370,7 +410,7 @@ const TeensBilling = () => {
           style={{ paddingLeft: "100px", paddingRight: "100px" }}
           type="submit"
           className="btn btn_colour mt-5 btn-lg"
-          onClick={generatePDFAndSend}
+          onClick={onButtonClick}
         >
           Complete Booking
         </button>

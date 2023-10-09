@@ -18,6 +18,9 @@ import { openShiftFn } from "../../../Redux/actions/users";
 import { closeShiftFn } from "../../../Redux/actions/users";
 import { closeOutletFunction } from "../../../Redux/actions/users";
 import { reopenShiftFunction } from "../../../Redux/actions/users";
+import api from "../../../Service/api";
+import { saveOutletDetails } from "../../../Redux/reducers/auth";
+import { checkCurrentOutletFn } from "../../../Redux/actions/users";
 
 const Shifts = () => {
   const location = useLocation();
@@ -32,17 +35,29 @@ const Shifts = () => {
     (state) => state.auth?.userDetailsAfterValidation
   );
 
+  const [outletId, setOutletId] = useState("");
+
   const outletOpenDetails = useSelector((state) => state.auth?.outeltDetails);
 
   console.log(
-    "validateDetails===========================================================>",
-    validateDetails?.Details
+    "Outelt details-----------------------||||||||||||||||||||||||--------------------------->",
+    outletOpenDetails
   );
+  const today = moment().format("YYYY-MM-DD");
 
-  console.log(
-    "Outelt details-------------------------------------------------->",
-    outletOpenDetails?.Details[0]?.Id
-  );
+  useEffect(() => {
+    api.CORE_PORT.get(`/core/checkCurrentOutlet?outletDate=${today}`, {
+      headers: {
+        AuthToken: loginDetails?.logindata?.Token,
+      },
+    }).then((response) => {
+      console.log(
+        "checkCurrentOutlet-------------------------------------------------->>>>>> -->",
+        response.data
+      );
+      setOutletId(response.data?.Details[0]?.Id);
+    });
+  }, []);
 
   const formattedDate = moment().format("YYYY-MM-DD");
 
@@ -50,23 +65,12 @@ const Shifts = () => {
   const outletFormattedData = parsedDate.format("YYYY-MM-DD");
 
   const [outletOpen, setOutletOpen] = useState(false);
-  const [shift1Open, setShift1Open] = useState(false);
-  const [shift2Open, setShift2Open] = useState(false);
-  const [shift3Open, setShift3Open] = useState(false);
-
-  const [reCloseShift1, setReCloseShift1] = useState(false);
-  const [reCloseShift2, setReCloseShift2] = useState(false);
-  const [reCloseShift3, setReCloseShift3] = useState(false);
 
   const [shift1close, setShift1close] = useState(false);
   const [shift2Close, setShift2Close] = useState(false);
   const [shift3Close, setShift3close] = useState(false);
 
-  const [checkShift1, setSheckShift1] = useState(false);
-
   //from api integration ---------------->
-
-  const [outletId, setOutletId] = useState("");
 
   const [checkOutletOpen, setCheckOutletOpen] = useState(false);
 
@@ -83,8 +87,6 @@ const Shifts = () => {
 
   const [shiftDetails, setShiftDetails] = useState("");
   const [outletDetails, setOutletDetails] = useState("");
-
-  const [closeOutlet, setCloseOutlet] = useState(false);
 
   //reopen logic----------------->
   const [reopenShift1, setReopenShift1] = useState(false);
@@ -133,9 +135,7 @@ const Shifts = () => {
 
   const closeShiftOne = () => {
     const data = {
-      outletId: outletOpenDetails?.Details[0]?.Id
-        ? outletOpenDetails?.Details[0]?.Id
-        : outletId,
+      outletId: outletId,
       shiftId: 1,
       closeTime: time,
       userTypeId: validateDetails?.Details?.UserType,
@@ -180,13 +180,8 @@ const Shifts = () => {
   };
 
   const closeShiftTwo = () => {
-    // setShift2Open(false);
-    // setShift2Close(true);
-
     const data = {
-      outletId: outletOpenDetails?.Details[0]?.Id
-        ? outletOpenDetails?.Details[0]?.Id
-        : outletId,
+      outletId: outletId,
       shiftId: 2,
       closeTime: time,
       userTypeId: validateDetails?.Details?.UserType,
@@ -197,7 +192,7 @@ const Shifts = () => {
       closeShiftFn(data, loginDetails?.logindata?.Token, (callback) => {
         if (callback.status) {
           console.log("Close 2 shift called------------->", callback);
-          // setCheckShift1Close(true);
+
           setShiftDetails(callback?.response?.Details[0]);
           setCheckShift2Close(false);
           setCheckShift3Open(true);
@@ -212,8 +207,6 @@ const Shifts = () => {
   };
 
   const openSHiftThree = () => {
-    // setShift3Open(true);
-
     const data = {
       outletDate: outletFormattedData,
       shiftTypeId: 3,
@@ -226,8 +219,7 @@ const Shifts = () => {
       openShiftFn(data, loginDetails?.logindata?.Token, (callback) => {
         if (callback.status) {
           console.log("Open shift 2  called------------->", callback);
-          // setSheckShift1(true);
-          // setCheckShift2open(true);
+
           setShiftDetails(callback?.response?.Details);
           setCheckShift3Open(true);
           setCheckShift2open(false);
@@ -240,9 +232,7 @@ const Shifts = () => {
 
   const closeSHiftThree = () => {
     const data = {
-      outletId: outletOpenDetails?.Details[0]?.Id
-        ? outletOpenDetails?.Details[0]?.Id
-        : outletId,
+      outletId: outletId,
       shiftId: 3,
       closeTime: time,
       userTypeId: validateDetails?.Details?.UserType,
@@ -264,9 +254,7 @@ const Shifts = () => {
 
   const closeOutletFn = () => {
     const data = {
-      outletId: outletOpenDetails?.Details[0]?.Id
-        ? outletOpenDetails?.Details[0]?.Id
-        : outletId,
+      outletId: outletId,
     };
 
     dispatch(
@@ -299,7 +287,10 @@ const Shifts = () => {
     dispatch(
       openOutletFunction(data, loginDetails?.logindata?.Token, (callback) => {
         if (callback.status) {
-          console.log("Open outlet called------------->", callback);
+          console.log(
+            "Open outlet called-------------------------------------------------->",
+            callback
+          );
           setOutletId(callback?.response?.Details?.Id);
           setCheckOutletOpen(true);
           setOutletDetails(callback?.response?.Details?.OutletStatus);
@@ -313,6 +304,7 @@ const Shifts = () => {
   const [recentShiftOpen, setRecentShiftOpen] = useState([]);
 
   useEffect(() => {
+    console.log("Hi called over here, useeffect is working------------->");
     dispatch(
       checkShiftForUser(
         outletFormattedData,
@@ -323,8 +315,10 @@ const Shifts = () => {
           if (callback) {
             console.log(
               "Callback from shifts for user -------------->",
-              callback?.response
+              callback?.response?.Details
             );
+
+            setShiftDetails(callback?.response?.Details);
 
             if (callback?.response?.Details == null) {
               dispatch(
@@ -339,6 +333,7 @@ const Shifts = () => {
                         callback?.response
                       );
                       setRecentShiftOpen(callback?.response?.Details);
+                      setShiftDetails(callback?.response?.Details);
 
                       toast.error(callback.error);
                     } else {
@@ -356,30 +351,37 @@ const Shifts = () => {
         }
       )
     );
+
+    dispatch(
+      checkCurrentOutletFn(
+        today,
+        loginDetails?.logindata?.Token,
+        (callback) => {
+          if (callback.status) {
+            console.log(
+              "check current outlet called---******************************************8---------->",
+              callback?.response?.Details[0]?.OutletStatus
+            );
+            setOutletDetails(callback?.response?.Details[0]?.OutletStatus);
+          } else {
+            toast.error(callback.error);
+          }
+        }
+      )
+    );
   }, []);
 
-  console.log(
-    "Outlet ID------------------>",
-    outletOpenDetails?.Details[0]?.Id
-  );
-
-  console.log("Outlet id from outlet open--------------->", outletId);
+  console.log("Outlet ID------------------>", outletOpenDetails);
 
   console.log(
-    "Shift Details--------shiftopen-------->",
-    shiftDetails?.ShiftOpen
-  );
-  console.log(
-    "Shift Details--------ShiftTypeId-------->",
-    shiftDetails?.ShiftTypeId
+    "Outlet id from outlet open-------||||||||||||||||||||||||||||||||||||||||-------->",
+    outletId
   );
 
   const reopenShiftOneFn = () => {
     const data = {
       userId: validateDetails?.Details?.Id,
-      outletId: outletOpenDetails?.Details[0]?.Id
-        ? outletOpenDetails?.Details[0]?.Id
-        : outletId,
+      outletId: outletId,
       shiftId: 1,
       userTypeId: validateDetails?.Details?.UserType,
       reopenTime: time,
@@ -404,9 +406,7 @@ const Shifts = () => {
   const reopenShiftTwoFn = () => {
     const data = {
       userId: validateDetails?.Details?.Id,
-      outletId: outletOpenDetails?.Details[0]?.Id
-        ? outletOpenDetails?.Details[0]?.Id
-        : outletId,
+      outletId: outletId,
       shiftId: 2,
       userTypeId: validateDetails?.Details?.UserType,
       reopenTime: time,
@@ -428,9 +428,7 @@ const Shifts = () => {
   const reopenShiftThreeFn = () => {
     const data = {
       userId: validateDetails?.Details?.Id,
-      outletId: outletOpenDetails?.Details[0]?.Id
-        ? outletOpenDetails?.Details[0]?.Id
-        : outletId,
+      outletId: outletId,
       shiftId: 3,
       userTypeId: validateDetails?.Details?.UserType,
       reopenTime: time,
@@ -448,6 +446,16 @@ const Shifts = () => {
       })
     );
   };
+
+  console.log(
+    "shiftDetails--------------------**************************________________________>>>",
+    shiftDetails
+  );
+
+  console.log(
+    "outletDetails---------------------------------||||||||||||||||||||||||||||||||||||||||||||||>",
+    outletDetails
+  );
 
   return (
     <div>
@@ -510,7 +518,7 @@ const Shifts = () => {
                   <></>
                 )}
 
-                {outletDetails === 1 && !checkShift1Open ? (
+                {outletDetails === 1 && shiftDetails?.length == 0 ? (
                   <button
                     className={`btn ${
                       outletDetails === 1 ? "btn-primary" : "btn-secondary"
@@ -582,10 +590,8 @@ const Shifts = () => {
                   <></>
                 )}
 
-                {(outletDetails === 1 && checkShift2Open) ||
-                (shiftDetails?.ShiftOpen == 0 &&
-                  shiftDetails?.ShiftTypeId == 2 &&
-                  !reopenShift2) ? (
+                {shiftDetails?.ShiftOpen == 0 &&
+                shiftDetails?.ShiftTypeId == 1 ? (
                   <button
                     className={`btn ${
                       outletDetails === 1 ? "btn-primary" : "btn-secondary"
@@ -609,15 +615,19 @@ const Shifts = () => {
                 (shiftDetails?.ShiftOpen == 1 &&
                   shiftDetails?.ShiftTypeId == 3) ||
                 (shiftDetails?.ShiftOpen == 0 &&
-                  shiftDetails?.ShiftTypeId == 2 &&
-                  reopenShift2) ? (
+                  shiftDetails?.ShiftTypeId == 2) ||
+                (shiftDetails?.ShiftOpen == 0 &&
+                  shiftDetails?.ShiftTypeId == 3) ? (
                   <button
                     className={`btn ${
                       outletDetails === 1 ? "btn-primary" : "btn-secondary"
                     } mr-2`}
                     onClick={reopenShiftTwoFn}
                     style={{ width: "100%" }}
-                    // disabled={checkShift3Open}
+                    disabled={
+                      shiftDetails?.ShiftOpen == 1 &&
+                      shiftDetails?.ShiftTypeId == 3
+                    }
                   >
                     Reopen
                   </button>
@@ -706,8 +716,7 @@ const Shifts = () => {
                   <></>
                 )}
 
-                {outletDetails === 1 &&
-                shiftDetails?.ShiftOpen == 0 &&
+                {shiftDetails?.ShiftOpen == 0 &&
                 shiftDetails?.ShiftTypeId == 2 ? (
                   <button
                     className={`btn ${

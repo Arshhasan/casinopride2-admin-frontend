@@ -495,7 +495,7 @@ const BillingDetails = () => {
                     </>
                   ) : (
                     <>
-                      {/* <h6 className="BillPrintFont">
+                      <h6 className="BillPrintFont">
                         CGST: {item?.ItemDetails.ItemTax / 2} %
                       </h6>
                       <h6 className="BillPrintFont">
@@ -534,7 +534,7 @@ const BillingDetails = () => {
                             )}
                           </span>
                         )}
-                      </h6> */}
+                      </h6>
                     </>
                   )}
 

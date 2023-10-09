@@ -86,7 +86,7 @@ const DriverList = () => {
 
   return (
     <div>
-      <h3 className="mb-4">Drivers List</h3>
+      <h3 className="mb-4">Local Agent List</h3>
       <div className="container">
         <div className="row">
           <div className="col-md-8 col-lg-6 mb-3">
@@ -109,7 +109,7 @@ const DriverList = () => {
                 state={{ userType: "6" }}
                 className="addLinks"
               >
-                Add Driver
+                Add Local Agent
               </Link>
             </button>
           </div>

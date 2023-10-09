@@ -125,7 +125,7 @@ const FutureBookingDates = () => {
             </div>
           </div> */}
           {!futureDates ? (
-            <div className="col-md-4 col-lg-6 d-flex justify-content-end mb-3">
+            <div className="col-md-4 col-lg-12 d-flex justify-content-end mb-3">
               <button className="btn btn-primary">
                 <Link
                   to="/AddFutureBookingDates"

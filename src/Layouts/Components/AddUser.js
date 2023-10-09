@@ -165,6 +165,11 @@ const AddUser = () => {
 
   console.log("isChecked---->", isChecked);
 
+  console.log(
+    "userData?.UserType--------------------------->",
+    userData?.UserType
+  );
+
   return (
     <div>
       <ToastContainer />
@@ -188,12 +193,16 @@ const AddUser = () => {
         )}
 
         {userType == 5 ? (
-          <h3 className="mb-4">{userData ? "Edit Agent" : "Add Agent"}</h3>
+          <h3 className="mb-4">
+            {userData ? "Edit  Travel Agent" : "Add Travel Agent"}
+          </h3>
         ) : (
           <></>
         )}
         {userType == 6 ? (
-          <h3 className="mb-4">{userData ? "Edit Driver" : "Add Driver"}</h3>
+          <h3 className="mb-4">
+            {userData ? "Edit Local Agent " : "Add Local Agent"}
+          </h3>
         ) : (
           <></>
         )}
@@ -234,22 +243,26 @@ const AddUser = () => {
             maxLength="10"
           />
         </div>
-        <div className="col-lg-6 mt-3">
-          <label
-            for="formGroupExampleInput "
-            className="form_text"
-            style={{ fontSize: "15px", fontWeight: "600" }}
-          >
-            Email <span style={{ color: "red" }}>*</span>
-          </label>
-          <input
-            class="form-control mt-2"
-            type="text"
-            placeholder="Enter Email"
-            onChange={(e) => setEmail(e.target.value)}
-            defaultValue={userData?.Email}
-          />
-        </div>
+        {userType == 6 ? (
+          <></>
+        ) : (
+          <div className="col-lg-6 mt-3">
+            <label
+              for="formGroupExampleInput "
+              className="form_text"
+              style={{ fontSize: "15px", fontWeight: "600" }}
+            >
+              Email <span style={{ color: "red" }}>*</span>
+            </label>
+            <input
+              class="form-control mt-2"
+              type="text"
+              placeholder="Enter Email"
+              onChange={(e) => setEmail(e.target.value)}
+              defaultValue={userData?.Email}
+            />
+          </div>
+        )}
 
         <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
@@ -264,40 +277,54 @@ const AddUser = () => {
           />
         </div>
 
-        <div className="col-lg-6 mt-3">
-          <label for="formGroupExampleInput " className="form_text">
-            Username <span style={{ color: "red" }}>*</span>
-          </label>
-          <input
-            class="form-control mt-2"
-            type="text"
-            placeholder="Enter Username"
-            onChange={(e) => setUsername(e.target.value)}
-            defaultValue={userData?.Username}
-          />
-        </div>
+        {userType == 6 ? (
+          <></>
+        ) : (
+          <div className="col-lg-6 mt-3">
+            <label for="formGroupExampleInput " className="form_text">
+              Username <span style={{ color: "red" }}>*</span>
+            </label>
+            <input
+              class="form-control mt-2"
+              type="text"
+              placeholder="Enter Username"
+              onChange={(e) => setUsername(e.target.value)}
+              defaultValue={userData?.Username}
+            />
+          </div>
+        )}
 
-        <div className="col-lg-6 mt-3">
-          <label for="formGroupExampleInput " className="form_text">
-            Password <span style={{ color: "red" }}>*</span>
-          </label>
-          <input
-            class="form-control mt-2"
-            type="text"
-            placeholder="password"
-            onChange={(e) => setPassword(e.target.value)}
-            defaultValue={userData?.Password}
-          />
-        </div>
+        {userType == 6 ? (
+          <></>
+        ) : (
+          <div className="col-lg-6 mt-3">
+            <label for="formGroupExampleInput " className="form_text">
+              Password <span style={{ color: "red" }}>*</span>
+            </label>
+            <input
+              class="form-control mt-2"
+              type="text"
+              placeholder="password"
+              onChange={(e) => setPassword(e.target.value)}
+              defaultValue={userData?.Password}
+            />
+          </div>
+        )}
 
         {userType == "5" ||
         userType == "6" ||
         userData?.UserType == "5" ||
         userData?.UserType == "6" ? (
           <div className="col-lg-6 mt-3">
-            <label for="formGroupExampleInput " className="form_text">
-              Discount Percentage <span style={{ color: "red" }}>*</span>
-            </label>
+            {userType == "5" || userData?.UserType == "5" ? (
+              <label for="formGroupExampleInput " className="form_text">
+                Travel Agent Commission <span style={{ color: "red" }}>*</span>
+              </label>
+            ) : (
+              <label for="formGroupExampleInput " className="form_text">
+                Discount Percentage <span style={{ color: "red" }}>*</span>
+              </label>
+            )}
             <input
               class="form-control mt-2"
               type="number"
@@ -310,7 +337,6 @@ const AddUser = () => {
           <></>
         )}
         {userType == "5" ||
-        userType == "6" ||
         userData?.UserType == "5" ||
         userData?.UserType == "6" ? (
           <div className="col-lg-6 mt-3">

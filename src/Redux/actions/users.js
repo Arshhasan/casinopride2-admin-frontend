@@ -1,4 +1,5 @@
 import api from "../../Service/api";
+import { saveShiftDetails } from "../reducers/users";
 
 export const AddUserDetails = (data, token, callback) => async (dispatch) => {
   api.CORE_PORT.post("/core/user", data, { headers: { AuthToken: token } })
@@ -680,7 +681,7 @@ export const openOutletFunction =
   };
 
 export const checkCurrentOutletFn =
-  (token, date, callback) => async (dispatch) => {
+  (date, token, callback) => async (dispatch) => {
     api.CORE_PORT.get(`/core/checkCurrentOutlet?outletDate=${date}`, {
       headers: { AuthToken: token },
     })

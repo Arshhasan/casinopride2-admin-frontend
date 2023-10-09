@@ -20,6 +20,8 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Link } from "react-router-dom";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import { checkShiftForUser } from "../../Redux/actions/users";
+import moment from "moment";
 
 const NewBooking = () => {
   const location = useLocation();
@@ -30,11 +32,71 @@ const NewBooking = () => {
   const loginDetails = useSelector(
     (state) => state.auth?.userDetailsAfterLogin.Details
   );
+
   console.log("loginDetails-------------->", loginDetails);
 
   const outletOpenDetails = useSelector((state) => state.auth?.outeltDetails);
 
-  console.log("outlet open Details------------------->", outletOpenDetails);
+  console.log(
+    "outlet open Details-----------------|||||||||||||||||||||||||-->",
+    outletOpenDetails
+  );
+
+  const validateDetails = useSelector(
+    (state) => state.auth?.userDetailsAfterValidation
+  );
+
+  const parsedDate = moment(outletOpenDetails?.Details[0]?.Date);
+  const outletFormattedData = parsedDate.format("YYYY-MM-DD");
+
+  const [shiftDetails, setShiftDetails] = useState("");
+
+  useEffect(() => {
+    dispatch(
+      checkShiftForUser(
+        outletFormattedData,
+        validateDetails?.Details?.Id,
+        validateDetails?.Details?.UserType,
+        loginDetails?.logindata?.Token,
+        (callback) => {
+          if (callback) {
+            console.log(
+              "Callback from shifts for user NEW BOOKING-------------->",
+              callback?.response?.Details
+            );
+            setShiftDetails(callback?.response?.Details);
+
+            if (callback?.response?.Details == null) {
+              dispatch(
+                recentShiftForOutlet(
+                  outletFormattedData,
+
+                  loginDetails?.logindata?.Token,
+                  (callback) => {
+                    if (callback) {
+                      console.log(
+                        "Recent shift for outlet       NEW BOOKING-------------------------------------- ->",
+                        callback?.response?.Details
+                      );
+                      setShiftDetails(callback?.response?.Details);
+
+                      toast.error(callback.error);
+                    } else {
+                      toast.error(callback.error);
+                    }
+                  }
+                )
+              );
+            }
+
+            toast.error(callback.error);
+          } else {
+            toast.error(callback.error);
+          }
+        }
+      )
+    );
+  }, [validateDetails]);
 
   const [guestName, setGuestName] = useState("");
   const [email, setEmail] = useState("");
@@ -279,7 +341,14 @@ const NewBooking = () => {
         userId: loginDetails?.logindata?.userId,
         userTypeId: loginDetails?.logindata?.UserType,
         // futureDate:2023-10-25,
-        shiftId: 2,
+        shiftId:
+          shiftDetails?.ShiftTypeId === 1 && shiftDetails?.ShiftOpen === 1
+            ? 1
+            : shiftDetails?.ShiftTypeId === 2 && shiftDetails?.ShiftOpen === 1
+            ? 2
+            : shiftDetails?.ShiftTypeId === 3 && shiftDetails?.ShiftOpen === 1
+            ? 3
+            : 0,
         actualAmount: amount,
         paymentMode: paymentOption,
         amountAfterDiscount: amountAfterDiscount,
@@ -380,10 +449,53 @@ const NewBooking = () => {
 
   console.log("paymentOption---------------->", paymentOption);
 
+  console.log("Shift All details----------------->", shiftDetails?.ShiftOpen);
+  console.log("Shift All details----------------->", shiftDetails?.ShiftTypeId);
+
+  const getShiftStatusMessage = () => {
+    if (shiftDetails?.ShiftOpen === 1) {
+      switch (shiftDetails?.ShiftTypeId) {
+        case 1:
+          return "Shift 1 is open";
+        case 2:
+          return "Shift 2 is open";
+        case 3:
+          return "Shift 3 is open";
+        default:
+          return "Unknown shift is open";
+      }
+    } else if (shiftDetails?.ShiftOpen === 0) {
+      switch (shiftDetails?.ShiftTypeId) {
+        case 1:
+          return "Shift 1 is closed";
+        case 2:
+          return "Shift 2 is closed";
+        case 3:
+          return "Shift 3 is closed";
+        default:
+          return "Unknown shift is closed";
+      }
+    } else {
+      return "Open the outlet";
+    }
+  };
+
+  const shiftPageFn = () => {
+    navigate("/Shifts");
+  };
+
   return (
     <div>
       <ToastContainer />
       <div className="row">
+        <h3
+          className="mb-4"
+          style={{ backgroundColor: "green", textAlign: "center" }}
+        >
+          {getShiftStatusMessage()}
+        </h3>
+        <button onClick={shiftPageFn}>Go to shifts</button>
+
         <h3 className="mb-4">New Booking</h3>
 
         <PackagesPage
@@ -437,7 +549,7 @@ const NewBooking = () => {
             className="form_text"
             style={{ fontSize: "15px", fontWeight: "600" }}
           >
-            Email
+            Email <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2"
