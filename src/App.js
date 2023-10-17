@@ -30,10 +30,12 @@ import Shifts from "./Layouts/Pages/Shifts/Shifts";
 import TeensBilling from "./Layouts/Pages/Billing/TeensBilling";
 import FutureBookingDates from "./Layouts/Pages/FutureBookingDates/FutureBookingDates";
 import AddFutureBookingDates from "./Layouts/Components/AddFutureBookingDates";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <Router>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route

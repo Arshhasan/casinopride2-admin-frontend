@@ -4,7 +4,10 @@ import { Link } from "react-router-dom";
 import { getPackageDetails, deletePackage } from "../../../Redux/actions/users";
 import { fetchUserbookings } from "../../../Redux/actions/booking";
 import { useDispatch } from "react-redux";
-import { GetBillingDetails } from "../../../Redux/actions/billing";
+import {
+  GetBillingDetails,
+  getVoidBillingList,
+} from "../../../Redux/actions/billing";
 import { getUserDetails } from "../../../Redux/actions/users";
 import { useSelector } from "react-redux";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
@@ -97,6 +100,7 @@ const BillingList = () => {
     console.log("Called when id changed");
     fetchBillingDetailsFn();
     fetchUsersDetails();
+    fetchVoidBillList();
   }, [dispatch]);
 
   const handleShiftChange = (selectedOption) => {
@@ -183,75 +187,177 @@ const BillingList = () => {
     fetchBillingDetailsFn();
   };
 
+  const fetchVoidBillList = () => {
+    console.log("inside fetchVoidBillList");
+    dispatch(
+      getVoidBillingList(loginDetails?.logindata?.Token, (callback) => {
+        if (callback.status) {
+          setLoading(false);
+          console.log(
+            "Callback---------getVoidBillingList",
+            callback?.response
+          );
+          setVoidBillingList(callback?.response?.Details);
+          // setFilteredBillingList(callback?.response?.Details);
+        } else {
+          console.log(callback.error);
+          toast.error(callback.error);
+        }
+      })
+    );
+  };
+
+  const handleToggle = (field) => {
+    // Toggle the state of the corresponding field
+    if (field === "allBill") {
+      setAllBill(!allBill); // Toggle the state
+      setVoidBillList(false);
+      setNoShowGuestList(false);
+    } else if (field === "voidBillList") {
+      setVoidBillList(!voidBillList);
+      setAllBill(false);
+      setNoShowGuestList(false);
+    } else if (field === "noShowGuestList") {
+      setNoShowGuestList(!noShowGuestList);
+      setAllBill(false);
+      setVoidBillList(false);
+    }
+  };
+
+  const [allBill, setAllBill] = useState(true);
+  const [voidBillList, setVoidBillList] = useState(false);
+  const [noShowGuestList, setNoShowGuestList] = useState(false);
+  const [voidBillingList, setVoidBillingList] = useState([]);
+  const [displayNoShowGuestList, setDisplayNoShowGuestList] = useState([]);
+  const [eventDate, setEventDate] = useState(null);
+
   return (
     <div>
       <ToastContainer />
       <h3 className="mb-4">Billing List</h3>
-      <div className="container">
-        <div className="row">
-          <div className="col-md-4 col-lg-3 mb-3">
-            <p style={{ fontWeight: "bold" }}>Search By Bill Id</p>
-            <div className="input-group">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Search Bill Id"
-                onChange={(e) => {
-                  setSearhBillId(e.target.value);
-                }}
-              />
-            </div>
-          </div>
 
-          {searchBillId == 0 ? (
-            <div className="col-md-3 col-lg-2 mb-2">
-              <p style={{ fontWeight: "bold" }}>Search By Date</p>
-              <div className="input-group">
+      <div className="row mt-3">
+        <div className="col-lg-6 mt-3">
+          <div className="row">
+            <div className="col-4">
+              <label for="formGroupExampleInput " className="form_text">
+                Display All Bills
+              </label>
+
+              <div className="form-check form-switch">
                 <input
-                  type="date"
-                  className="form-control"
-                  placeholder="Search name"
-                  onChange={(e) => setFutureDate(e.target.value)}
-                  value={futureDate}
+                  className="form-check-input"
+                  type="checkbox"
+                  id="discountSwitch"
+                  checked={allBill}
+                  onChange={() => handleToggle("allBill")}
                 />
               </div>
             </div>
-          ) : (
-            <></>
-          )}
-          <div className="col-lg-2 col-md-4 col-sm-6">
-            <p style={{ fontWeight: "bold" }}>Search By Shift</p>
-            <div className="input-group">
-              <Select
-                className="custom-select"
-                options={shiftOptions}
-                onChange={handleShiftChange}
-              />
+
+            <div className="col-4">
+              <label for="formGroupExampleInput " className="form_text">
+                Display Void Bills
+              </label>
+
+              <div className="form-check form-switch">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="couponSwitch"
+                  checked={voidBillList}
+                  onChange={() => handleToggle("voidBillList")}
+                />
+              </div>
+            </div>
+
+            <div className="col-4">
+              <label for="formGroupExampleInput " className="form_text">
+                Display No Show Guest List
+              </label>
+
+              <div className="form-check form-switch">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="referredBySwitch"
+                  checked={noShowGuestList}
+                  onChange={() => handleToggle("noShowGuestList")}
+                />
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+      {allBill === true &&
+        voidBillList === false &&
+        noShowGuestList === false && ( //show all bills with filters
+          <>
+            <div className="container">
+              <div className="row">
+                <div className="col-md-4 col-lg-3 mb-3">
+                  <p style={{ fontWeight: "bold" }}>Search By Bill Id</p>
+                  <div className="input-group">
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="Search Bill Id"
+                      onChange={(e) => {
+                        setSearhBillId(e.target.value);
+                      }}
+                    />
+                  </div>
+                </div>
 
-          <div className="col-lg-2 col-md-4 col-sm-6">
-            <p style={{ fontWeight: "bold" }}>Search By User</p>
-            <div className="input-group">
-              <Select
-                className="custom-select"
-                options={options}
-                onChange={handleSelectChange}
-              />
-            </div>
-          </div>
+                {searchBillId == 0 ? (
+                  <div className="col-md-3 col-lg-2 mb-2">
+                    <p style={{ fontWeight: "bold" }}>Search By Date</p>
+                    <div className="input-group">
+                      <input
+                        type="date"
+                        className="form-control"
+                        placeholder="Search name"
+                        onChange={(e) => setFutureDate(e.target.value)}
+                        value={futureDate}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
+                <div className="col-lg-2 col-md-4 col-sm-6">
+                  <p style={{ fontWeight: "bold" }}>Search By Shift</p>
+                  <div className="input-group">
+                    <Select
+                      className="custom-select"
+                      options={shiftOptions}
+                      onChange={handleShiftChange}
+                    />
+                  </div>
+                </div>
 
-          {/* <div className="col-md-1 col-lg-1 d-flex justify-content-end mb-3">
+                <div className="col-lg-2 col-md-4 col-sm-6">
+                  <p style={{ fontWeight: "bold" }}>Search By User</p>
+                  <div className="input-group">
+                    <Select
+                      className="custom-select"
+                      options={options}
+                      onChange={handleSelectChange}
+                    />
+                  </div>
+                </div>
+
+                {/* <div className="col-md-1 col-lg-1 d-flex justify-content-end mb-3">
             <button className="btn btn-primary" onClick={searchBtn}>
               Search
             </button>
           </div> */}
-          {/* <div className="col-md-3 col-lg-3 d-flex justify-content-end mb-3">
+                {/* <div className="col-md-3 col-lg-3 d-flex justify-content-end mb-3">
             <button className="btn btn-primary" onClick={clearFilters}>
               Clear
             </button>
           </div> */}
-          {/* <div className="col-md-2 col-lg-2 d-flex justify-content-end mb-3">
+                {/* <div className="col-md-2 col-lg-2 d-flex justify-content-end mb-3">
             <button className="btn btn-primary">
               <Link
                 to="/NewBooking"
@@ -262,85 +368,248 @@ const BillingList = () => {
               </Link>
             </button>
           </div> */}
-        </div>
-      </div>
+              </div>
+            </div>
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col" className="text-center table_heading">
-              Bill Id
-            </th>
-            <th scope="col" className="text-center table_heading">
-              Guest Name
-            </th>
-            <th scope="col" className="text-center table_heading">
-              Phone
-            </th>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" className="text-center table_heading">
+                    Bill Id
+                  </th>
+                  <th scope="col" className="text-center table_heading">
+                    Guest Name
+                  </th>
+                  <th scope="col" className="text-center table_heading">
+                    Phone
+                  </th>
 
-            <th scope="col" className="text-center table_heading">
-              Users Name
-            </th>
+                  <th scope="col" className="text-center table_heading">
+                    Users Name
+                  </th>
 
-            <th scope="col" className="text-center table_heading">
-              Shift
-            </th>
+                  <th scope="col" className="text-center table_heading">
+                    Shift
+                  </th>
 
-            <th scope="col" className="text-center table_heading">
-              View more
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan="6" className="text-center">
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <Oval
-                    height={80}
-                    width={50}
-                    color="#4fa94d"
-                    visible={true}
-                    ariaLabel="oval-loading"
-                    secondaryColor="#4fa94d"
-                    strokeWidth={2}
-                    strokeWidthSecondary={2}
-                  />
-                </div>
-              </td>
-            </tr>
-          ) : billingDetails.length === 0 ? (
-            <tr>
-              <td colSpan="6" className="text-center">
-                No data found.
-              </td>
-            </tr>
-          ) : (
-            billingDetails.map((item) => (
-              <tr key={item.id}>
-                <td className="manager-list">{item.BillingId}</td>
-                <td className="manager-list ">{item.GuestName}</td>
-                <td className="manager-list">{item.Phone}</td>
-                <td className="manager-list">{item.UsersName}</td>
-                <td className="manager-list">{item.ShiftId}</td>
-                <td
-                  className="manager-list"
-                  onClick={() => handleViewMore(item)}
-                >
-                  <img src={more} className="more_img" />
-                </td>
+                  <th scope="col" className="text-center table_heading">
+                    View more
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="6" className="text-center">
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          height: "100%",
+                        }}
+                      >
+                        <Oval
+                          height={80}
+                          width={50}
+                          color="#4fa94d"
+                          visible={true}
+                          ariaLabel="oval-loading"
+                          secondaryColor="#4fa94d"
+                          strokeWidth={2}
+                          strokeWidthSecondary={2}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ) : billingDetails.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center">
+                      No data found.
+                    </td>
+                  </tr>
+                ) : (
+                  billingDetails.map((item) => (
+                    <tr key={item.id}>
+                      <td className="manager-list">{item.BillingId}</td>
+                      <td className="manager-list ">{item.GuestName}</td>
+                      <td className="manager-list">{item.Phone}</td>
+                      <td className="manager-list">{item.UsersName}</td>
+                      <td className="manager-list">{item.ShiftId}</td>
+                      <td
+                        className="manager-list"
+                        onClick={() => handleViewMore(item)}
+                      >
+                        <img src={more} className="more_img" />
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </>
+        )}
+
+      {allBill === false &&
+        voidBillList === true &&
+        noShowGuestList === false && ( // show void bill list
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" className="text-center table_heading">
+                  Bill Id
+                </th>
+                <th scope="col" className="text-center table_heading">
+                  Guest Name
+                </th>
+                <th scope="col" className="text-center table_heading">
+                  Phone
+                </th>
+
+                <th scope="col" className="text-center table_heading">
+                  Users Name
+                </th>
+
+                <th scope="col" className="text-center table_heading">
+                  Shift
+                </th>
+
+                <th scope="col" className="text-center table_heading">
+                  View more
+                </th>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="6" className="text-center">
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                      }}
+                    >
+                      <Oval
+                        height={80}
+                        width={50}
+                        color="#4fa94d"
+                        visible={true}
+                        ariaLabel="oval-loading"
+                        secondaryColor="#4fa94d"
+                        strokeWidth={2}
+                        strokeWidthSecondary={2}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ) : voidBillingList.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="text-center">
+                    No data found.
+                  </td>
+                </tr>
+              ) : (
+                voidBillingList.map((item) => (
+                  <tr key={item.id}>
+                    <td className="manager-list">{item.BillingId}</td>
+                    <td className="manager-list ">{item.GuestName}</td>
+                    <td className="manager-list">{item.Phone}</td>
+                    <td className="manager-list">{item.UsersName}</td>
+                    <td className="manager-list">{item.ShiftId}</td>
+                    <td
+                      className="manager-list"
+                      onClick={() => handleViewMore(item)}
+                    >
+                      <img src={more} className="more_img" />
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        )}
+      {allBill === false &&
+        voidBillList === false &&
+        noShowGuestList === true && ( //show no show guest list
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" className="text-center table_heading">
+                  Bill Id
+                </th>
+                <th scope="col" className="text-center table_heading">
+                  Guest Name
+                </th>
+                <th scope="col" className="text-center table_heading">
+                  Phone
+                </th>
+
+                <th scope="col" className="text-center table_heading">
+                  Users Name
+                </th>
+
+                <th scope="col" className="text-center table_heading">
+                  Shift
+                </th>
+
+                <th scope="col" className="text-center table_heading">
+                  View more
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="6" className="text-center">
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                      }}
+                    >
+                      <Oval
+                        height={80}
+                        width={50}
+                        color="#4fa94d"
+                        visible={true}
+                        ariaLabel="oval-loading"
+                        secondaryColor="#4fa94d"
+                        strokeWidth={2}
+                        strokeWidthSecondary={2}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ) : billingDetails.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="text-center">
+                    No data found.
+                  </td>
+                </tr>
+              ) : (
+                billingDetails.map((item) => (
+                  <tr key={item.id}>
+                    <td className="manager-list">{item.BillingId}</td>
+                    <td className="manager-list ">{item.GuestName}</td>
+                    <td className="manager-list">{item.Phone}</td>
+                    <td className="manager-list">{item.UsersName}</td>
+                    <td className="manager-list">{item.ShiftId}</td>
+                    <td
+                      className="manager-list"
+                      onClick={() => handleViewMore(item)}
+                    >
+                      <img src={more} className="more_img" />
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        )}
       <ToastContainer />
 
       <Modal show={showViewMoreModal} onHide={handleCloseViewMore} size="lg">
@@ -349,6 +618,7 @@ const BillingList = () => {
         </Modal.Header>
         <Modal.Body>
           <div className="row">
+            <img src={selectedUserDetails?.BillingFile} />
             <div className="col-6">
               <p className="table-modal-list ">
                 Item Details :

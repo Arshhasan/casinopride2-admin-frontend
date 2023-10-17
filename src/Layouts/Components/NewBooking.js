@@ -367,9 +367,11 @@ const NewBooking = () => {
             : 0,
         actualAmount: amount,
         paymentMode: paymentOption,
-        amountAfterDiscount: amountAfterDiscount
-          ? amountAfterDiscount
-          : couponDiscount,
+        // amountAfterDiscount: amountAfterDiscount == 0
+        //   ? amountAfterDiscount
+        //   : couponDiscount,
+        amountAfterDiscount:
+          amountAfterDiscount == "" ? amount : amountAfterDiscount,
         packageName: JSON.stringify(packageName),
         isActive: 1,
         partCash: partCash,

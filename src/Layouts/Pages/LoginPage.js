@@ -29,10 +29,14 @@ function LoginPage() {
     dispatch(
       Login(data, (callback) => {
         if (callback.status) {
+          console.log("DEMO------------->", callback);
+
           toast.success("Welcome to casino pride");
           navigate("NewBooking");
+          setLoading(false);
         } else {
           toast.error(callback.error);
+          setLoading(false);
         }
       })
     );

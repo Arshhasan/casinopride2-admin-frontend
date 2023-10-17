@@ -133,3 +133,61 @@ export const uploadBillFile = (token, data, callback) => async (dispatch) => {
 export const senSms = (token, data, callback) => async (dispatch) => {
   console.log("Data for add billing details---------->", data);
 };
+
+export const getVoidBillingList = (token, callback) => async (dispatch) => {
+  api.BILLING_PORT.get("/billing/fetchVoidBill", {
+    headers: { AuthToken: token },
+  })
+    .then((response) => {
+      console.log("inside resp of getVoidBillingList");
+      console.log("Get void biiling list -> ->", response.data);
+      if (response.data?.Details) {
+        console.log(response.data?.Details);
+        callback({
+          status: true,
+          response: response?.data,
+        });
+      } else if (response.data?.Error) {
+        callback({
+          status: false,
+          error: response.data?.Error?.ErrorMessage,
+        });
+      }
+    })
+    .catch((err) => {
+      {
+        console.log("inside resp of getVoidBillingList error", err);
+      }
+    });
+};
+export const getNoShowGuestList =
+  (token, eventDate, callback) => async (dispatch) => {
+    api.BILLING_PORT.get(
+      `/billing/noShowGuestLis?eventDate=${
+        eventDate != null ? eventDate : null
+      }`,
+      {
+        headers: { AuthToken: token },
+      }
+    )
+      .then((response) => {
+        console.log("Get No show guest list Details -> ->", response.data);
+        if (response.data?.Details) {
+          console.log(response.data?.Details);
+          callback({
+            status: true,
+            response: response?.data,
+          });
+        } else if (response.data?.Error) {
+          callback({
+            status: false,
+            error: response.data?.Error?.ErrorMessage,
+          });
+        }
+      })
+      .catch((err) => {
+        {
+          console.log("error", err);
+        }
+      });
+  };
