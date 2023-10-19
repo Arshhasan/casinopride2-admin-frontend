@@ -1174,20 +1174,20 @@ const BillingDetails = () => {
 
                 setLoader(false);
 
-                resolve(callback);
+                // resolve(callback);
               } else {
                 toast.error(callback.error);
-                reject(callback);
+                // reject(callback);
               }
             }
           )
         );
 
-        if (response.ok) {
-          console.log("Image upload successful.");
-        } else {
-          console.error("Image upload failed:", response.statusText);
-        }
+        // if (response.ok) {
+        //   console.log("Image upload successful.");
+        // } else {
+        //   console.error("Image upload failed:", response.statusText);
+        // }
       })
       .catch((err) => {
         console.log(err);
@@ -1256,10 +1256,10 @@ const BillingDetails = () => {
                     toast.success("Details sent to customer");
                   });
 
-                resolve(callback);
+                // resolve(callback);
               } else {
                 toast.error(callback.error);
-                reject(callback);
+                // reject(callback);
               }
             }
           )
@@ -1288,11 +1288,11 @@ const BillingDetails = () => {
           })
         );
 
-        if (response.ok) {
-          console.log("Image upload successful.");
-        } else {
-          console.error("Image upload failed:", response.statusText);
-        }
+        // if (response.ok) {
+        //   console.log("Image upload successful.");
+        // } else {
+        //   console.error("Image upload failed:", response.statusText);
+        // }
       })
       .catch((err) => {
         console.log(err);

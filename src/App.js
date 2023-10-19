@@ -33,6 +33,7 @@ import AddFutureBookingDates from "./Layouts/Components/AddFutureBookingDates";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AgentSettlementList from "./Layouts/Pages/AgentSettlement/AgentSettlementList";
+import RegenerateBill from "./Layouts/Pages/Billing/RegenerateBill";
 function App() {
   return (
     <Router>
@@ -88,6 +89,15 @@ function App() {
           element={
             <Layout>
               <AgentSettlementList />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/RegenerateBill"
+          element={
+            <Layout>
+              <RegenerateBill />
             </Layout>
           }
         />

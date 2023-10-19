@@ -21,9 +21,15 @@ import more from "../../../assets/Images/more.png";
 import PackagesPage from "../Packages/PackagePage";
 import Select from "react-select";
 import moment from "moment";
+import { voidBill } from "../../../Redux/actions/billing";
+import { updateBillForVoid } from "../../../Redux/actions/billing";
+import { generateCSVReport } from "../../../Redux/actions/billing";
+import { generateNoShowReport } from "../../../Redux/actions/billing";
+import { useNavigate } from "react-router-dom";
 
 const BillingList = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const loginDetails = useSelector(
     (state) => state.auth?.userDetailsAfterLogin.Details
@@ -31,7 +37,7 @@ const BillingList = () => {
 
   console.log(
     "loginDetails--------------{{{{{{{{{{{}}}}}}}}}}}}}}-------->",
-    loginDetails?.logindata?.UserType
+    loginDetails?.logindata?.userId
   );
 
   const [userBookings, setUserBookings] = useState([]);
@@ -51,17 +57,19 @@ const BillingList = () => {
   const todayDate = moment().format("YYYY-MM-DD");
 
   const [futureDate, setFutureDate] = useState(
-    loginDetails?.logindata?.UserType == "2" ||
-      loginDetails?.logindata?.UserType == "3"
+    loginDetails?.logindata?.UserType == 2 ||
+      loginDetails?.logindata?.UserType == 3
       ? todayDate
       : ""
   );
+
+  // const [futureDate, setFutureDate] = useState("");
 
   console.log(
     "<------------------filtered Billing List-------------->",
     filteredBillingList
   );
-
+  const [reportId, setReportId] = useState(0);
   const [shiftId, setShitId] = useState(0);
   const [userId, setUserId] = useState(0);
   const [billId, setBillId] = useState(0);
@@ -78,6 +86,7 @@ const BillingList = () => {
   const [voidBillingList, setVoidBillingList] = useState([]);
   const [displayNoShowGuestList, setDisplayNoShowGuestList] = useState([]);
   const [eventDate, setEventDate] = useState(null);
+  const [online, setOnline] = useState(reportId == 4 ? 1 : 0);
 
   const fetchBillingDetailsFn = () => {
     dispatch(
@@ -88,6 +97,7 @@ const BillingList = () => {
         shiftId,
         billId,
         searchBillId,
+        online,
 
         (callback) => {
           if (callback.status) {
@@ -125,7 +135,10 @@ const BillingList = () => {
     fetchUsersDetails();
     fetchVoidBillList();
     fetchNoShowGuestList();
-    if (loginDetails?.logindata?.UserType == "1") {
+    if (
+      loginDetails?.logindata?.UserType == "3" ||
+      loginDetails?.logindata?.UserType == "4"
+    ) {
       const today = moment().format("YYYY-MM-DD");
       setFutureDate(today);
     }
@@ -133,6 +146,10 @@ const BillingList = () => {
 
   const handleShiftChange = (selectedOption) => {
     setShitId(selectedOption?.value);
+  };
+
+  const handleReportTypeChange = (selectedOption) => {
+    setReportId(selectedOption?.value);
   };
 
   const handleViewMore = (item) => {
@@ -176,10 +193,18 @@ const BillingList = () => {
   }));
 
   const shiftOptions = [
-    { value: "", label: "Select a shift" },
+    { value: 0, label: "Select a shift" },
     { value: "1", label: "Shift 1" },
     { value: "2", label: "Shift 2" },
     { value: "3", label: "Shift 3" },
+  ];
+
+  const reportTypeOptions = [
+    { value: "", label: "Select a report type" },
+    { value: "1", label: "User Wise" },
+    { value: "2", label: "Day Wise" },
+    { value: "3", label: "Shift Wise" },
+    { value: "4", label: "Online" },
   ];
 
   const searchBtn = () => {
@@ -207,15 +232,17 @@ const BillingList = () => {
     setDisableInput(true);
   }, [futureDate, handleSelectChange, handleShiftChange]);
 
-  // const clearFilters = () => {
-  //   console.log("All clear");
-  //   setFutureDate("");
-  //   setShitId(0);
-  //   setUserId(0);
-  //   setBillId(0);
-  //   setSearhBillId(0);
-  //   fetchBillingDetailsFn();
-  // };
+  const [billDate, setBillDate] = useState("");
+
+  const clearFilters = () => {
+    console.log("All clear");
+    setFutureDate("");
+    setShitId(0);
+    setUserId(0);
+    setBillId(0);
+    setSearhBillId(0);
+    fetchBillingDetailsFn();
+  };
 
   const fetchVoidBillList = () => {
     dispatch(
@@ -328,6 +355,169 @@ const BillingList = () => {
     futureDate
   );
 
+  const [isModalVisible, setModalVisibility] = useState(false);
+
+  const closeModal = () => setModalVisibility(false);
+
+  const [voidBookingId, stVoidBookingId] = useState("");
+  const openModal = (item) => {
+    console.log("Void billing id check", item?.BookingId);
+    stVoidBookingId(item?.BookingId);
+    setModalVisibility(true);
+  };
+
+  const handleVoidBill = () => {
+    const voidBillData = {
+      bookingId: voidBookingId,
+    };
+
+    dispatch(
+      voidBill(loginDetails?.logindata?.Token, voidBillData, (callback) => {
+        if (callback.status) {
+          setLoading(false);
+          console.log("Callback---------void bill", callback?.response);
+        } else {
+          console.log("Callback--------voidt>>error", callback.error);
+          toast.error(callback.error);
+        }
+      })
+    );
+  };
+
+  const [show, setShow] = useState(false);
+
+  const [editVoidDetails, setEditVoidDetails] = useState("");
+
+  const handleShow = (item) => {
+    console.log("Update void bill----------------->", item);
+    setEditVoidDetails(item);
+    setShow(true);
+  };
+  const handleClose = () => setShow(false);
+
+  const handleUpdateBilling = () => {
+    // Add your logic to update billing information here
+    // You can access the input values using state or refs
+    handleClose(); // Close the modal after updating
+  };
+
+  const [newBillId, setNewBillId] = useState("");
+
+  const handleUpdateVoidBill = () => {
+    const UpdateVoidBillData = {
+      voidBillId: editVoidDetails?.BillingId,
+      bookingId: editVoidDetails?.BookingId,
+      newBillId: newBillId,
+    };
+
+    dispatch(
+      updateBillForVoid(
+        loginDetails?.logindata?.Token,
+        UpdateVoidBillData,
+        (callback) => {
+          if (callback.status) {
+            setLoading(false);
+            console.log("Callback------update---void bill", callback?.response);
+            handleClose();
+            fetchVoidBillList();
+          } else {
+            console.log("Callback------update --voidt>>error", callback.error);
+            toast.error(callback.error);
+          }
+        }
+      )
+    );
+  };
+
+  const generateReportFn = () => {
+    const reportData = {
+      userId: userId,
+      billDate: futureDate,
+      futureDate: billDate,
+      shiftId: shiftId,
+      reportTypeId: reportId,
+    };
+
+    dispatch(
+      generateCSVReport(
+        loginDetails?.logindata?.Token,
+        reportData,
+        (callback) => {
+          if (callback.status) {
+            setLoading(false);
+            console.log(
+              "Callback------generate report",
+              callback?.response?.Details?.ReportFile
+            );
+            window.open(callback?.response?.Details?.ReportFile, "_blank");
+
+            handleClose();
+            setShitId(0);
+            setBillId(0);
+            setUserId(0);
+            setFutureDate("");
+            setReportId(0);
+            fetchVoidBillList();
+            setBillDate("");
+          } else {
+            console.log("Callback------generate report error", callback.error);
+            toast.error(callback.error);
+          }
+        }
+      )
+    );
+  };
+
+  const generateNoShowBillFn = () => {
+    dispatch(
+      generateNoShowReport(
+        loginDetails?.logindata?.Token,
+        eventDate,
+        (callback) => {
+          if (callback.status) {
+            setLoading(false);
+            console.log("Callback------No show bill---", callback?.response);
+          } else {
+            console.log("Callback------", callback.error);
+            toast.error(callback.error);
+          }
+        }
+      )
+    );
+  };
+
+  const combinedData = {};
+
+  filteredBillingList.forEach((item) => {
+    const bookingId = item.BookingId;
+    if (!combinedData[bookingId]) {
+      combinedData[bookingId] = {
+        BookingId: bookingId,
+        Items: [item],
+      };
+    } else {
+      combinedData[bookingId].Items.push(item);
+    }
+  });
+
+  const combinedDataArray = Object.values(combinedData);
+
+  // Now, combinedDataArray contains the data grouped by BookingId
+  console.log(
+    "Combined Array-------------------------->",
+    combinedDataArray[1]?.Items
+  );
+
+  const regenerateBillFn = (item) => {
+    console.log(
+      "Item--------------------------------- regenerate bill------------>",
+      item
+    );
+    navigate("/BillingDetails", {
+      state: { BookingDetails: combinedDataArray[1]?.Items },
+    });
+  };
+
   return (
     <div>
       <ToastContainer />
@@ -390,23 +580,27 @@ const BillingList = () => {
           <>
             <div className="container">
               <div className="row">
-                <div className="col-md-4 col-lg-3 mb-3">
-                  <p style={{ fontWeight: "bold" }}>Search By Bill Id</p>
-                  <div className="input-group">
-                    <input
-                      type="number"
-                      className="form-control"
-                      placeholder="Search Bill Id"
-                      onChange={(e) => {
-                        setSearhBillId(e.target.value);
-                      }}
-                    />
+                {searchBillId == 0 && userId == 0 ? (
+                  <div className="col-md-4 col-lg-3 mb-3">
+                    <p style={{ fontWeight: "bold" }}>Search By Bill Id</p>
+                    <div className="input-group">
+                      <input
+                        type="number"
+                        className="form-control"
+                        placeholder="Search Bill Id"
+                        onChange={(e) => {
+                          setSearhBillId(e.target.value);
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <></>
+                )}
 
-                {searchBillId == 0 ? (
+                {reportId == 2 || reportId == 3 ? (
                   <div className="col-md-3 col-lg-2 mb-2">
-                    <p style={{ fontWeight: "bold" }}>Search By Date</p>
+                    <p style={{ fontWeight: "bold" }}>Search By Bill Date</p>
                     <div className="input-group">
                       <input
                         type="date"
@@ -420,26 +614,72 @@ const BillingList = () => {
                 ) : (
                   <></>
                 )}
+
+                {reportId == 4 ? (
+                  <div className="col-md-3 col-lg-2 mb-2">
+                    <p style={{ fontWeight: "bold" }}>Search By Future Date</p>
+                    <div className="input-group">
+                      <input
+                        type="date"
+                        className="form-control"
+                        placeholder="Search name"
+                        onChange={(e) => setBillDate(e.target.value)}
+                        value={billDate}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
+
+                {reportId == 3 ? (
+                  <div className="col-lg-2 col-md-4 col-sm-6">
+                    <p style={{ fontWeight: "bold" }}>Search By Shift</p>
+                    <div className="input-group">
+                      <Select
+                        className="custom-select"
+                        options={shiftOptions}
+                        onChange={handleShiftChange}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
+
                 <div className="col-lg-2 col-md-4 col-sm-6">
-                  <p style={{ fontWeight: "bold" }}>Search By Shift</p>
+                  <p style={{ fontWeight: "bold" }}>Search Report Type</p>
                   <div className="input-group">
                     <Select
                       className="custom-select"
-                      options={shiftOptions}
-                      onChange={handleShiftChange}
+                      options={reportTypeOptions}
+                      onChange={handleReportTypeChange}
                     />
                   </div>
                 </div>
 
-                <div className="col-lg-2 col-md-4 col-sm-6">
-                  <p style={{ fontWeight: "bold" }}>Search By User</p>
-                  <div className="input-group">
-                    <Select
-                      className="custom-select"
-                      options={options}
-                      onChange={handleSelectChange}
-                    />
+                {reportId == 1 ? (
+                  <div className="col-lg-2 col-md-4 col-sm-6">
+                    <p style={{ fontWeight: "bold" }}>Search By User</p>
+                    <div className="input-group">
+                      <Select
+                        className="custom-select"
+                        options={options}
+                        onChange={handleSelectChange}
+                      />
+                    </div>
                   </div>
+                ) : (
+                  <></>
+                )}
+
+                <div className="col-lg-2 col-md-4 col-sm-6">
+                  <button
+                    className="btn btn-primary mt-4"
+                    onClick={generateReportFn}
+                  >
+                    Generate Report
+                  </button>
                 </div>
 
                 {/* <div className="col-md-1 col-lg-1 d-flex justify-content-end mb-3">
@@ -448,10 +688,10 @@ const BillingList = () => {
             </button>
           </div> */}
                 {/* <div className="col-md-3 col-lg-3 d-flex justify-content-end mb-3">
-            <button className="btn btn-primary" onClick={clearFilters}>
-              Clear
-            </button>
-          </div> */}
+                  <button className="btn btn-primary" onClick={clearFilters}>
+                    Clear
+                  </button>
+                </div> */}
                 {/* <div className="col-md-2 col-lg-2 d-flex justify-content-end mb-3">
             <button className="btn btn-primary">
               <Link
@@ -485,6 +725,10 @@ const BillingList = () => {
 
                   <th scope="col" className="text-center table_heading">
                     Shift
+                  </th>
+
+                  <th scope="col" className="text-center table_heading">
+                    Void Bill
                   </th>
 
                   <th scope="col" className="text-center table_heading">
@@ -535,6 +779,19 @@ const BillingList = () => {
                       <td className="manager-list">
                         {item.ShiftId === 0 ? "-" : item.ShiftId}
                       </td>
+                      {item?.IsVoid == null || item?.IsVoid == 0 ? (
+                        <td style={{ textAlign: "center" }}>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => openModal(item)}
+                          >
+                            Void Bill
+                          </button>
+                        </td>
+                      ) : (
+                        <td></td>
+                      )}
+
                       <td
                         className="manager-list"
                         onClick={() => handleViewMore(item)}
@@ -559,6 +816,9 @@ const BillingList = () => {
                   Bill Id
                 </th>
                 <th scope="col" className="text-center table_heading">
+                  Booking Id
+                </th>
+                <th scope="col" className="text-center table_heading">
                   Guest Name
                 </th>
                 <th scope="col" className="text-center table_heading">
@@ -574,6 +834,9 @@ const BillingList = () => {
                 </th>
                 <th scope="col" className="text-center table_heading">
                   Status
+                </th>
+                <th scope="col" className="text-center table_heading">
+                  Update Bill
                 </th>
 
                 <th scope="col" className="text-center table_heading">
@@ -616,6 +879,8 @@ const BillingList = () => {
                 voidBillingList.map((item) => (
                   <tr key={item.id}>
                     <td className="manager-list">{item.BillingId}</td>
+                    <td className="manager-list ">{item?.BookingId}</td>
+
                     <td className="manager-list ">{item.GuestName}</td>
                     <td className="manager-list">{item.Phone}</td>
                     <td className="manager-list">{item.UsersName}</td>
@@ -626,6 +891,18 @@ const BillingList = () => {
                     >
                       {item.IsVoid == 1 ? "Void" : "Active"}
                     </td>
+                    {item?.NewBillId === null ? (
+                      <td className="manager-list">
+                        <button
+                          variant="primary"
+                          onClick={() => handleShow(item)}
+                        >
+                          Update Bill
+                        </button>
+                      </td>
+                    ) : (
+                      <td></td>
+                    )}
                     <td
                       className="manager-list"
                       onClick={() => handleViewMore(item)}
@@ -642,24 +919,38 @@ const BillingList = () => {
         voidBillList === false &&
         noShowGuestList === true && ( //show no show guest list
           <>
-            <div className="col-md-3 col-lg-2 mb-2">
-              <p style={{ fontWeight: "bold" }}>Search By Event Date</p>
-              <div className="input-group">
-                <input
-                  type="date"
-                  className="form-control"
-                  placeholder="Search name"
-                  onChange={(e) => {
-                    if (e.target.value === "") {
-                      setEventDate(null);
-                    } else {
-                      setEventDate(e.target.value);
-                    }
-                  }}
-                  value={eventDate}
-                  max={getCurrentDate()} // Set the max attribute to disable dates after today
-                />
+            <div className="row">
+              <div className="col-md-3 col-lg-2 mb-2">
+                <p style={{ fontWeight: "bold" }}>Search By Event Date</p>
+                <div className="input-group">
+                  <input
+                    type="date"
+                    className="form-control"
+                    placeholder="Search name"
+                    onChange={(e) => {
+                      if (e.target.value === "") {
+                        setEventDate(null);
+                      } else {
+                        setEventDate(e.target.value);
+                      }
+                    }}
+                    value={eventDate}
+                    max={getCurrentDate()} // Set the max attribute to disable dates after today
+                  />
+                </div>
               </div>
+              {!displayNoShowGuestList.length > 0 ? (
+                <div className="col-lg-2 col-md-4 col-sm-6">
+                  <button
+                    className="btn btn-primary mt-4"
+                    onClick={generateNoShowBillFn}
+                  >
+                    Generate Report
+                  </button>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
             <table class="table">
               <thead>
@@ -990,6 +1281,45 @@ const BillingList = () => {
           </div>
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
+      </Modal>
+
+      <Modal show={isModalVisible} onHide={closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Void Bill </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to void this bill?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeModal}>
+            Close
+          </Button>
+
+          <Button variant="danger" onClick={handleVoidBill}>
+            Void Bill
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Update Billing</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {/* Add input fields for updating billing data */}
+          <input
+            class="form-control mt-2"
+            type="text"
+            placeholder="Enter the bill number"
+            onChange={(e) => setNewBillId(e.target.value)}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleUpdateVoidBill}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );

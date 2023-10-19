@@ -63,7 +63,16 @@ export const AddBillingDetails =
 //   };
 
 export const GetBillingDetails =
-  (token, futureDate, userId, shiftId, billId, searchBillId, callback) =>
+  (
+    token,
+    futureDate,
+    userId,
+    shiftId,
+    billId,
+    searchBillId,
+    online,
+    callback
+  ) =>
   async (dispatch) => {
     console.log(
       "futureDate-----------------from redux***********************************************************>",
@@ -77,7 +86,9 @@ export const GetBillingDetails =
         searchBillId ? searchBillId : 0
       )}&userId=${
         userId ? parseInt(userId) : 0
-      }&billingDate=${futureDate}&shiftId=${shiftId ? parseInt(shiftId) : 0}`,
+      }&billingDate=${futureDate}&shiftId=${
+        shiftId ? parseInt(shiftId) : 0
+      }&isBookingWebsite=${online}`,
       {
         headers: { AuthToken: token },
       }
@@ -186,6 +197,7 @@ export const getVoidBillingList = (token, callback) => async (dispatch) => {
       }
     });
 };
+
 export const getNoShowGuestList =
   (token, eventDate, callback) => async (dispatch) => {
     if (eventDate === null) {
@@ -237,4 +249,120 @@ export const getNoShowGuestList =
           }
         });
     }
+  };
+
+export const voidBill = (token, data, callback) => async (dispatch) => {
+  console.log("Data for void bill---------->", data);
+  api.BILLING_PORT.put("/billing/voidBill", data, {
+    headers: { AuthToken: token },
+  })
+    .then((response) => {
+      console.log("Void bill Details ---------->", response.data);
+      if (response.data?.Details) {
+        console.log(response.data?.Details);
+        callback({
+          status: true,
+          response: response?.data,
+        });
+      } else if (response.data?.Error) {
+        callback({
+          status: false,
+          error: response.data?.Error?.ErrorMessage,
+        });
+      }
+    })
+    .catch((err) => {
+      {
+        console.log("error", err);
+      }
+    });
+};
+
+export const updateBillForVoid =
+  (token, data, callback) => async (dispatch) => {
+    console.log("update Data for void bill---------->", data);
+    api.BILLING_PORT.put("/billing/updateBillIdForVoid", data, {
+      headers: { AuthToken: token },
+    })
+      .then((response) => {
+        console.log(" update Void bill Details ---------->", response.data);
+        if (response.data?.Details) {
+          console.log(response.data?.Details);
+          callback({
+            status: true,
+            response: response?.data,
+          });
+        } else if (response.data?.Error) {
+          callback({
+            status: false,
+            error: response.data?.Error?.ErrorMessage,
+          });
+        }
+      })
+      .catch((err) => {
+        {
+          console.log("error", err);
+        }
+      });
+  };
+
+export const generateCSVReport =
+  (token, data, callback) => async (dispatch) => {
+    console.log("Data to generate reports---------->", data);
+
+    console.log("Reached here for reports------>");
+    api.BILLING_PORT.post("/billing/generateCSVReport", data, {
+      headers: { AuthToken: token },
+    })
+      .then((response) => {
+        console.log("Data to generate reports ---------->", response.data);
+        if (response.data?.Details) {
+          console.log(response.data?.Details);
+          callback({
+            status: true,
+            response: response?.data,
+          });
+        } else if (response.data?.Error) {
+          callback({
+            status: false,
+            error: response.data?.Error?.ErrorMessage,
+          });
+        }
+      })
+      .catch((err) => {
+        {
+          console.log("error", err);
+        }
+      });
+  };
+
+export const generateNoShowReport =
+  (token, date, callback) => async (dispatch) => {
+    api.BILLING_PORT.get(
+      `/billing/generateNoShowReport?eventDate=${date}&reportTypeId=5`,
+      {
+        headers: { AuthToken: token },
+      }
+    )
+      .then((response) => {
+        console.log("generate no show bill ");
+        console.log("generate no show bill---------------->>", response.data);
+        if (response.data?.Details) {
+          console.log(response.data?.Details);
+          callback({
+            status: true,
+            response: response?.data,
+          });
+        } else if (response.data?.Error) {
+          callback({
+            status: false,
+            error: response.data?.Error?.ErrorMessage,
+          });
+        }
+      })
+      .catch((err) => {
+        {
+          console.log("inside resp of getVoidBillingList error", err);
+        }
+      });
   };

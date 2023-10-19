@@ -18,6 +18,8 @@ import htmlToImage from "html-to-image";
 import { Oval } from "react-loader-spinner";
 import QRCode from "qrcode";
 import { PDFDocument, rgb } from "pdf-lib";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const TeensBilling = () => {
   const location = useLocation();
@@ -154,20 +156,20 @@ const TeensBilling = () => {
                 );
                 setLoader(false);
 
-                resolve(callback);
+                // resolve(callback);
               } else {
                 toast.error(callback.error);
-                reject(callback);
+                // reject(callback);
               }
             }
           )
         );
 
-        if (response.ok) {
-          console.log("Image upload successful.");
-        } else {
-          console.error("Image upload failed:", response.statusText);
-        }
+        // if (response.ok) {
+        //   console.log("Image upload successful.");
+        // } else {
+        //   console.error("Image upload failed:", response.statusText);
+        // }
       })
       .catch((err) => {
         console.log(err);
@@ -233,20 +235,20 @@ const TeensBilling = () => {
                     console.error("Fetch error:", error);
                   });
 
-                resolve(callback);
+                // resolve(callback);
               } else {
                 toast.error(callback.error);
-                reject(callback);
+                // reject(callback);
               }
             }
           )
         );
 
-        if (response.ok) {
-          console.log("Image upload successful.");
-        } else {
-          console.error("Image upload failed:", response.statusText);
-        }
+        // if (response.ok) {
+        //   console.log("Image upload successful.");
+        // } else {
+        //   console.error("Image upload failed:", response.statusText);
+        // }
       })
       .catch((err) => {
         console.log(err);

@@ -26,6 +26,7 @@ import logo from "../../assets/Images/icone-fleche-droite-verte.png";
 import { Button, Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import checkcircle from "../../assets/Images/checkcircle.png";
+import { recentShiftForOutlet } from "../../Redux/actions/users";
 
 const NewBooking = () => {
   const location = useLocation();
