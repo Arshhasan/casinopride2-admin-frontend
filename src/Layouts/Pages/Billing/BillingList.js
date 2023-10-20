@@ -375,7 +375,10 @@ const BillingList = () => {
       voidBill(loginDetails?.logindata?.Token, voidBillData, (callback) => {
         if (callback.status) {
           setLoading(false);
-          console.log("Callback---------void bill", callback?.response);
+          setModalVisibility(false)
+          toast.success("Void Bill Successful")
+          fetchBillingDetailsFn()
+          fetchVoidBillList()
         } else {
           console.log("Callback--------voidt>>error", callback.error);
           toast.error(callback.error);
@@ -789,7 +792,12 @@ const BillingList = () => {
                           </button>
                         </td>
                       ) : (
-                        <td></td>
+                        <td
+                        className="manager-list"
+                        style={{ color: item.IsVoid === 1 ? "red" : "green" }}
+                      >
+                        {item.IsVoid == 1 ? "Void" : "Active"}
+                      </td>
                       )}
 
                       <td
@@ -884,24 +892,28 @@ const BillingList = () => {
                     <td className="manager-list ">{item.GuestName}</td>
                     <td className="manager-list">{item.Phone}</td>
                     <td className="manager-list">{item.UsersName}</td>
-                    <td className="manager-list">{item.ShiftId}</td>
+                    <td className="manager-list">{item.ShiftId === 0 ? "-" : item.ShiftId}</td>
                     <td
                       className="manager-list"
                       style={{ color: item.IsVoid === 1 ? "red" : "green" }}
                     >
                       {item.IsVoid == 1 ? "Void" : "Active"}
                     </td>
-                    {item?.NewBillId === null ? (
+                    {(item?.NewBillId === null || item?.NewBillId === 0) ? (
                       <td className="manager-list">
                         <button
-                          variant="primary"
+                          className="btn btn-primary"
                           onClick={() => handleShow(item)}
                         >
-                          New Bill Id
+                          Add New Bill Id
                         </button>
                       </td>
                     ) : (
-                      <td></td>
+                      <td
+                      className="manager-list"
+                    >
+                      {item.NewBillId}
+                    </td>
                     )}
                     <td
                       className="manager-list"
@@ -1294,7 +1306,7 @@ const BillingList = () => {
           </Button>
 
           <Button variant="danger" onClick={handleVoidBill}>
-            Void Bill
+            Yes
           </Button>
         </Modal.Footer>
       </Modal>
