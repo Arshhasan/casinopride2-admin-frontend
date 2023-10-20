@@ -106,12 +106,6 @@ const AddUser = () => {
       dispatch(
         AddUserDetails(data, loginDetails?.logindata?.Token, (callback) => {
           if (callback.status) {
-            console.log(
-              "User Details------------------>",
-              callback?.response?.Details
-            );
-            navigate(-1);
-
             if (callback?.response?.Details?.UserType == 6) {
               dispatch(
                 addQrCodeLink(
@@ -128,6 +122,9 @@ const AddUser = () => {
                   }
                 )
               );
+            }
+            else{
+              navigate(-1);
             }
             toast.success("User Added");
 

@@ -630,10 +630,6 @@ const RegenerateBill = () => {
           ) : (
             combinedDataArray.map(
               (item) => (
-                console.log(
-                  "Item------------*************************************************************************************88--->",
-                  item
-                ),
                 (
                   <tr key={item.id}>
                     <td className="manager-list">
@@ -650,7 +646,7 @@ const RegenerateBill = () => {
                     <td className="manager-list">
                       {item?.Items[0]?.UsersName}
                     </td>
-                    <td className="manager-list">{item?.Items[0]?.ShiftId}</td>
+                    <td className="manager-list">{item?.Items[0]?.ShiftId === 0 ? "-" : item?.Items[0]?.ShiftId}</td>
                     <td style={{ textAlign: "center" }}>
                       <button
                         className="btn btn-primary"
