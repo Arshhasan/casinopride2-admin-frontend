@@ -143,7 +143,10 @@ export const uploadBillFile = (token, data, callback) => async (dispatch) => {
 };
 
 export const sendEmail = (data, callback) => async (dispatch) => {
-  console.log("Data for Email---------->", data);
+  console.log(
+    "Data for Email----+++++++++++++++++++++++++++++++++++++=------>",
+    data
+  );
   api.BILLING_PORT.post("/billing/sendBillMail", data)
     .then((response) => {
       console.log("Send By Email---------->", response.data);

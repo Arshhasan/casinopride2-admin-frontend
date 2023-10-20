@@ -27,6 +27,7 @@ import { Button, Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import checkcircle from "../../assets/Images/checkcircle.png";
 import { recentShiftForOutlet } from "../../Redux/actions/users";
+import { getEnabledPanelDiscount } from "../../Redux/actions/users";
 
 const NewBooking = () => {
   const location = useLocation();
@@ -152,6 +153,10 @@ const NewBooking = () => {
 
   const [packageWeekdaysPrice, setPackageWeekdaysPrice] = useState("");
   const [packageWeekendPrice, setPackageWeekendPrice] = useState("");
+
+  const [teensWeekdayPrice, setTeensWeekdayPrice] = useState("");
+  const [teensWeekendPrice, setTeensWeekendPrice] = useState("");
+  const [teensPackageName, setTeensPackageName] = useState("");
 
   console.log("phone--------------->", phone);
 
@@ -349,7 +354,7 @@ const NewBooking = () => {
         teensRate: totalTeensRate,
         teensTax: teenstaxPercentage,
         teensTaxName: teensTaxName,
-        // discountId:2,
+
         panelDiscountId: selectedOption,
         couponId: couponId,
         referredBy: referredBy,
@@ -361,7 +366,7 @@ const NewBooking = () => {
         packageGuestCount: JSON.stringify(packageGuestCount),
         userId: loginDetails?.logindata?.userId,
         userTypeId: loginDetails?.logindata?.UserType,
-        // futureDate:2023-10-25,
+
         shiftId:
           shiftDetails?.ShiftTypeId === 1 && shiftDetails?.ShiftOpen === 1
             ? 1
@@ -372,18 +377,25 @@ const NewBooking = () => {
             : 0,
         actualAmount: amount,
         paymentMode: paymentOption,
-        // amountAfterDiscount: amountAfterDiscount == 0
-        //   ? amountAfterDiscount
-        //   : couponDiscount,
+
         amountAfterDiscount:
           amountAfterDiscount == "" ? amount : amountAfterDiscount,
-        packageName: JSON.stringify(packageName),
+        packageName:
+          packageIds.length == 0
+            ? JSON.stringify(teensPackageName)
+            : JSON.stringify(packageName),
         isActive: 1,
         partCash: partCash,
         partCard: partCard,
         isBookingWebsite: 0,
-        packageWeekdayPrice: JSON.stringify(packageWeekdaysPrice),
-        packageWeekendPrice: JSON.stringify(packageWeekendPrice),
+        packageWeekdayPrice:
+          packageIds.length == 0
+            ? JSON.stringify(teensWeekdayPrice)
+            : JSON.stringify(packageWeekdaysPrice),
+        packageWeekendPrice:
+          packageIds.length == 0
+            ? JSON.stringify(teensWeekendPrice)
+            : JSON.stringify(packageWeekendPrice),
       };
 
       console.log("Data from booking ------->", data);
@@ -607,6 +619,9 @@ const NewBooking = () => {
           setPackageName={setPackageName}
           setPackageWeekendPrice={setPackageWeekendPrice}
           setPackageWeekdaysPrice={setPackageWeekdaysPrice}
+          setTeensWeekdayPrice={setTeensWeekdayPrice}
+          setTeensWeekendPrice={setTeensWeekendPrice}
+          setTeensPackageName={setTeensPackageName}
         />
         <div className="col-lg-6 mt-3 mt-3">
           <label for="formGroupExampleInput " className="form_text">

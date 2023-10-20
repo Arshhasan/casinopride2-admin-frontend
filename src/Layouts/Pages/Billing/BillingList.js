@@ -836,7 +836,7 @@ const BillingList = () => {
                   Status
                 </th>
                 <th scope="col" className="text-center table_heading">
-                  Update Bill
+                  New Bill Id
                 </th>
 
                 <th scope="col" className="text-center table_heading">
@@ -897,7 +897,7 @@ const BillingList = () => {
                           variant="primary"
                           onClick={() => handleShow(item)}
                         >
-                          Update Bill
+                          New Bill Id
                         </button>
                       </td>
                     ) : (

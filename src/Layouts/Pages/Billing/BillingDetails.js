@@ -1273,7 +1273,7 @@ const BillingDetails = () => {
         const data = {
           receiverMail: JSON.stringify(BookingDetails[0]?.Email),
           amount: BookingDetails[0]?.ActualAmount,
-          billFile: updatedQrcodeImage,
+          billFile: JSON.stringify(updatedQrcodeImage),
         };
 
         dispatch(

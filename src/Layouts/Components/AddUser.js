@@ -110,6 +110,7 @@ const AddUser = () => {
               "User Details------------------>",
               callback?.response?.Details
             );
+            navigate(-1);
 
             if (callback?.response?.Details?.UserType == 6) {
               dispatch(

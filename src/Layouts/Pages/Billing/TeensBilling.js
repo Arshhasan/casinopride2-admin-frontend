@@ -498,8 +498,20 @@ const TeensBilling = () => {
                 <div className="totals" style={{ textAlign: "right" }}>
                   <h6>Total Amount: {item?.TeensRate.toFixed(2)}</h6>
 
-                  <h6> CGST: {item?.TeensTax / 2} %</h6>
-                  <h6> SGST: {item?.TeensTax / 2} %</h6>
+                  <h6>
+                    {" "}
+                    CGST: {item?.TeensTax / 2} % :{" "}
+                    {(item?.ActualAmount -
+                      (item?.ActualAmount - item?.AmountAfterDiscount) -
+                      (item?.ActualAmount - item?.AmountAfterDiscount)) /
+                      1.28 /
+                      2}
+                  </h6>
+                  <h6>
+                    {" "}
+                    SGST: {item?.TeensTax / 2} % :{" "}
+                    {(item?.ActualAmount - item?.AmountAfterDiscount) / 2}
+                  </h6>
 
                   {item?.AmountAfterDiscount == 0 ? (
                     <h4>Bill Amountt: {item?.TeensPrice}</h4>

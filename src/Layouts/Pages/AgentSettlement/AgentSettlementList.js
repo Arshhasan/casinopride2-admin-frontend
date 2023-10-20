@@ -198,9 +198,6 @@ const AgentSettlementList = () => {
             <th scope="col" className="text-center table_heading">
               Settlement
             </th>
-            <th scope="col" className="text-center table_heading">
-              Is Settled
-            </th>
 
             <th scope="col" className="text-center table_heading">
               Settle Payment
@@ -243,7 +240,6 @@ const AgentSettlementList = () => {
               <tr key={item.id}>
                 <td className="manager-list ">{item.Name}</td>
                 <td className="manager-list">{item.Settlement}</td>
-                <td className="manager-list">{item.IsSettled}</td>
 
                 {item.IsSettled == 0 ? (
                   <td
@@ -253,7 +249,7 @@ const AgentSettlementList = () => {
                     <img src={more} className="more_img" />
                   </td>
                 ) : (
-                  <td></td>
+                  <td>Amount Settled</td>
                 )}
               </tr>
             ))

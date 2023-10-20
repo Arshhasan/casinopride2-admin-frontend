@@ -26,6 +26,9 @@ const PackagesPage = ({
   setPackageName,
   setPackageWeekendPrice,
   setPackageWeekdaysPrice,
+  setTeensWeekendPrice,
+  setTeensWeekdayPrice,
+  setTeensPackageName,
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
@@ -80,7 +83,6 @@ const PackagesPage = ({
     groupedData[0]?.Id
   );
   const [selectedPackages, setSelectedPackages] = useState({});
-  // console.log("selectedPackages -------------->", selectedPackages);
 
   const handleCounterChange = (
     packageId,
@@ -254,6 +256,9 @@ const PackagesPage = ({
     setPackageName(formattedData?.packageNames);
     setPackageWeekendPrice(formattedData?.packageWeekendPrices);
     setPackageWeekdaysPrice(formattedData?.packageWeekdayPrices);
+    setTeensWeekendPrice(groupedData[0]?.PackageWeekendPrice);
+    setTeensWeekdayPrice(groupedData[0]?.PackageWeekdayPrice);
+    setTeensPackageName(groupedData[0]?.PackageName);
   }, [TotalAmount, teensCount]);
 
   console.log("total amount-------->", TotalAmount);

@@ -68,19 +68,6 @@ const Shifts = () => {
     activeDateOfOutlet?.OutletDate
   );
 
-  // const inputDate = activeDateOfOutlet?.Details?.Date;
-
-  // // Parse the input date using moment
-  // const parsedDateOfOutlet = moment(inputDate);
-
-  // // Format the parsed date in "YYYY-MM-DD" format
-  // const formattedDateOutlet = parsedDateOfOutlet.format("YYYY-MM-DD");
-
-  // console.log(
-  //   "activeDateOfOutlet---------------------------------------------------------------***************************************************************8-->",
-  //   formattedDateOutlet
-  // );
-
   useEffect(() => {
     api.CORE_PORT.get(`/core/checkCurrentOutlet?outletDate=${today}`, {
       headers: {
@@ -366,6 +353,8 @@ const Shifts = () => {
 
             callback?.response?.Details
           );
+
+          console.log("today-------------------->", today);
           console.log(
             "check Active outlet---------------------------->",
 
@@ -391,7 +380,7 @@ const Shifts = () => {
         (callback) => {
           if (callback) {
             console.log(
-              "Callback from shifts for user -------------->",
+              "Callback from shifts for user -----------***********************8--->",
               callback?.response?.Details
             );
 
@@ -407,7 +396,7 @@ const Shifts = () => {
                   (callback) => {
                     if (callback) {
                       console.log(
-                        "Recent shift for outlet--------------------------------------- ->",
+                        "Recent shift for outlet----------------------------------*********************************----- ->",
                         callback?.response
                       );
                       setRecentShiftOpen(callback?.response?.Details);
@@ -568,9 +557,6 @@ const Shifts = () => {
   const handleShowShift = () => setShowCloseShiftModal(true);
 
   const handleClose = () => {
-    // Implement your logic to close the shift here
-    // You can perform necessary actions and API calls.
-    // For simplicity, we're just closing the modal here.
     handleCloseShift();
 
     if (shiftDetails?.ShiftOpen == 1 && shiftDetails?.ShiftTypeId == 1) {
@@ -585,9 +571,6 @@ const Shifts = () => {
   const [showOpenShiftModal, setShowOpenShiftModal] = useState(false);
 
   const handleOpenShift = () => {
-    // Implement your logic to open the shift here
-    // You can perform necessary actions and API calls.
-    // For simplicity, we're just closing the modal here.
     handleCloseOpenShift();
 
     if (outletDetails === 1 && shiftDetails?.length == 0) {

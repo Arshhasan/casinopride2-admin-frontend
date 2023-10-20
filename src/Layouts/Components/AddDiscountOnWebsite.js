@@ -148,12 +148,12 @@ const AddDiscountOnWebsite = () => {
             className="form_text"
             style={{ fontSize: "15px", fontWeight: "600" }}
           >
-            Discount Amount <span style={{ color: "red" }}>*</span>
+            Discount Percentage <span style={{ color: "red" }}>*</span>
           </label>
           <input
             class="form-control mt-2"
             type="number"
-            placeholder="Enter Discount Amount"
+            placeholder="Enter Discount Percentage"
             onChange={(e) => setDiscountAmount(e.target.value)}
             defaultValue={userData?.Discount}
           />
