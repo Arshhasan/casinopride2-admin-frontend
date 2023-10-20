@@ -24,6 +24,8 @@ const PackagesPage = ({
   setTeensTaxPercentage,
   setTeensTaxName,
   setPackageName,
+  setPackageWeekendPrice,
+  setPackageWeekdaysPrice,
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
@@ -149,6 +151,8 @@ const PackagesPage = ({
   console.log("selectedPackages----------->", selectedPackages);
 
   const packageNames = [];
+  const packageWeekdayPrices = [];
+  const packageWeekendPrices = [];
 
   Object.keys(selectedPackages).forEach((packageId) => {
     const packageData = selectedPackages[packageId];
@@ -170,6 +174,8 @@ const PackagesPage = ({
       packagePrices.push(packagePrice);
 
       packageNames.push(packageData.PackageName);
+      packageWeekdayPrices.push(packageData.PackageWeekdayPrice);
+      packageWeekendPrices.push(packageData?.PackageWeekendPrice);
     }
   });
 
@@ -177,7 +183,15 @@ const PackagesPage = ({
     packageId: packageIds,
     packageGuestCount: packageGuestCounts,
     packageNames: packageNames,
+
+    packageWeekdayPrices: packageWeekdayPrices,
+    packageWeekendPrices: packageWeekendPrices,
   };
+
+  console.log(
+    "FORMATEDDDDDDDDDDDDDDDDD DATA____________------------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+    formattedData
+  );
 
   const handleBookNow = () => {
     console.log("Selected Packages:", selectedPackages);
@@ -238,6 +252,8 @@ const PackagesPage = ({
     setTeensTaxPercentage(teensTaxPercentage);
     setTeensTaxName(teensTaxName);
     setPackageName(formattedData?.packageNames);
+    setPackageWeekendPrice(formattedData?.packageWeekendPrices);
+    setPackageWeekdaysPrice(formattedData?.packageWeekdayPrices);
   }, [TotalAmount, teensCount]);
 
   console.log("total amount-------->", TotalAmount);

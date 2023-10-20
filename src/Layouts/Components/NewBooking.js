@@ -150,6 +150,9 @@ const NewBooking = () => {
   const [teenstaxPercentage, setTeensTaxPercentage] = useState("");
   const [teensTaxName, setTeensTaxName] = useState("");
 
+  const [packageWeekdaysPrice, setPackageWeekdaysPrice] = useState("");
+  const [packageWeekendPrice, setPackageWeekendPrice] = useState("");
+
   console.log("phone--------------->", phone);
 
   const handleToggle = (field) => {
@@ -379,6 +382,8 @@ const NewBooking = () => {
         partCash: partCash,
         partCard: partCard,
         isBookingWebsite: 0,
+        packageWeekdayPrice: JSON.stringify(packageWeekdaysPrice),
+        packageWeekendPrice: JSON.stringify(packageWeekendPrice),
       };
 
       console.log("Data from booking ------->", data);
@@ -600,6 +605,8 @@ const NewBooking = () => {
           setTeensTaxName={setTeensTaxName}
           setTeensTaxPercentage={setTeensTaxPercentage}
           setPackageName={setPackageName}
+          setPackageWeekendPrice={setPackageWeekendPrice}
+          setPackageWeekdaysPrice={setPackageWeekdaysPrice}
         />
         <div className="col-lg-6 mt-3 mt-3">
           <label for="formGroupExampleInput " className="form_text">

@@ -1647,10 +1647,11 @@ const BillingDetails = () => {
                 </table>
 
                 <div className="totals" style={{ textAlign: "right" }}>
-                  {item?.ItemDetails?.ItemTaxName[0] === "GST" &&
+                  {/* GST WITH TEENS OLD CODE */}
+                  {/* {item?.ItemDetails?.ItemTaxName[0] === "GST" &&
                   item?.TeensPrice > 0 ? (
                     <h6 className="BillPrintFont ">
-                      Total Amount:{" "}
+                      Total Amount 1:{" "}
                       {item?.ItemDetails && item?.TeensRate && (
                         <span className="BillPrintFont">
                           {(
@@ -1670,14 +1671,14 @@ const BillingDetails = () => {
                     </h6>
                   ) : (
                     <h6 className="BillPrintFont">
-                      Total Amount:
+                      Total Amount 2:
                       {item?.ItemDetails &&
                         item?.ItemDetails?.Rate.map((item) => (
                           <span className="BillPrintFont">
-                            {parseFloat(item).toFixed(2)}{" "}
+                            {parseFloat(item).toFixed(2)}
                           </span>
                         ))}
-                      {/* {item?.ItemDetails && (
+                      {item?.ItemDetails && (
                         <span className="BillPrintFont">
                           {parseFloat(
                             item?.ItemDetails?.packageGuestCount
@@ -1689,7 +1690,49 @@ const BillingDetails = () => {
                               .toFixed(2)
                           )}
                         </span>
-                      )} */}
+                      )}
+                    </h6>
+                  )} */}
+
+                  {item?.ItemDetails?.ItemTaxName[0] === "GST" ? (
+                    <h6 className="BillPrintFont ">
+                      Total Amount :
+                      {item?.ItemDetails?.PackageGuestcount === "1" ? (
+                        <span className="BillPrintFont">
+                          {parseFloat(
+                            item?.ItemDetails?.packageGuestCount
+                              .reduce((acc, count, index) => {
+                                return (
+                                  acc + count * item?.ItemDetails?.Rate[index]
+                                );
+                              }, 0)
+                              .toFixed(2)
+                          )}
+                        </span>
+                      ) : (
+                        item?.ItemDetails?.Rate.map((rate, index) => (
+                          <span key={index} className="BillPrintFont">
+                            {parseFloat(rate).toFixed(2)}
+                          </span>
+                        ))
+                      )}
+                    </h6>
+                  ) : (
+                    <h6 className="BillPrintFont">
+                      Total Amount :
+                      {item?.ItemDetails && (
+                        <span className="BillPrintFont">
+                          {parseFloat(
+                            item?.ItemDetails?.packageGuestCount
+                              .reduce((acc, count, index) => {
+                                return (
+                                  acc + count * item?.ItemDetails?.Rate[index]
+                                );
+                              }, 0)
+                              .toFixed(2)
+                          )}
+                        </span>
+                      )}
                     </h6>
                   )}
 
@@ -1846,12 +1889,12 @@ const BillingDetails = () => {
                                 CGST :{" "}
                                 {(
                                   (item?.ItemDetails?.packageGuestCount &&
-                                  item?.ItemDetails?.TaxDiffWeekday
+                                  item?.ItemDetails?.TaxDiffWeekend
                                     ? item.ItemDetails.packageGuestCount.reduce(
                                         (total, count, index) =>
                                           total +
                                           count *
-                                            item.ItemDetails.TaxDiffWeekday[
+                                            item.ItemDetails.TaxDiffWeekend[
                                               index
                                             ],
                                         0
@@ -1861,15 +1904,15 @@ const BillingDetails = () => {
                               </h6>
 
                               <h6>
-                                SGST:{" "}
+                                SGST :{" "}
                                 {(
                                   (item?.ItemDetails?.packageGuestCount &&
-                                  item?.ItemDetails?.TaxDiffWeekday
+                                  item?.ItemDetails?.TaxDiffWeekend
                                     ? item.ItemDetails.packageGuestCount.reduce(
                                         (total, count, index) =>
                                           total +
                                           count *
-                                            item.ItemDetails.TaxDiffWeekday[
+                                            item.ItemDetails.TaxDiffWeekend[
                                               index
                                             ],
                                         0
@@ -1881,58 +1924,73 @@ const BillingDetails = () => {
                           ) : (
                             <>
                               <h6>
-                                CGST:
-                                {(item?.ItemDetails?.TaxDiffWeekday
-                                  ? item.ItemDetails.TaxDiffWeekday.reduce(
-                                      (total, tax, index) => total + tax,
-                                      0
-                                    )
-                                  : 0 / 2
+                                SGST:
+                                {/* {item?.ItemDetails?.TaxBifurcation
+                                  ? (
+                                      item.ItemDetails.TaxBifurcation.reduce(
+                                        (total, tax) => total + tax,
+                                        0
+                                      ) / 2
+                                    ).toFixed(2)
+                                  : 0} */}
+                                {(
+                                  (item?.ItemDetails?.packageGuestCount &&
+                                  item?.ItemDetails?.TaxBifurcation
+                                    ? item.ItemDetails.packageGuestCount.reduce(
+                                        (total, count, index) =>
+                                          total +
+                                          count *
+                                            item.ItemDetails.TaxBifurcation[
+                                              index
+                                            ],
+                                        0
+                                      )
+                                    : 0) / 2
                                 ).toFixed(2)}
                               </h6>
 
                               <h6>
-                                SGST:{" "}
-                                {(item?.ItemDetails?.TaxDiffWeekday
-                                  ? item.ItemDetails.TaxDiffWeekday.reduce(
-                                      (total, tax, index) => total + tax,
-                                      0
-                                    )
-                                  : 0 / 2
+                                CGST:
+                                {(
+                                  (item?.ItemDetails?.packageGuestCount &&
+                                  item?.ItemDetails?.TaxBifurcation
+                                    ? item.ItemDetails.packageGuestCount.reduce(
+                                        (total, count, index) =>
+                                          total +
+                                          count *
+                                            item.ItemDetails.TaxBifurcation[
+                                              index
+                                            ],
+                                        0
+                                      )
+                                    : 0) / 2
                                 ).toFixed(2)}
-                                {/* {(item?.ItemDetails?.packageGuestCount &&
-                                item?.ItemDetails?.TaxBifurcation
-                                  ? item.ItemDetails.packageGuestCount.reduce(
-                                      (total, count, index) =>
-                                        total +
-                                        count *
-                                          item.ItemDetails.TaxBifurcation[
-                                            index
-                                          ],
-                                      0
-                                    )
-                                  : 0) / 2} */}
                               </h6>
                             </>
                           )}
                         </>
                       ) : item?.ItemDetails?.ItemTaxName[0] === "VAT" ? (
                         <h6 className="BillPrintFont">
-                          {/* {item?.ItemDetails?.ItemTaxName[0]}{" "}
-                          {item?.ItemDetails.ItemTax} %:{" "}
-                          {(
-                            item?.ItemDetails?.TaxDiffWeekend[0] *
-                            item?.ItemDetails?.packageGuestCount
-                          ).toFixed(2)} */}
-                          VAT :
+                          VAT {item?.ItemDetails.ItemTax}%:
                           {/* {(
-                            item?.ItemDetails?.TaxDiffWeekday[0] *
+                            item?.ItemDetails?.TaxDiffWeekday *
                             item?.ItemDetails?.packageGuestCount
                           ).toFixed(2)} */}
-                          {item?.ItemDetails?.TaxDiffWeekday?.reduce(
+                          {(item?.ItemDetails?.packageGuestCount &&
+                          item?.ItemDetails?.TaxDiffWeekend
+                            ? item.ItemDetails.packageGuestCount.reduce(
+                                (total, count, index) =>
+                                  total +
+                                  count *
+                                    item.ItemDetails.TaxDiffWeekend[index],
+                                0
+                              )
+                            : 0
+                          ).toFixed(2)}
+                          {/* {item?.ItemDetails?.TaxDiffWeekday?.reduce(
                             (acc, value) => acc + value,
                             0
-                          ).toFixed(2)}
+                          ).toFixed(2)} */}
                         </h6>
                       ) : (
                         <h6 className="BillPrintFont">

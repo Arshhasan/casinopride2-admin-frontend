@@ -11,8 +11,6 @@ export const OTPpackage = ({
   selectedPackages,
   handleBookNow,
 }) => {
-  console.log("packageDetail in OTP package", packageDetail);
-
   const [showModal, setShowModal] = useState(false);
 
   const handleCloseModal = () => setShowModal(false);
