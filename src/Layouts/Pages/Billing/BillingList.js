@@ -189,7 +189,8 @@ const BillingList = () => {
 
   const options = userName.map((user) => ({
     value: user.Id,
-    label: user.Username,
+    // label: user.Username,
+    label: user.Name,
   }));
 
   const shiftOptions = [
@@ -480,6 +481,7 @@ const BillingList = () => {
           if (callback.status) {
             setLoading(false);
             console.log("Callback------No show bill---", callback?.response);
+            window.open(callback?.response?.Details?.ReportFile, "_blank");
           } else {
             console.log("Callback------", callback.error);
             toast.error(callback.error);

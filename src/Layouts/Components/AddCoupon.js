@@ -70,7 +70,8 @@ const AddCoupon = () => {
     return newDate.format("YYYY-MM-DD");
   };
 
-  const todayDate = moment().format("YYYY-MM-DD");
+  // const todayDate = moment().format("YYYY-MM-DD");
+  const todayDate = moment().add(1, 'days').format("YYYY-MM-DD");
 
   const onsubmit = () => {
     const startNumber = parseInt(seriesStart);
@@ -258,7 +259,8 @@ const AddCoupon = () => {
             placeholder=" End Date"
             onChange={(e) => setendDate(e.target.value)}
             defaultValue={formattedEndDate}
-            min={startDate}
+            // min={startDate}
+            min={moment(startDate).add(1, 'days').format("YYYY-MM-DD")}
           />
         </div>
 

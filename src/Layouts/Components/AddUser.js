@@ -394,13 +394,14 @@ const AddUser = () => {
             <label for="formGroupExampleInput " className="form_text">
               QR Link <span style={{ color: "red" }}>*</span>
             </label>
-            <input
+            {/* <input
               class="form-control mt-2"
               type="text"
               placeholder="password"
               disabled
               defaultValue={userData?.QRLink}
-            />
+            /> */}
+            <p style={{ marginTop: "20px", fontSize: "15px"}}>{userData?.QRLink}</p>
           </div>
         ) : (
           <></>
