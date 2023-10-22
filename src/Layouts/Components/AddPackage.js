@@ -357,7 +357,7 @@ const AddPackage = () => {
             min={0}
             onWheel={(e) => e.target.blur()}
             class="form-control mt-2"
-            type="text"
+            type="number"
             placeholder="Teens Tax %"
             onChange={(e) => setPackageTeensPercentage(e.target.value)}
             defaultValue={userData?.PackageTeensTax}

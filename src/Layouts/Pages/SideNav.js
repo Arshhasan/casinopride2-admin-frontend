@@ -22,10 +22,12 @@ import ThreeColumnsIcon from "@rsuite/icons/ThreeColumns";
 import "react-toastify/dist/ReactToastify.css";
 import "../../assets/NavBar.css";
 import { Link } from "react-router-dom";
+import { Button, Modal } from "react-bootstrap";
 
 const SideNav = () => {
   const [expanded, setExpanded] = React.useState(true);
   const [activeKey, setActiveKey] = React.useState("1");
+  const [isModalVisible, setModalVisibility] = useState(false);
 
   const [collapsed, setCollapsed] = useState(false);
   const dispatch = useDispatch();
@@ -47,13 +49,20 @@ const SideNav = () => {
     dispatch(
       Logout(data, loginDetails?.logindata?.Token, (callback) => {
         if (callback.status) {
+          setModalVisibility(false)
           navigate("/");
         } else {
           toast.error("Invalid credentials");
+          setModalVisibility(false)
         }
       })
     );
   };
+
+  const openModal = () =>{
+    setModalVisibility(true)
+  }
+  const closeModal = () => setModalVisibility(false);
   return (
     <div
       style={{
@@ -245,7 +254,7 @@ const SideNav = () => {
               <></>
             )}
 
-            <Nav.Item eventKey="6" icon={<ExitIcon />} onClick={logoutFn}>
+            <Nav.Item eventKey="6" icon={<ExitIcon />} onClick={openModal}>
               Logout
             </Nav.Item>
           </Nav>
@@ -256,6 +265,21 @@ const SideNav = () => {
           onToggle={(expanded) => setExpanded(expanded)}
         />
       </Sidenav>
+      <Modal show={isModalVisible} onHide={closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Logout</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to Logout?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeModal}>
+            No
+          </Button>
+
+          <Button variant="danger" onClick={logoutFn}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
