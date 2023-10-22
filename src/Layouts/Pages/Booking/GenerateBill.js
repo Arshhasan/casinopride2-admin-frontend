@@ -54,7 +54,6 @@ const GenerateBill = () => {
       discount: userData?.PanelDiscount
         ? userData?.PanelDiscount
         : userData?.CouponDiscount,
-
       packageWeekdayPrice: userData?.PackageWeekdayPrice,
       packageWeekendPrice: userData?.PackageWeekendPrice,
     };

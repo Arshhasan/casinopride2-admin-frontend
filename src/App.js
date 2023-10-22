@@ -1,6 +1,11 @@
 import "./App.css";
 import LoginPage from "./Layouts/Pages/LoginPage";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useParams,
+} from "react-router-dom";
 import HomePage from "./Layouts/Pages/HomePage";
 import CrudDemoPage from "./Layouts/Pages/CrudDemoPage";
 import Layout from "./Layouts/Components/Layout";
@@ -34,7 +39,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AgentSettlementList from "./Layouts/Pages/AgentSettlement/AgentSettlementList";
 import RegenerateBill from "./Layouts/Pages/Billing/RegenerateBill";
+import QrLinkPage from "./Layouts/Pages/QRLink/QrLinkPage";
 function App() {
+  let { param } = useParams();
   return (
     <Router>
       <ToastContainer />
@@ -71,6 +78,15 @@ function App() {
           element={
             <Layout>
               <AddFutureBookingDates />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/p/:param"
+          element={
+            <Layout>
+              <QrLinkPage />
             </Layout>
           }
         />

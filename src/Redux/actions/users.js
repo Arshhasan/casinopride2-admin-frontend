@@ -1011,3 +1011,61 @@ export const reopenShiftFunction =
         }
       });
   };
+
+export const shortenUrl = (data, token, callback) => async (dispatch) => {
+  console.log("DATA---------shorten url--------------->", data);
+
+  console.log("Called here ---->");
+  api.CORE_PORT.post("/core/shortenURL", data, {
+    headers: { AuthToken: token },
+  })
+    .then((response) => {
+      console.log(
+        "shorten url post----------------------------->",
+        response.data
+      );
+      if (response.data) {
+        console.log(response.data);
+        callback({
+          status: true,
+          response: response?.data,
+        });
+      } else if (response.data?.Error) {
+        callback({
+          status: false,
+          error: response.data?.Error?.ErrorMessage,
+        });
+      }
+    })
+    .catch((err) => {
+      {
+        console.log("error", err);
+      }
+    });
+};
+
+export const getLongUrl = (code, token, callback) => async (dispatch) => {
+  api.CORE_PORT.get(`/core/getLongURL?shortCode=${code}`, {
+    headers: { AuthToken: token },
+  })
+    .then((response) => {
+      console.log("Long code ----->", response.data);
+      if (response.data) {
+        console.log(response.data);
+        callback({
+          status: true,
+          response: response?.data,
+        });
+      } else if (response.data?.Error) {
+        callback({
+          status: false,
+          error: response.data?.Error?.ErrorMessage,
+        });
+      }
+    })
+    .catch((err) => {
+      {
+        console.log("error", err);
+      }
+    });
+};

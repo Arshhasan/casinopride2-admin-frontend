@@ -32,6 +32,8 @@ const AddPackage = () => {
     itemTax: item.ItemTax,
     itemTaxName: item.ItemTaxName,
     isDeductable: item.IsDeductable,
+    taxDiffWeekday: item?.TaxDiffWeekday,
+    taxDiffWeekend: item?.TaxDiffWeekend,
   }));
 
   console.log(formattedData);

@@ -69,11 +69,16 @@ const Shifts = () => {
   );
 
   useEffect(() => {
-    api.CORE_PORT.get(`/core/checkCurrentOutlet?outletDate=${today}`, {
-      headers: {
-        AuthToken: loginDetails?.logindata?.Token,
-      },
-    }).then((response) => {
+    api.CORE_PORT.get(
+      `/core/checkCurrentOutlet?outletDate=${
+        !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today
+      }`,
+      {
+        headers: {
+          AuthToken: loginDetails?.logindata?.Token,
+        },
+      }
+    ).then((response) => {
       console.log(
         "checkCurrentOutlet-------------------------------------------------->>>>>> -->",
         response.data
@@ -135,7 +140,7 @@ const Shifts = () => {
 
   const openShiftOne = () => {
     const data = {
-      outletDate: outletFormattedData,
+      outletDate: activeDateOfOutlet?.OutletDate,
       shiftTypeId: 1,
       userType: validateDetails?.Details?.UserType,
       userId: validateDetails?.Details?.Id,
@@ -183,7 +188,7 @@ const Shifts = () => {
 
   const openShiftTwo = () => {
     const data = {
-      outletDate: outletFormattedData,
+      outletDate: activeDateOfOutlet?.OutletDate,
       shiftTypeId: 2,
       userType: validateDetails?.Details?.UserType,
       userId: validateDetails?.Details?.Id,
@@ -205,7 +210,7 @@ const Shifts = () => {
     );
   };
 
-  const [checkActiveOtlet, setCheckActiveOutlet] = useState(false);
+  const [checkActiveOtlet, setCheckActiveOutlet] = useState();
 
   console.log(
     "CHECK IF TRUEEEEEEEEEEEEEEEEEEE ORRRRRRRRRRRRRRRRRRRR FALSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS---------->",
@@ -242,7 +247,7 @@ const Shifts = () => {
 
   const openSHiftThree = () => {
     const data = {
-      outletDate: outletFormattedData,
+      outletDate: activeDateOfOutlet?.OutletDate,
       shiftTypeId: 3,
       userType: validateDetails?.Details?.UserType,
       userId: validateDetails?.Details?.Id,
@@ -317,6 +322,10 @@ const Shifts = () => {
     setOpenCloseOutletModal(true);
   };
 
+  console.log("Todays Date-->", formattedDate);
+  console.log("Todays Date-->", today);
+  console.log("Todays Date-->", outletFormattedData);
+
   const onsubmit = () => {
     const data = {
       outletDate: formattedDate,
@@ -354,7 +363,10 @@ const Shifts = () => {
             callback?.response?.Details
           );
 
-          console.log("today-------------------->", today);
+          console.log(
+            "today-------------------->",
+            callback?.response?.Details?.OutletDate
+          );
           console.log(
             "check Active outlet---------------------------->",
 
@@ -363,7 +375,7 @@ const Shifts = () => {
               : "Falsee"
           );
           setCheckActiveOutlet(
-            callback?.response?.Details?.OutletDate == today ? true : false
+            callback?.response?.Details?.OutletDate == [] ? true : false
           );
         } else {
           toast.error(callback.error);
@@ -373,7 +385,7 @@ const Shifts = () => {
 
     dispatch(
       checkShiftForUser(
-        outletFormattedData,
+        !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
         validateDetails?.Details?.Id,
         validateDetails?.Details?.UserType,
         loginDetails?.logindata?.Token,
@@ -390,17 +402,17 @@ const Shifts = () => {
             if (callback?.response?.Details == null) {
               dispatch(
                 recentShiftForOutlet(
-                  outletFormattedData,
+                  !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
 
                   loginDetails?.logindata?.Token,
                   (callback) => {
                     if (callback) {
                       console.log(
                         "Recent shift for outlet----------------------------------*********************************----- ->",
-                        callback?.response
+                        callback?.response?.Details[0]
                       );
                       setRecentShiftOpen(callback?.response?.Details);
-                      setShiftDetails(callback?.response?.Details);
+                      setShiftDetails(callback?.response?.Details[0]);
                       setLoader(false);
 
                       toast.error(callback.error);
@@ -584,6 +596,9 @@ const Shifts = () => {
 
   const handleCloseOpenShift = () => setShowOpenShiftModal(false);
   const handleShowOpenShift = () => setShowOpenShiftModal(true);
+
+  console.log("shiftDetails?.ShiftOpen--------->", shiftDetails?.ShiftOpen);
+  console.log("shiftDetails?.ShiftOpen--------->", shiftDetails?.ShiftOpen);
 
   return (
     <div>

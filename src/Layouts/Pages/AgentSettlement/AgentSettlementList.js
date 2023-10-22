@@ -168,7 +168,7 @@ const AgentSettlementList = () => {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search coupon name"
+                placeholder="Search name"
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
                   filterCouponListDetails();
@@ -249,7 +249,9 @@ const AgentSettlementList = () => {
                     <img src={more} className="more_img" />
                   </td>
                 ) : (
-                  <td>Amount Settled</td>
+                  <td className="manager-list" style={{ color: "green" }}>
+                    Amount Settled
+                  </td>
                 )}
               </tr>
             ))

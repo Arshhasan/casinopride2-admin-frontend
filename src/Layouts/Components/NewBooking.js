@@ -28,6 +28,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import checkcircle from "../../assets/Images/checkcircle.png";
 import { recentShiftForOutlet } from "../../Redux/actions/users";
 import { getEnabledPanelDiscount } from "../../Redux/actions/users";
+import { compose } from "@reduxjs/toolkit";
 
 const NewBooking = () => {
   const location = useLocation();
@@ -48,6 +49,10 @@ const NewBooking = () => {
 
   const outletOpenDetails = useSelector((state) => state.auth?.outeltDetails);
 
+  const activeDateOfOutlet = useSelector(
+    (state) => state.users?.saveOutletDate?.Details
+  );
+
   console.log(
     "outlet open Details-----------------|||||||||||||||||||||||||-->",
     outletOpenDetails
@@ -65,7 +70,7 @@ const NewBooking = () => {
   useEffect(() => {
     dispatch(
       checkShiftForUser(
-        outletFormattedData,
+        activeDateOfOutlet?.OutletDate,
         validateDetails?.Details?.Id,
         validateDetails?.Details?.UserType,
         loginDetails?.logindata?.Token,
@@ -80,7 +85,7 @@ const NewBooking = () => {
             if (callback?.response?.Details == null) {
               dispatch(
                 recentShiftForOutlet(
-                  outletFormattedData,
+                  activeDateOfOutlet?.OutletDate,
 
                   loginDetails?.logindata?.Token,
                   (callback) => {
@@ -160,6 +165,8 @@ const NewBooking = () => {
 
   console.log("phone--------------->", phone);
 
+  console.log("remainingCoupons------------>remaining", remainingCoupons);
+
   const handleToggle = (field) => {
     // Toggle the state of the corresponding field
     if (field === "discount") {
@@ -228,7 +235,7 @@ const NewBooking = () => {
 
   const fetchPanelDiscounts = () => {
     dispatch(
-      getPanelDiscounts(loginDetails?.logindata?.Token, (callback) => {
+      getEnabledPanelDiscount(loginDetails?.logindata?.Token, (callback) => {
         if (callback.status) {
           setPanelDiscounts(callback?.response?.Details);
           console.log(
@@ -288,8 +295,14 @@ const NewBooking = () => {
               const discountedAmount = amount - discount;
               setCouponDiscout(discountedAmount);
 
+              setDiscountFigure(callback?.response?.Details?.CouponDiscount);
+              console.log(
+                "remaing------------------->length------------->",
+                callback?.response?.Details?.UsedCoupons
+              );
               setRemainingCoupons(
-                callback?.response?.Details?.RemainingCoupons
+                callback?.response?.Details?.TotalCoupons -
+                  callback?.response?.Details?.UsedCoupons?.length
               );
               setCouponId(callback?.response?.Details?.Id);
               setUsedCouponArr(
@@ -316,6 +329,34 @@ const NewBooking = () => {
     } else {
       toast.error("Coupon code format is invalid.");
     }
+  };
+
+  const [discountFigure, setDiscountFigure] = useState("");
+
+  console.log(
+    "discountFigure_____________________(((((((((((((((((((((((((({{{{{{{{{{{{{{{}}}}}}}}}}}}}}}______________________------------>>>>>>>>>>>>>",
+    discountFigure
+  );
+
+  const handleSelectChange = (e) => {
+    const selectedValue = e.target.value;
+
+    console.log("Discount valueeeeeeeeeee", e.target.value);
+
+    const selectedPanelDiscount = panelDiscounts.find(
+      (item) => item.Id == selectedValue
+    );
+
+    console.log(
+      "selectedPanelDiscount-----------------------********************************8-------------->",
+      selectedPanelDiscount?.PanelDiscount
+    );
+    setDiscountFigure(selectedPanelDiscount?.PanelDiscount);
+
+    setSelectedOption(e.target.value);
+    const discount = (amount * selectedPanelDiscount?.PanelDiscount) / 100;
+    const discountedAmount = amount - discount;
+    setamountAfterDiscount(discountedAmount);
   };
 
   console.log("usedCouponArr-------------->", usedCouponArr);
@@ -354,7 +395,7 @@ const NewBooking = () => {
         teensRate: totalTeensRate,
         teensTax: teenstaxPercentage,
         teensTaxName: teensTaxName,
-
+        discount: discountFigure,
         panelDiscountId: selectedOption,
         couponId: couponId,
         referredBy: referredBy,
@@ -378,8 +419,14 @@ const NewBooking = () => {
         actualAmount: amount,
         paymentMode: paymentOption,
 
+        // amountAfterDiscount:
+        //   amountAfterDiscount == "" ? amount : amountAfterDiscount,
         amountAfterDiscount:
-          amountAfterDiscount == "" ? amount : amountAfterDiscount,
+          amountAfterDiscount !== ""
+            ? amountAfterDiscount
+            : couponDiscount !== ""
+            ? couponDiscount
+            : amount,
         packageName:
           packageIds.length == 0
             ? JSON.stringify(teensPackageName)
@@ -460,26 +507,6 @@ const NewBooking = () => {
   const [selectedOption, setSelectedOption] = useState("");
 
   const [paymentOption, setPaymentOption] = useState("");
-
-  const handleSelectChange = (e) => {
-    const selectedValue = e.target.value;
-
-    console.log("Discount valueeeeeeeeeee", e.target.value);
-
-    const selectedPanelDiscount = panelDiscounts.find(
-      (item) => item.Id == selectedValue
-    );
-
-    console.log(
-      "selectedPanelDiscount------------------------------------->",
-      selectedPanelDiscount
-    );
-
-    setSelectedOption(e.target.value);
-    const discount = (amount * selectedPanelDiscount?.PanelDiscount) / 100;
-    const discountedAmount = amount - discount;
-    setamountAfterDiscount(discountedAmount);
-  };
 
   console.log("Discount ----->", selectedOption);
 
