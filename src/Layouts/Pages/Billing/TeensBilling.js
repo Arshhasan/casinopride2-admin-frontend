@@ -496,12 +496,12 @@ const TeensBilling = () => {
                   <h6>
                     {" "}
                     CGST: {item?.TeensTax / 2} % :{" "}
-                    {((item?.ActualAmount - item?.TeensRate) / 2).toFixed(2)}
+                    {(item?.TeensTaxBifurcation / 2).toFixed(2)}
                   </h6>
                   <h6>
                     {" "}
                     SGST: {item?.TeensTax / 2} % :{" "}
-                    {((item?.ActualAmount - item?.TeensRate) / 2).toFixed(2)}
+                    {(item?.TeensTaxBifurcation / 2).toFixed(2)}
                   </h6>
 
                   {item?.AmountAfterDiscount == 0 ? (
