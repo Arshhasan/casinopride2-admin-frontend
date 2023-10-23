@@ -337,14 +337,7 @@ const TeensBilling = () => {
               }}
             >
               <div className="row">
-                <div className="col-lg-4">
-                  <h5 style={{ textAlign: "left", fontSize: "12px" }}>
-                    CIN No: U55101GA2005PTC004274{" "}
-                  </h5>
-                  <h5 style={{ textAlign: "left", fontSize: "12px" }}>
-                    PAN No: BACCG7450R
-                  </h5>
-                </div>
+                <div className="col-lg-4"></div>
                 <div className="col-lg-4">
                   <div className="text-center">
                     <img
@@ -354,14 +347,7 @@ const TeensBilling = () => {
                     />
                   </div>
                 </div>
-                <div className="col-lg-4">
-                  <h5 style={{ textAlign: "right", fontSize: "12px" }}>
-                    TIN No : 30220106332
-                  </h5>
-                  <h5 style={{ textAlign: "right", fontSize: "12px" }}>
-                    GSTIN : 30AACCG7450R1ZO
-                  </h5>
-                </div>
+                <div className="col-lg-4"></div>
               </div>
               <p
                 style={{
@@ -372,12 +358,21 @@ const TeensBilling = () => {
                 A unit of Goa Coastal Resorts & Recreation Pvt.Ltd
               </p>
               <h5 style={{ fontSize: "15px" }}>
-                Hotel Neo Majestic, Plot No. 104/14, Porvorim, Barder, Gos - 403
+                Hotel Neo Majestic, Plot No. 104/14, Porvorim, Barder, Goa - 403
                 521 <br></br>Tel. + 91 9158885000
               </h5>
               <h5 style={{ fontSize: "15px" }}>
-                Email : casinopride2020@gmail.com
+                Email : info@casinoprideofficial.com
               </h5>
+              <h5 style={{ fontSize: "15px" }}>
+                Website : www.casinoprideofficial.com
+              </h5>
+              <h5 style={{ fontSize: "15px" }}>Instagram :</h5>
+              <h5 style={{ fontSize: "12px" }}>
+                CIN No: U55101GA2005PTC004274{" "}
+              </h5>
+              <h5 style={{ fontSize: "12px" }}>PAN No: BACCG7450R</h5>
+
               <h3>TAX INVOICE</h3>
               <div className="row">
                 <div className="col-6 bill-details">
@@ -501,16 +496,12 @@ const TeensBilling = () => {
                   <h6>
                     {" "}
                     CGST: {item?.TeensTax / 2} % :{" "}
-                    {(item?.ActualAmount -
-                      (item?.ActualAmount - item?.AmountAfterDiscount) -
-                      (item?.ActualAmount - item?.AmountAfterDiscount)) /
-                      1.28 /
-                      2}
+                    {((item?.ActualAmount - item?.TeensRate) / 2).toFixed(2)}
                   </h6>
                   <h6>
                     {" "}
                     SGST: {item?.TeensTax / 2} % :{" "}
-                    {(item?.ActualAmount - item?.AmountAfterDiscount) / 2}
+                    {((item?.ActualAmount - item?.TeensRate) / 2).toFixed(2)}
                   </h6>
 
                   {item?.AmountAfterDiscount == 0 ? (
