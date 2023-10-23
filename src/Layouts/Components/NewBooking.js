@@ -71,8 +71,8 @@ const NewBooking = () => {
     dispatch(
       checkShiftForUser(
         activeDateOfOutlet?.OutletDate,
-        validateDetails?.Details?.Id,
-        validateDetails?.Details?.UserType,
+        loginDetails?.logindata?.userId,
+        loginDetails?.logindata?.UserType,
         loginDetails?.logindata?.Token,
         (callback) => {
           if (callback) {

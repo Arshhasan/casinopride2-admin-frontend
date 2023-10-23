@@ -313,11 +313,7 @@ const BillingDetails = () => {
                         );
                         setUpatedQrcodeImage(callback?.response?.shortUrl);
 
-                        const apiUrl = `http://commnestsms.com/api/push.json?apikey=635cd8e64fddd&route=transactional&sender=CPGOAA&mobileno=${
-                          BookingDetails[0]?.Phone
-                        }&text=Thank%20you%20for%20choosing%20Casino%20Pride.%20View%20e-bill%20of%20Rs%20${
-                          BookingDetails[0]?.ActualAmount
-                        }%20at%20-%20${"HI"}%0ALets%20Play%20with%20Pride%20!%0AGood%20luck%20!%0ACPGOAA`;
+                        const apiUrl = `http://commnestsms.com/api/push.json?apikey=635cd8e64fddd&route=transactional&sender=CPGOAA&mobileno=${BookingDetails[0]?.Phone}&text=Thank%20you%20for%20choosing%20Casino%20Pride.%20View%20e-bill%20of%20Rs%20${BookingDetails[0]?.ActualAmount}%20at%20-%20${callback?.response?.shortUrl}%0ALets%20Play%20with%20Pride%20!%0AGood%20luck%20!%0ACPGOAA`;
                         fetch(apiUrl)
                           .then((response) => {
                             if (!response.ok) {
@@ -802,7 +798,7 @@ const BillingDetails = () => {
 
                   {item?.ItemDetails?.ItemTaxName[0] === "GST" ? (
                     <h6 className="BillPrintFont ">
-                      Total Amount 1:
+                      Total Amount :
                       {item?.ItemDetails?.ActualAmount -
                         item?.ItemDetails?.AmountAfterDiscount ==
                       0 ? (
@@ -839,7 +835,7 @@ const BillingDetails = () => {
                     </h6>
                   ) : (
                     <h6 className="BillPrintFont">
-                      Total Amount 2:
+                      Total Amount :
                       {item?.ItemDetails && (
                         <span className="BillPrintFont">
                           {parseFloat(
@@ -904,7 +900,7 @@ const BillingDetails = () => {
                       {item?.ItemDetails?.TaxDiff ? (
                         <>
                           <h6 className="BillPrintFont">
-                            CGST not teens{item?.ItemDetails.ItemTax / 2} %:{" "}
+                            CGST {item?.ItemDetails.ItemTax / 2} %:{" "}
                             {(
                               item?.ItemDetails?.TaxDiff.reduce(
                                 (acc, value) => acc + value,
@@ -913,7 +909,7 @@ const BillingDetails = () => {
                             ).toFixed(2)}
                           </h6>
                           <h6 className="BillPrintFont">
-                            SGST not teens{item?.ItemDetails.ItemTax / 2} %:{" "}
+                            SGST {item?.ItemDetails.ItemTax / 2} %:{" "}
                             {(
                               item?.ItemDetails?.TaxDiff.reduce(
                                 (acc, value) => acc + value,
@@ -926,14 +922,14 @@ const BillingDetails = () => {
                         <></>
                       )}
                       <h6 className="BillPrintFont">
-                        CGST 1212 {item?.TeensTax / 2} %:{" "}
+                        CGST {item?.TeensTax / 2} %:{" "}
                         {(
                           (item?.TeensTaxBifurcation * item?.NumOfTeens) /
                           2
                         ).toFixed(2)}
                       </h6>
                       <h6 className="BillPrintFont">
-                        SGST 1212{item?.TeensTax / 2} %:
+                        SGST {item?.TeensTax / 2} %:
                         {(
                           (item?.TeensTaxBifurcation * item?.NumOfTeens) /
                           2
@@ -998,7 +994,7 @@ const BillingDetails = () => {
                                 ).toFixed(2)}
                               </h6> */}
                               <h6>
-                                CGST 1:{" "}
+                                CGST :{" "}
                                 {(
                                   (item?.ItemDetails?.packageGuestCount &&
                                   item?.ItemDetails?.TaxDiff
@@ -1014,7 +1010,7 @@ const BillingDetails = () => {
                               </h6>
 
                               <h6>
-                                SGST 2:{" "}
+                                SGST :{" "}
                                 {(
                                   (item?.ItemDetails?.packageGuestCount &&
                                   item?.ItemDetails?.TaxDiff
@@ -1032,7 +1028,7 @@ const BillingDetails = () => {
                           ) : (
                             <>
                               <h6>
-                                CGST 1:
+                                CGST :
                                 {item?.ItemDetails?.packageGuestCount &&
                                 item?.ItemDetails?.TaxBifurcation
                                   ? (
@@ -1109,7 +1105,7 @@ const BillingDetails = () => {
                               </h6> */}
 
                               <h6>
-                                SGST 1:
+                                SGST :
                                 {item?.ItemDetails?.packageGuestCount &&
                                 item?.ItemDetails?.TaxBifurcation
                                   ? (
@@ -1206,7 +1202,7 @@ const BillingDetails = () => {
                         </h6>
                       ) : (
                         <h6 className="BillPrintFont">
-                          Bill Amount 99:{" "}
+                          Bill Amount :{" "}
                           {item?.ItemDetails && (
                             <span>
                               {parseFloat(

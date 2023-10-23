@@ -532,7 +532,7 @@ const RegenerateBill = () => {
   return (
     <div>
       <ToastContainer />
-      <h3 className="mb-4">Regenerate Billing List</h3>
+      <h3 className="mb-4">Reprint Billing List</h3>
 
       <div className="row mt-3">
         <div className="row">
@@ -592,7 +592,7 @@ const RegenerateBill = () => {
               Shift
             </th>
             <th scope="col" className="text-center table_heading">
-              Regenerate Bill
+              Reprint Bill
             </th>
           </tr>
         </thead>
@@ -628,37 +628,29 @@ const RegenerateBill = () => {
               </td>
             </tr>
           ) : (
-            combinedDataArray.map(
-              (item) => (
-                (
-                  <tr key={item.id}>
-                    <td className="manager-list">
-                      {item?.Items[0]?.BillingId}
-                    </td>
-                    <td className="manager-list ">
-                      {item?.Items[0]?.BookingId}
-                    </td>
+            combinedDataArray.map((item) => (
+              <tr key={item.id}>
+                <td className="manager-list">{item?.Items[0]?.BillingId}</td>
+                <td className="manager-list ">{item?.Items[0]?.BookingId}</td>
 
-                    <td className="manager-list ">
-                      {item?.Items[0]?.GuestName}
-                    </td>
-                    <td className="manager-list">{item?.Items[0]?.Phone}</td>
-                    <td className="manager-list">
-                      {item?.Items[0]?.UsersName}
-                    </td>
-                    <td className="manager-list">{item?.Items[0]?.ShiftId === 0 ? "-" : item?.Items[0]?.ShiftId}</td>
-                    <td style={{ textAlign: "center" }}>
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => regenerateBillFn(item)}
-                      >
-                        Regenerate Bill
-                      </button>
-                    </td>
-                  </tr>
-                )
-              )
-            )
+                <td className="manager-list ">{item?.Items[0]?.GuestName}</td>
+                <td className="manager-list">{item?.Items[0]?.Phone}</td>
+                <td className="manager-list">{item?.Items[0]?.UsersName}</td>
+                <td className="manager-list">
+                  {item?.Items[0]?.ShiftId === 0
+                    ? "-"
+                    : item?.Items[0]?.ShiftId}
+                </td>
+                <td style={{ textAlign: "center" }}>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => regenerateBillFn(item)}
+                  >
+                    Reprint Bill
+                  </button>
+                </td>
+              </tr>
+            ))
           )}
         </tbody>
       </table>

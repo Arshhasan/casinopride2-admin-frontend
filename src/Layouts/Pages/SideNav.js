@@ -49,19 +49,19 @@ const SideNav = () => {
     dispatch(
       Logout(data, loginDetails?.logindata?.Token, (callback) => {
         if (callback.status) {
-          setModalVisibility(false)
+          setModalVisibility(false);
           navigate("/");
         } else {
           toast.error("Invalid credentials");
-          setModalVisibility(false)
+          setModalVisibility(false);
         }
       })
     );
   };
 
-  const openModal = () =>{
-    setModalVisibility(true)
-  }
+  const openModal = () => {
+    setModalVisibility(true);
+  };
   const closeModal = () => setModalVisibility(false);
   return (
     <div
@@ -136,7 +136,7 @@ const SideNav = () => {
             loginDetails?.logindata?.UserType == "3" ? (
               <Nav.Item eventKey="6" icon={<PageIcon />}>
                 <Link to="/RegenerateBill" className="links">
-                  Regenerate Bill
+                  Reprint Bill
                 </Link>
               </Nav.Item>
             ) : (

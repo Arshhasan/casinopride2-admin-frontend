@@ -376,10 +376,10 @@ const BillingList = () => {
       voidBill(loginDetails?.logindata?.Token, voidBillData, (callback) => {
         if (callback.status) {
           setLoading(false);
-          setModalVisibility(false)
-          toast.success("Void Bill Successful")
-          fetchBillingDetailsFn()
-          fetchVoidBillList()
+          setModalVisibility(false);
+          toast.success("Void Bill Successful");
+          fetchBillingDetailsFn();
+          fetchVoidBillList();
         } else {
           console.log("Callback--------voidt>>error", callback.error);
           toast.error(callback.error);
@@ -585,7 +585,7 @@ const BillingList = () => {
           <>
             <div className="container">
               <div className="row">
-                {searchBillId == 0 && userId == 0 ? (
+                {userId == 0 ? (
                   <div className="col-md-4 col-lg-3 mb-3">
                     <p style={{ fontWeight: "bold" }}>Search By Bill Id</p>
                     <div className="input-group">
@@ -795,11 +795,11 @@ const BillingList = () => {
                         </td>
                       ) : (
                         <td
-                        className="manager-list"
-                        style={{ color: item.IsVoid === 1 ? "red" : "green" }}
-                      >
-                        {item.IsVoid == 1 ? "Void" : "Active"}
-                      </td>
+                          className="manager-list"
+                          style={{ color: item.IsVoid === 1 ? "red" : "green" }}
+                        >
+                          {item.IsVoid == 1 ? "Void" : "Active"}
+                        </td>
                       )}
 
                       <td
@@ -894,14 +894,16 @@ const BillingList = () => {
                     <td className="manager-list ">{item.GuestName}</td>
                     <td className="manager-list">{item.Phone}</td>
                     <td className="manager-list">{item.UsersName}</td>
-                    <td className="manager-list">{item.ShiftId === 0 ? "-" : item.ShiftId}</td>
+                    <td className="manager-list">
+                      {item.ShiftId === 0 ? "-" : item.ShiftId}
+                    </td>
                     <td
                       className="manager-list"
                       style={{ color: item.IsVoid === 1 ? "red" : "green" }}
                     >
                       {item.IsVoid == 1 ? "Void" : "Active"}
                     </td>
-                    {(item?.NewBillId === null || item?.NewBillId === 0) ? (
+                    {item?.NewBillId === null || item?.NewBillId === 0 ? (
                       <td className="manager-list">
                         <button
                           className="btn btn-primary"
@@ -911,11 +913,7 @@ const BillingList = () => {
                         </button>
                       </td>
                     ) : (
-                      <td
-                      className="manager-list"
-                    >
-                      {item.NewBillId}
-                    </td>
+                      <td className="manager-list">{item.NewBillId}</td>
                     )}
                     <td
                       className="manager-list"
