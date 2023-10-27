@@ -1073,24 +1073,24 @@ const Shifts = () => {
     activeDateOfOutlet?.OutletDate
   );
 
-  useEffect(() => {
-    api.CORE_PORT.get(
-      `/core/checkCurrentOutlet?outletDate=${
-        !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today
-      }`,
-      {
-        headers: {
-          AuthToken: loginDetails?.logindata?.Token,
-        },
-      }
-    ).then((response) => {
-      console.log(
-        "checkCurrentOutlet-------------------------------------------------->>>>>> -->",
-        response.data
-      );
-      setOutletId(response.data?.Details[0]?.Id);
-    });
-  }, []);
+  // useEffect(() => {
+  //   api.CORE_PORT.get(
+  //     `/core/checkCurrentOutlet?outletDate=${
+  //       !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today
+  //     }`,
+  //     {
+  //       headers: {
+  //         AuthToken: loginDetails?.logindata?.Token,
+  //       },
+  //     }
+  //   ).then((response) => {
+  //     console.log(
+  //       "checkCurrentOutlet-------------------------------------------------->>>>>> -->",
+  //       response.data
+  //     );
+  //     setOutletId(response.data?.Details[0]?.Id);
+  //   });
+  // }, []);
 
   const formattedDate = moment().format("YYYY-MM-DD");
 
@@ -1107,7 +1107,7 @@ const Shifts = () => {
 
   const [checkOutletOpen, setCheckOutletOpen] = useState(false);
 
-  const [checkShift1Open, setCheckShift1Open] = useState(false);
+  const [checkShift1Open, setCheckShift1Open] = useState(0);
   const [checkShift1Close, setCheckShift1Close] = useState(false);
   const [checkShift2Open, setCheckShift2open] = useState(false);
   const [checShift2Close, setCheckShift2Close] = useState(false);
@@ -1127,6 +1127,8 @@ const Shifts = () => {
   const [reopenShift3, setReopenShift3] = useState(false);
 
   const [defaultShift1, setDefaultShift1] = useState(false);
+  const [shiftDetailsForUser, setSHiftDetaislForUser] = useState();
+  const [closeShiftButton, setCloseShiftButton] = useState(false);
 
   const openOutletModal = () => {
     setOutletModalOpen(true);
@@ -1146,6 +1148,7 @@ const Shifts = () => {
   const time = date.format("HH:mm");
 
   const openShiftOne = () => {
+    console.log("Shift one open");
     const data = {
       outletDate: activeDateOfOutlet?.OutletDate,
       shiftTypeId: 1,
@@ -1157,11 +1160,109 @@ const Shifts = () => {
     dispatch(
       openShiftFn(data, loginDetails?.logindata?.Token, (callback) => {
         if (callback.status) {
-          console.log("Ope outlet called------------->", callback);
-          setCheckShift1Open(true);
+          console.log(
+            "Open shitft 1 called------------->",
+            callback?.response?.Details
+          );
+
           setCheckOutletOpen(false);
-          setShiftDetails(callback?.response?.Details);
-          setDefaultShift1(false);
+          setOutletId(callback?.response?.Details?.OutletId);
+
+          dispatch(
+            checkShiftForUser(
+              checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
+              validateDetails?.Details?.Id,
+              validateDetails?.Details?.UserType,
+              loginDetails?.logindata?.Token,
+              (callback) => {
+                if (callback) {
+                  console.log(
+                    "check shift for user details",
+                    callback?.response?.Details
+                  );
+
+                  // setShiftDetails(callback?.response?.Details);
+                  // setLoader(false);
+                  setOutletId(callback?.response?.Details?.OutletId);
+
+                  if (callback?.response?.Details == null) {
+                    console.log("When check shift for user is null");
+                    dispatch(
+                      recentShiftForOutlet(
+                        !checkActiveOtlet
+                          ? activeDateOfOutlet?.OutletDate
+                          : today,
+
+                        loginDetails?.logindata?.Token,
+                        (callback) => {
+                          if (callback) {
+                            console.log(
+                              "Recent shift for outlet----------------------------------*********************************----- ->",
+                              callback?.response?.Details[0]
+                            );
+                            setLoader(false);
+                            setOutletId(callback?.response?.Details?.OutletId);
+
+                            if (callback?.response?.Details?.length == 0) {
+                              console.log("When length of details is 0");
+                              setDefaultShift1(true);
+                            } else {
+                              console.log(
+                                "Else condition for recent shift open",
+                                callback?.response?.Details
+                              );
+                              setRecentShiftOpen(
+                                callback?.response?.Details[0]
+                              );
+                              setShiftDetails(callback?.response?.Details[0]);
+                              setLoader(false);
+                            }
+                            // setRecentShiftOpen(callback?.response?.Details);
+                            // setShiftDetails(callback?.response?.Details[0]);
+                            // setLoader(false);
+
+                            toast.error(callback.error);
+                          } else {
+                            toast.error(callback.error);
+                            console.log("First error ");
+                          }
+                        }
+                      )
+                    );
+                  } else {
+                    console.log(
+                      "Else for check shift for user",
+                      callback?.response?.Details
+                    );
+                    setSHiftDetaislForUser(callback?.response?.Details);
+                    setRecentShiftOpen(callback?.response?.Details);
+                    setOutletId(callback?.response?.Details?.OutletId);
+                    setLoader(false);
+                    setCheckShift1Open(1);
+                    window.location.reload();
+                  }
+
+                  toast.error(callback.error);
+                } else {
+                  toast.error(callback.error);
+                  console.log("second error ");
+                }
+              }
+            )
+          );
+
+          // setShiftDetails(callback?.response?.Details);
+
+          // if (
+          //   callback?.response?.Details?.UserId ==
+          //   loginDetails?.logindata?.userId
+          // ) {
+          //   setSHiftDetaislForUser(callback?.response?.Details);
+          // } else {
+          //   setRecentShiftOpen(callback?.response?.Details);
+          // }
+
+          // setDefaultShift1(false);
           toast.success("Shift 1 is opened");
         } else {
           toast.error(callback.error);
@@ -1187,6 +1288,90 @@ const Shifts = () => {
           setShiftDetails(callback?.response?.Details[0]);
           setCheckShift2open(true);
           toast.success("Shift 1 is Closed");
+
+          dispatch(
+            checkShiftForUser(
+              checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
+              validateDetails?.Details?.Id,
+              validateDetails?.Details?.UserType,
+              loginDetails?.logindata?.Token,
+              (callback) => {
+                if (callback) {
+                  console.log(
+                    "check shift for user details",
+                    callback?.response?.Details
+                  );
+
+                  // setShiftDetails(callback?.response?.Details);
+                  // setLoader(false);
+                  setOutletId(callback?.response?.Details?.OutletId);
+
+                  if (callback?.response?.Details == null) {
+                    console.log("When check shift for user is null");
+                    dispatch(
+                      recentShiftForOutlet(
+                        !checkActiveOtlet
+                          ? activeDateOfOutlet?.OutletDate
+                          : today,
+
+                        loginDetails?.logindata?.Token,
+                        (callback) => {
+                          if (callback) {
+                            console.log(
+                              "Recent shift for outlet----------------------------------*********************************----- ->",
+                              callback?.response?.Details[0]
+                            );
+                            setLoader(false);
+                            setOutletId(callback?.response?.Details?.OutletId);
+
+                            if (callback?.response?.Details?.length == 0) {
+                              console.log("When length of details is 0");
+                              setDefaultShift1(true);
+                            } else {
+                              console.log(
+                                "Else condition for recent shift open",
+                                callback?.response?.Details
+                              );
+                              setRecentShiftOpen(
+                                callback?.response?.Details[0]
+                              );
+                              setShiftDetails(callback?.response?.Details[0]);
+                              setLoader(false);
+                            }
+                            // setRecentShiftOpen(callback?.response?.Details);
+                            // setShiftDetails(callback?.response?.Details[0]);
+                            // setLoader(false);
+
+                            toast.error(callback.error);
+                          } else {
+                            toast.error(callback.error);
+                            console.log("First error ");
+                          }
+                        }
+                      )
+                    );
+                  } else {
+                    console.log(
+                      "Else for check shift for user",
+                      callback?.response?.Details
+                    );
+                    setSHiftDetaislForUser(callback?.response?.Details);
+                    setRecentShiftOpen(callback?.response?.Details);
+                    setOutletId(callback?.response?.Details?.OutletId);
+                    setLoader(false);
+                    setCheckShift1Open(1);
+                    window.location.reload();
+                  }
+
+                  toast.error(callback.error);
+                } else {
+                  toast.error(callback.error);
+                  console.log("second error ");
+                }
+              }
+            )
+          );
+          window.location.reload();
         } else {
           toast.error(callback.error);
         }
@@ -1195,6 +1380,7 @@ const Shifts = () => {
   };
 
   const openShiftTwo = () => {
+    console.log("Called open shift 2");
     const data = {
       outletDate: activeDateOfOutlet?.OutletDate,
       shiftTypeId: 2,
@@ -1211,6 +1397,93 @@ const Shifts = () => {
           setCheckShift2open(false);
           setReopenShift1(true);
           toast.success("Shift 2 is opened");
+          setOutletId(callback?.response?.Details?.OutletId);
+
+          dispatch(
+            checkShiftForUser(
+              checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
+              validateDetails?.Details?.Id,
+              validateDetails?.Details?.UserType,
+              loginDetails?.logindata?.Token,
+              (callback) => {
+                if (callback) {
+                  console.log(
+                    "check shift for user details",
+                    callback?.response?.Details
+                  );
+                  setOutletId(callback?.response?.Details?.OutletId);
+
+                  // setShiftDetails(callback?.response?.Details);
+                  // setLoader(false);
+
+                  if (callback?.response?.Details == null) {
+                    console.log("When check shift for user is null");
+                    dispatch(
+                      recentShiftForOutlet(
+                        !checkActiveOtlet
+                          ? activeDateOfOutlet?.OutletDate
+                          : today,
+
+                        loginDetails?.logindata?.Token,
+                        (callback) => {
+                          if (callback) {
+                            console.log(
+                              "Recent shift for outlet----------------------------------*********************************----- ->",
+                              callback?.response?.Details[0]
+                            );
+                            setOutletId(callback?.response?.Details?.OutletId);
+                            setLoader(false);
+
+                            if (callback?.response?.Details?.length == 0) {
+                              console.log("When length of details is 0");
+                              setDefaultShift1(true);
+                            } else {
+                              console.log(
+                                "Else condition for recent shift open",
+                                callback?.response?.Details
+                              );
+                              setRecentShiftOpen(
+                                callback?.response?.Details[0]
+                              );
+                              setShiftDetails(callback?.response?.Details[0]);
+                              setLoader(false);
+                              setOutletId(
+                                callback?.response?.Details?.OutletId
+                              );
+                            }
+                            // setRecentShiftOpen(callback?.response?.Details);
+                            // setShiftDetails(callback?.response?.Details[0]);
+                            // setLoader(false);
+
+                            toast.error(callback.error);
+                          } else {
+                            toast.error(callback.error);
+                            console.log("First error ");
+                          }
+                        }
+                      )
+                    );
+                  } else {
+                    console.log(
+                      "Else for check shift for user",
+                      callback?.response?.Details
+                    );
+                    setSHiftDetaislForUser(callback?.response?.Details);
+                    setRecentShiftOpen(callback?.response?.Details);
+                    setLoader(false);
+                    setCheckShift1Open(1);
+                    window.location.reload();
+                    setOutletId(callback?.response?.Details?.OutletId);
+                  }
+
+                  toast.error(callback.error);
+                } else {
+                  toast.error(callback.error);
+                  console.log("second error ");
+                }
+              }
+            )
+          );
         } else {
           toast.error(callback.error);
         }
@@ -1245,6 +1518,91 @@ const Shifts = () => {
           setReopenShift2(true);
           toast.success("Shift 2 is Closed");
 
+          dispatch(
+            checkShiftForUser(
+              checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
+              validateDetails?.Details?.Id,
+              validateDetails?.Details?.UserType,
+              loginDetails?.logindata?.Token,
+              (callback) => {
+                if (callback) {
+                  console.log(
+                    "check shift for user details",
+                    callback?.response?.Details
+                  );
+
+                  // setShiftDetails(callback?.response?.Details);
+                  // setLoader(false);
+                  setOutletId(callback?.response?.Details?.OutletId);
+
+                  if (callback?.response?.Details == null) {
+                    console.log("When check shift for user is null");
+                    dispatch(
+                      recentShiftForOutlet(
+                        !checkActiveOtlet
+                          ? activeDateOfOutlet?.OutletDate
+                          : today,
+
+                        loginDetails?.logindata?.Token,
+                        (callback) => {
+                          if (callback) {
+                            console.log(
+                              "Recent shift for outlet----------------------------------*********************************----- ->",
+                              callback?.response?.Details[0]
+                            );
+                            setLoader(false);
+                            setOutletId(callback?.response?.Details?.OutletId);
+
+                            if (callback?.response?.Details?.length == 0) {
+                              console.log("When length of details is 0");
+                              setDefaultShift1(true);
+                            } else {
+                              console.log(
+                                "Else condition for recent shift open",
+                                callback?.response?.Details
+                              );
+                              setRecentShiftOpen(
+                                callback?.response?.Details[0]
+                              );
+                              setShiftDetails(callback?.response?.Details[0]);
+                              setLoader(false);
+                            }
+                            // setRecentShiftOpen(callback?.response?.Details);
+                            // setShiftDetails(callback?.response?.Details[0]);
+                            // setLoader(false);
+
+                            toast.error(callback.error);
+                          } else {
+                            toast.error(callback.error);
+                            console.log("First error ");
+                          }
+                        }
+                      )
+                    );
+                  } else {
+                    console.log(
+                      "Else for check shift for user",
+                      callback?.response?.Details
+                    );
+                    setSHiftDetaislForUser(callback?.response?.Details);
+                    setRecentShiftOpen(callback?.response?.Details);
+                    setOutletId(callback?.response?.Details?.OutletId);
+                    setLoader(false);
+                    setCheckShift1Open(1);
+                    window.location.reload();
+                  }
+
+                  toast.error(callback.error);
+                } else {
+                  toast.error(callback.error);
+                  console.log("second error ");
+                }
+              }
+            )
+          );
+
+          window.location.reload();
+
           setReopenShift1(false);
         } else {
           toast.error(callback.error);
@@ -1271,6 +1629,91 @@ const Shifts = () => {
           setCheckShift3Open(true);
           setCheckShift2open(false);
           toast.success("Shift 3 is opened");
+          setOutletId(callback?.response?.Details?.OutletId);
+          dispatch(
+            checkShiftForUser(
+              checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
+              validateDetails?.Details?.Id,
+              validateDetails?.Details?.UserType,
+              loginDetails?.logindata?.Token,
+              (callback) => {
+                if (callback) {
+                  console.log(
+                    "check shift for user details",
+                    callback?.response?.Details
+                  );
+                  setOutletId(callback?.response?.Details?.OutletId);
+                  // setShiftDetails(callback?.response?.Details);
+                  // setLoader(false);
+
+                  if (callback?.response?.Details == null) {
+                    console.log("When check shift for user is null");
+                    dispatch(
+                      recentShiftForOutlet(
+                        !checkActiveOtlet
+                          ? activeDateOfOutlet?.OutletDate
+                          : today,
+
+                        loginDetails?.logindata?.Token,
+                        (callback) => {
+                          if (callback) {
+                            console.log(
+                              "Recent shift for outlet----------------------------------*********************************----- ->",
+                              callback?.response?.Details[0]
+                            );
+                            setLoader(false);
+                            setOutletId(callback?.response?.Details?.OutletId);
+
+                            if (callback?.response?.Details?.length == 0) {
+                              console.log("When length of details is 0");
+                              setDefaultShift1(true);
+                            } else {
+                              console.log(
+                                "Else condition for recent shift open",
+                                callback?.response?.Details
+                              );
+                              setRecentShiftOpen(
+                                callback?.response?.Details[0]
+                              );
+                              setShiftDetails(callback?.response?.Details[0]);
+                              setLoader(false);
+                              setOutletId(
+                                callback?.response?.Details?.OutletId
+                              );
+                            }
+                            // setRecentShiftOpen(callback?.response?.Details);
+                            // setShiftDetails(callback?.response?.Details[0]);
+                            // setLoader(false);
+
+                            toast.error(callback.error);
+                          } else {
+                            toast.error(callback.error);
+                            console.log("First error ");
+                          }
+                        }
+                      )
+                    );
+                  } else {
+                    console.log(
+                      "Else for check shift for user",
+                      callback?.response?.Details
+                    );
+                    setSHiftDetaislForUser(callback?.response?.Details);
+                    setRecentShiftOpen(callback?.response?.Details);
+                    setLoader(false);
+                    setCheckShift1Open(1);
+                    window.location.reload();
+                    setOutletId(callback?.response?.Details?.OutletId);
+                  }
+
+                  toast.error(callback.error);
+                } else {
+                  toast.error(callback.error);
+                  console.log("second error ");
+                }
+              }
+            )
+          );
         } else {
           toast.error(callback.error);
         }
@@ -1293,6 +1736,89 @@ const Shifts = () => {
           console.log("Close shift called------------->", callback);
           setCheckShift3Close(true);
           setShiftDetails(callback?.response?.Details[0]);
+
+          dispatch(
+            checkShiftForUser(
+              checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
+              validateDetails?.Details?.Id,
+              validateDetails?.Details?.UserType,
+              loginDetails?.logindata?.Token,
+              (callback) => {
+                if (callback) {
+                  console.log(
+                    "check shift for user details",
+                    callback?.response?.Details
+                  );
+
+                  // setShiftDetails(callback?.response?.Details);
+                  // setLoader(false);
+                  setOutletId(callback?.response?.Details?.OutletId);
+
+                  if (callback?.response?.Details == null) {
+                    console.log("When check shift for user is null");
+                    dispatch(
+                      recentShiftForOutlet(
+                        !checkActiveOtlet
+                          ? activeDateOfOutlet?.OutletDate
+                          : today,
+
+                        loginDetails?.logindata?.Token,
+                        (callback) => {
+                          if (callback) {
+                            console.log(
+                              "Recent shift for outlet----------------------------------*********************************----- ->",
+                              callback?.response?.Details[0]
+                            );
+                            setLoader(false);
+                            setOutletId(callback?.response?.Details?.OutletId);
+
+                            if (callback?.response?.Details?.length == 0) {
+                              console.log("When length of details is 0");
+                              setDefaultShift1(true);
+                            } else {
+                              console.log(
+                                "Else condition for recent shift open",
+                                callback?.response?.Details
+                              );
+                              setRecentShiftOpen(
+                                callback?.response?.Details[0]
+                              );
+                              setShiftDetails(callback?.response?.Details[0]);
+                              setLoader(false);
+                            }
+                            // setRecentShiftOpen(callback?.response?.Details);
+                            // setShiftDetails(callback?.response?.Details[0]);
+                            // setLoader(false);
+
+                            toast.error(callback.error);
+                          } else {
+                            toast.error(callback.error);
+                            console.log("First error ");
+                          }
+                        }
+                      )
+                    );
+                  } else {
+                    console.log(
+                      "Else for check shift for user",
+                      callback?.response?.Details
+                    );
+                    setSHiftDetaislForUser(callback?.response?.Details);
+                    setRecentShiftOpen(callback?.response?.Details);
+                    setOutletId(callback?.response?.Details?.OutletId);
+                    setLoader(false);
+                    setCheckShift1Open(1);
+                    window.location.reload();
+                  }
+
+                  toast.error(callback.error);
+                } else {
+                  toast.error(callback.error);
+                  console.log("second error ");
+                }
+              }
+            )
+          );
         } else {
           toast.error(callback.error);
           toast.success("Shift 3 is Closed");
@@ -1313,7 +1839,8 @@ const Shifts = () => {
           setOpenCloseOutletModal(false);
           setShiftDetails("");
           setOutletDetails(callback?.response?.Details?.OutletStatus);
-          toast.success("Outlet  is Closed")();
+          toast.success("Outlet  is Closed");
+          window.location.reload();
         } else {
           toast.error(callback.error);
         }
@@ -1349,6 +1876,7 @@ const Shifts = () => {
           setOutletId(callback?.response?.Details?.Id);
           setCheckOutletOpen(true);
           setOutletDetails(callback?.response?.Details?.OutletStatus);
+          window.location.reload();
           toast.success("Outlet is opened");
         } else {
           toast.error(callback.error);
@@ -1360,31 +1888,18 @@ const Shifts = () => {
   const [recentShiftOpen, setRecentShiftOpen] = useState([]);
 
   useEffect(() => {
-    console.log("Hi called over here, useeffect is working------------->");
-
     dispatch(
       checkActiveOutlet(loginDetails?.logindata?.Token, (callback) => {
         if (callback.status) {
-          console.log(
-            "check Active outlet---------------------<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<>>>>>>>>>>>>>>>..------->",
-
-            callback?.response?.Details
-          );
-
-          console.log(
-            "today-------------------->",
-            callback?.response?.Details?.OutletDate
-          );
-          console.log(
-            "check Active outlet---------------------------->",
-
-            callback?.response?.Details?.OutletDate == today
-              ? "Truee"
-              : "Falsee"
-          );
-          setCheckActiveOutlet(
-            callback?.response?.Details?.OutletDate == [] ? true : false
-          );
+          console.log("check active outlet--->", callback?.response?.Details);
+          if (callback?.response?.Details == null) {
+            setCheckActiveOutlet(true);
+            setLoader(false);
+          } else {
+            setCheckActiveOutlet(
+              callback?.response?.Details?.OutletDate == today ? true : false
+            );
+          }
         } else {
           toast.error(callback.error);
         }
@@ -1393,7 +1908,7 @@ const Shifts = () => {
 
     dispatch(
       checkShiftForUser(
-        !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
+        checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
         validateDetails?.Details?.Id,
         validateDetails?.Details?.UserType,
         loginDetails?.logindata?.Token,
@@ -1403,8 +1918,8 @@ const Shifts = () => {
               "Callback from shifts for user -----------***********************8--->",
               callback?.response?.Details
             );
-
-            setShiftDetails(callback?.response?.Details);
+            setOutletId(callback?.response?.Details?.OutletId);
+            // setShiftDetails(callback?.response?.Details);
             setLoader(false);
 
             if (callback?.response?.Details == null) {
@@ -1419,11 +1934,17 @@ const Shifts = () => {
                         "Recent shift for outlet----------------------------------*********************************----- ->",
                         callback?.response?.Details[0]
                       );
+                      setLoader(false);
+                      setOutletId(callback?.response?.Details?.OutletId);
 
                       if (callback?.response?.Details?.length == 0) {
                         setDefaultShift1(true);
                       } else {
-                        setRecentShiftOpen(callback?.response?.Details);
+                        console.log(
+                          "Else condition for recent shift open",
+                          callback?.response?.Details
+                        );
+                        setRecentShiftOpen(callback?.response?.Details[0]);
                         setShiftDetails(callback?.response?.Details[0]);
                         setLoader(false);
                       }
@@ -1438,6 +1959,14 @@ const Shifts = () => {
                   }
                 )
               );
+            } else {
+              console.log(
+                "Else for check shift for user",
+                callback?.response?.Details
+              );
+              setSHiftDetaislForUser(callback?.response?.Details);
+              setOutletId(callback?.response?.Details?.OutletId);
+              setLoader(false);
             }
 
             toast.error(callback.error);
@@ -1492,6 +2021,89 @@ const Shifts = () => {
           );
 
           setShiftDetails(callback?.response?.Details[0]);
+
+          dispatch(
+            checkShiftForUser(
+              checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
+              validateDetails?.Details?.Id,
+              validateDetails?.Details?.UserType,
+              loginDetails?.logindata?.Token,
+              (callback) => {
+                if (callback) {
+                  console.log(
+                    "check shift for user details",
+                    callback?.response?.Details
+                  );
+
+                  // setShiftDetails(callback?.response?.Details);
+                  // setLoader(false);
+                  setOutletId(callback?.response?.Details?.OutletId);
+
+                  if (callback?.response?.Details == null) {
+                    console.log("When check shift for user is null");
+                    dispatch(
+                      recentShiftForOutlet(
+                        !checkActiveOtlet
+                          ? activeDateOfOutlet?.OutletDate
+                          : today,
+
+                        loginDetails?.logindata?.Token,
+                        (callback) => {
+                          if (callback) {
+                            console.log(
+                              "Recent shift for outlet----------------------------------*********************************----- ->",
+                              callback?.response?.Details[0]
+                            );
+                            setLoader(false);
+                            setOutletId(callback?.response?.Details?.OutletId);
+
+                            if (callback?.response?.Details?.length == 0) {
+                              console.log("When length of details is 0");
+                              setDefaultShift1(true);
+                            } else {
+                              console.log(
+                                "Else condition for recent shift open",
+                                callback?.response?.Details
+                              );
+                              setRecentShiftOpen(
+                                callback?.response?.Details[0]
+                              );
+                              setShiftDetails(callback?.response?.Details[0]);
+                              setLoader(false);
+                            }
+                            // setRecentShiftOpen(callback?.response?.Details);
+                            // setShiftDetails(callback?.response?.Details[0]);
+                            // setLoader(false);
+
+                            toast.error(callback.error);
+                          } else {
+                            toast.error(callback.error);
+                            console.log("First error ");
+                          }
+                        }
+                      )
+                    );
+                  } else {
+                    console.log(
+                      "Else for check shift for user",
+                      callback?.response?.Details
+                    );
+                    setSHiftDetaislForUser(callback?.response?.Details);
+                    setRecentShiftOpen(callback?.response?.Details);
+                    setOutletId(callback?.response?.Details?.OutletId);
+                    setLoader(false);
+                    setCheckShift1Open(1);
+                    window.location.reload();
+                  }
+
+                  toast.error(callback.error);
+                } else {
+                  toast.error(callback.error);
+                  console.log("second error ");
+                }
+              }
+            )
+          );
           toast.success("Shift 1 is Re-opened");
         } else {
           toast.error(callback.error);
@@ -1515,6 +2127,89 @@ const Shifts = () => {
           console.log("Reopen  shift 2 called------------->", callback);
 
           setShiftDetails(callback?.response?.Details[0]);
+
+          dispatch(
+            checkShiftForUser(
+              checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
+              validateDetails?.Details?.Id,
+              validateDetails?.Details?.UserType,
+              loginDetails?.logindata?.Token,
+              (callback) => {
+                if (callback) {
+                  console.log(
+                    "check shift for user details",
+                    callback?.response?.Details
+                  );
+
+                  // setShiftDetails(callback?.response?.Details);
+                  // setLoader(false);
+                  setOutletId(callback?.response?.Details?.OutletId);
+
+                  if (callback?.response?.Details == null) {
+                    console.log("When check shift for user is null");
+                    dispatch(
+                      recentShiftForOutlet(
+                        !checkActiveOtlet
+                          ? activeDateOfOutlet?.OutletDate
+                          : today,
+
+                        loginDetails?.logindata?.Token,
+                        (callback) => {
+                          if (callback) {
+                            console.log(
+                              "Recent shift for outlet----------------------------------*********************************----- ->",
+                              callback?.response?.Details[0]
+                            );
+                            setLoader(false);
+                            setOutletId(callback?.response?.Details?.OutletId);
+
+                            if (callback?.response?.Details?.length == 0) {
+                              console.log("When length of details is 0");
+                              setDefaultShift1(true);
+                            } else {
+                              console.log(
+                                "Else condition for recent shift open",
+                                callback?.response?.Details
+                              );
+                              setRecentShiftOpen(
+                                callback?.response?.Details[0]
+                              );
+                              setShiftDetails(callback?.response?.Details[0]);
+                              setLoader(false);
+                            }
+                            // setRecentShiftOpen(callback?.response?.Details);
+                            // setShiftDetails(callback?.response?.Details[0]);
+                            // setLoader(false);
+
+                            toast.error(callback.error);
+                          } else {
+                            toast.error(callback.error);
+                            console.log("First error ");
+                          }
+                        }
+                      )
+                    );
+                  } else {
+                    console.log(
+                      "Else for check shift for user",
+                      callback?.response?.Details
+                    );
+                    setSHiftDetaislForUser(callback?.response?.Details);
+                    setRecentShiftOpen(callback?.response?.Details);
+                    setOutletId(callback?.response?.Details?.OutletId);
+                    setLoader(false);
+                    setCheckShift1Open(1);
+                    window.location.reload();
+                  }
+
+                  toast.error(callback.error);
+                } else {
+                  toast.error(callback.error);
+                  console.log("second error ");
+                }
+              }
+            )
+          );
           toast.success("Shift 2 is Re-opened");
         } else {
           toast.error(callback.error);
@@ -1538,6 +2233,89 @@ const Shifts = () => {
           console.log("Reopen  shift 3 called------------->", callback);
 
           setShiftDetails(callback?.response?.Details[0]);
+
+          dispatch(
+            checkShiftForUser(
+              checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
+              validateDetails?.Details?.Id,
+              validateDetails?.Details?.UserType,
+              loginDetails?.logindata?.Token,
+              (callback) => {
+                if (callback) {
+                  console.log(
+                    "check shift for user details",
+                    callback?.response?.Details
+                  );
+
+                  // setShiftDetails(callback?.response?.Details);
+                  // setLoader(false);
+                  setOutletId(callback?.response?.Details?.OutletId);
+
+                  if (callback?.response?.Details == null) {
+                    console.log("When check shift for user is null");
+                    dispatch(
+                      recentShiftForOutlet(
+                        !checkActiveOtlet
+                          ? activeDateOfOutlet?.OutletDate
+                          : today,
+
+                        loginDetails?.logindata?.Token,
+                        (callback) => {
+                          if (callback) {
+                            console.log(
+                              "Recent shift for outlet----------------------------------*********************************----- ->",
+                              callback?.response?.Details[0]
+                            );
+                            setLoader(false);
+                            setOutletId(callback?.response?.Details?.OutletId);
+
+                            if (callback?.response?.Details?.length == 0) {
+                              console.log("When length of details is 0");
+                              setDefaultShift1(true);
+                            } else {
+                              console.log(
+                                "Else condition for recent shift open",
+                                callback?.response?.Details
+                              );
+                              setRecentShiftOpen(
+                                callback?.response?.Details[0]
+                              );
+                              setShiftDetails(callback?.response?.Details[0]);
+                              setLoader(false);
+                            }
+                            // setRecentShiftOpen(callback?.response?.Details);
+                            // setShiftDetails(callback?.response?.Details[0]);
+                            // setLoader(false);
+
+                            toast.error(callback.error);
+                          } else {
+                            toast.error(callback.error);
+                            console.log("First error ");
+                          }
+                        }
+                      )
+                    );
+                  } else {
+                    console.log(
+                      "Else for check shift for user",
+                      callback?.response?.Details
+                    );
+                    setSHiftDetaislForUser(callback?.response?.Details);
+                    setRecentShiftOpen(callback?.response?.Details);
+                    setOutletId(callback?.response?.Details?.OutletId);
+                    setLoader(false);
+                    setCheckShift1Open(1);
+                    window.location.reload();
+                  }
+
+                  toast.error(callback.error);
+                } else {
+                  toast.error(callback.error);
+                  console.log("second error ");
+                }
+              }
+            )
+          );
           toast.success("Shift 3 is Re-opened");
         } else {
           toast.error(callback.error);
@@ -1587,25 +2365,62 @@ const Shifts = () => {
   const handleClose = () => {
     handleCloseShift();
 
-    if (shiftDetails?.ShiftOpen == 1 && shiftDetails?.ShiftTypeId == 1) {
+    if (
+      shiftDetailsForUser?.ShiftOpen == 1 &&
+      shiftDetailsForUser?.ShiftTypeId == 1
+    ) {
       closeShiftOne();
-    } else if (shiftDetails?.ShiftOpen == 1 && shiftDetails?.ShiftTypeId == 2) {
+    } else if (
+      shiftDetailsForUser?.ShiftOpen == 1 &&
+      shiftDetailsForUser?.ShiftTypeId == 2
+    ) {
       closeShiftTwo();
-    } else if (shiftDetails?.ShiftOpen == 1 && shiftDetails?.ShiftTypeId == 3) {
+    } else if (
+      shiftDetailsForUser?.ShiftOpen == 1 &&
+      shiftDetailsForUser?.ShiftTypeId == 3
+    ) {
       closeSHiftThree();
     }
   };
 
   const [showOpenShiftModal, setShowOpenShiftModal] = useState(false);
+  console.log("outletDetails from open shift modal", outletDetails);
 
   const handleOpenShift = () => {
     handleCloseOpenShift();
 
-    if (outletDetails === 1 && shiftDetails?.length == 0) {
+    console.log("Shift open button called");
+    console.log("outletDetails----->", outletDetails);
+    console.log("shiftDetailsForUser------>", shiftDetailsForUser);
+    console.log("recentShiftOpen---->", recentShiftOpen.length);
+
+    if (
+      (outletDetails === 1 &&
+        recentShiftOpen?.ShiftTypeId == 1 &&
+        recentShiftOpen?.ShiftOpen == 1 &&
+        recentShiftOpen?.UserId != loginDetails?.logindata?.UserId) ||
+      defaultShift1 == true ||
+      (outletDetails === 1 &&
+        shiftDetailsForUser?.ShiftTypeId == 1 &&
+        shiftDetailsForUser?.ShiftOpen == 0 &&
+        shiftDetailsForUser?.OpenTime == "")
+    ) {
       openShiftOne();
-    } else if (shiftDetails?.ShiftOpen == 0 && shiftDetails?.ShiftTypeId == 1) {
+    } else if (
+      (console.log("called here"),
+      shiftDetailsForUser?.ShiftOpen == 0 &&
+        shiftDetailsForUser?.ShiftTypeId == 1 &&
+        shiftDetailsForUser?.OpenTime != "" &&
+        shiftDetailsForUser?.CloseTime != "")
+    ) {
       openShiftTwo();
-    } else if (shiftDetails?.ShiftOpen == 0 && shiftDetails?.ShiftTypeId == 2) {
+    } else if (
+      (console.log("called here"),
+      shiftDetailsForUser?.ShiftOpen == 0 &&
+        shiftDetailsForUser?.ShiftTypeId == 2 &&
+        shiftDetailsForUser?.OpenTime != "" &&
+        shiftDetailsForUser?.CloseTime != "")
+    ) {
       openSHiftThree();
     }
   };
@@ -1613,8 +2428,9 @@ const Shifts = () => {
   const handleCloseOpenShift = () => setShowOpenShiftModal(false);
   const handleShowOpenShift = () => setShowOpenShiftModal(true);
 
-  console.log("shiftDetails?.ShiftOpen--------->", shiftDetails?.ShiftOpen);
-  console.log("shiftDetails?.ShiftOpen--------->", shiftDetails?.ShiftOpen);
+  console.log("Recent shift open---recent---->", recentShiftOpen);
+
+  console.log("shift Details For User------->", shiftDetailsForUser);
 
   return (
     <div>
@@ -1679,26 +2495,40 @@ const Shifts = () => {
                 </div>
 
                 <div className="card-footer">
-                  {shiftDetails?.ShiftOpen == 1 &&
-                  shiftDetails?.ShiftTypeId == 1 &&
-                  shiftDetails?.UserId == loginDetails?.logindata?.userId ? (
+                  {(outletDetails === 1 &&
+                    recentShiftOpen?.ShiftTypeId == 1 &&
+                    recentShiftOpen?.ShiftOpen == 1 &&
+                    recentShiftOpen?.userId ==
+                      loginDetails?.logindata?.userId) ||
+                  checkShift1Open == 1 ||
+                  (outletDetails === 1 &&
+                    shiftDetailsForUser?.ShiftTypeId == 1 &&
+                    shiftDetailsForUser?.ShiftOpen == 1) ? (
                     <button
                       className="btn btn-primary mr-2"
                       onClick={handleConfirmShow}
                       style={{ width: "100%" }}
                       disabled={
                         shiftDetails?.ShiftOpen == 0 &&
-                        shiftDetails?.ShiftTypeId == 0
+                        shiftDetails?.ShiftTypeId == 1
                       }
                     >
                       Close
                     </button>
                   ) : (
-                    <></>
+                    <p>Close for shift one</p>
                   )}
 
-                  {(outletDetails === 1 && shiftDetails?.length == 0) ||
-                  defaultShift1 === true ? (
+                  {(outletDetails === 1 &&
+                    recentShiftOpen?.ShiftTypeId == 1 &&
+                    recentShiftOpen?.ShiftOpen == 1 &&
+                    recentShiftOpen?.UserId !=
+                      loginDetails?.logindata?.UserId) ||
+                  defaultShift1 == true ||
+                  (outletDetails === 1 &&
+                    shiftDetailsForUser?.ShiftTypeId == 1 &&
+                    shiftDetailsForUser?.ShiftOpen == 0 &&
+                    shiftDetailsForUser?.OpenTime == "") ? (
                     <button
                       className={`btn ${
                         outletDetails === 1 ? "btn-primary" : "btn-secondary"
@@ -1706,22 +2536,25 @@ const Shifts = () => {
                       onClick={handleShowOpenShift}
                       style={{ width: "100%" }}
                       disabled={
-                        shiftDetails?.ShiftOpen == 0 &&
-                        shiftDetails?.ShiftTypeId == 0
+                        shiftDetails?.ShiftOpen == 0
+                        // &&
+                        // shiftDetails?.ShiftTypeId == 0
                       }
                     >
                       Open
                     </button>
                   ) : (
-                    <></>
+                    <p>open for shift 1</p>
                   )}
 
-                  {(shiftDetails?.ShiftOpen == 0 &&
-                    shiftDetails?.ShiftTypeId == 1) ||
-                  (shiftDetails?.ShiftOpen == 1 &&
-                    shiftDetails?.ShiftTypeId == 2) ||
-                  (shiftDetails?.ShiftOpen == 0 &&
-                    shiftDetails?.ShiftTypeId == 2) ? (
+                  {(shiftDetailsForUser?.ShiftOpen == 0 &&
+                    shiftDetailsForUser?.ShiftTypeId == 1 &&
+                    shiftDetailsForUser?.OpenTime != "" &&
+                    shiftDetailsForUser?.CloseTime != "") ||
+                  (recentShiftOpen?.ShiftOpen == 0 &&
+                    recentShiftOpen?.ShiftTypeId == 1 &&
+                    recentShiftOpen?.userId !=
+                      loginDetails?.logindata?.userId) ? (
                     <button
                       className={`btn ${
                         outletDetails === 1 ? "btn-primary" : "btn-secondary"
@@ -1749,8 +2582,14 @@ const Shifts = () => {
                 </div>
 
                 <div className="card-footer">
-                  {shiftDetails?.ShiftOpen == 1 &&
-                  shiftDetails?.ShiftTypeId == 2 ? (
+                  {(outletDetails === 1 &&
+                    recentShiftOpen?.ShiftTypeId == 2 &&
+                    recentShiftOpen?.ShiftOpen == 1 &&
+                    recentShiftOpen?.userId ==
+                      loginDetails?.logindata?.userId) ||
+                  (outletDetails === 1 &&
+                    shiftDetailsForUser?.ShiftTypeId == 2 &&
+                    shiftDetailsForUser?.ShiftOpen == 1) ? (
                     <button
                       className="btn btn-primary mr-2"
                       onClick={handleConfirmShow}
@@ -1766,8 +2605,20 @@ const Shifts = () => {
                     <></>
                   )}
 
-                  {shiftDetails?.ShiftOpen == 0 &&
-                  shiftDetails?.ShiftTypeId == 1 ? (
+                  {(outletDetails === 1 &&
+                    recentShiftOpen?.ShiftTypeId == 1 &&
+                    recentShiftOpen?.ShiftOpen == 0 &&
+                    recentShiftOpen?.UserId !=
+                      loginDetails?.logindata?.UserId) ||
+                  (outletDetails === 1 &&
+                    shiftDetailsForUser?.ShiftTypeId == 1 &&
+                    shiftDetailsForUser?.ShiftOpen == 0 &&
+                    recentShiftOpen?.UserId !=
+                      loginDetails?.logindata?.UserId) ||
+                  (shiftDetailsForUser?.ShiftOpen == 0 &&
+                    shiftDetailsForUser?.ShiftTypeId == 1 &&
+                    shiftDetailsForUser?.OpenTime != "" &&
+                    shiftDetailsForUser?.CloseTime != "") ? (
                     <button
                       className={`btn ${
                         outletDetails === 1 ? "btn-primary" : "btn-secondary"
@@ -1782,18 +2633,17 @@ const Shifts = () => {
                       Open
                     </button>
                   ) : (
-                    <></>
+                    <p>Open the shift</p>
                   )}
 
-                  {(shiftDetails?.ShiftOpen == 1 &&
-                    shiftDetails?.ShiftTypeId == 2 &&
-                    checkShift2Open) ||
-                  (shiftDetails?.ShiftOpen == 1 &&
-                    shiftDetails?.ShiftTypeId == 3) ||
-                  (shiftDetails?.ShiftOpen == 0 &&
-                    shiftDetails?.ShiftTypeId == 2) ||
-                  (shiftDetails?.ShiftOpen == 0 &&
-                    shiftDetails?.ShiftTypeId == 3) ? (
+                  {(shiftDetailsForUser?.ShiftOpen == 0 &&
+                    shiftDetailsForUser?.ShiftTypeId == 2 &&
+                    shiftDetailsForUser?.OpenTime != "" &&
+                    shiftDetailsForUser?.CloseTime != "") ||
+                  (shiftDetailsForUser?.ShiftOpen == 0 &&
+                    shiftDetailsForUser?.ShiftTypeId == 2 &&
+                    recentShiftOpen?.userId !=
+                      loginDetails?.logindata?.userId) ? (
                     <button
                       className={`btn ${
                         outletDetails === 1 ? "btn-primary" : "btn-secondary"
@@ -1824,8 +2674,14 @@ const Shifts = () => {
                 </div>
 
                 <div className="card-footer">
-                  {shiftDetails?.ShiftOpen == 1 &&
-                  shiftDetails?.ShiftTypeId == 3 ? (
+                  {(outletDetails === 1 &&
+                    recentShiftOpen?.ShiftTypeId == 3 &&
+                    recentShiftOpen?.ShiftOpen == 1 &&
+                    recentShiftOpen?.userId ==
+                      loginDetails?.logindata?.userId) ||
+                  (outletDetails === 1 &&
+                    shiftDetailsForUser?.ShiftTypeId == 3 &&
+                    shiftDetailsForUser?.ShiftOpen == 1) ? (
                     <button
                       className="btn btn-primary mr-2"
                       onClick={handleConfirmShow}
@@ -1841,8 +2697,15 @@ const Shifts = () => {
                     <></>
                   )}
 
-                  {shiftDetails?.ShiftOpen == 0 &&
-                  shiftDetails?.ShiftTypeId == 2 ? (
+                  {(outletDetails === 1 &&
+                    recentShiftOpen?.ShiftTypeId == 3 &&
+                    recentShiftOpen?.ShiftOpen == 1 &&
+                    recentShiftOpen?.UserId !=
+                      loginDetails?.logindata?.UserId) ||
+                  (shiftDetailsForUser?.ShiftOpen == 0 &&
+                    shiftDetailsForUser?.ShiftTypeId == 2 &&
+                    shiftDetailsForUser?.OpenTime != "" &&
+                    shiftDetailsForUser?.CloseTime != "") ? (
                     <button
                       className={`btn ${
                         outletDetails === 1 ? "btn-primary" : "btn-secondary"
@@ -1860,8 +2723,10 @@ const Shifts = () => {
                     <></>
                   )}
 
-                  {shiftDetails?.ShiftOpen == 0 &&
-                  shiftDetails?.ShiftTypeId == 3 ? (
+                  {shiftDetailsForUser?.ShiftOpen == 0 &&
+                  shiftDetailsForUser?.ShiftTypeId == 3 &&
+                  shiftDetailsForUser?.OpenTime != "" &&
+                  shiftDetailsForUser?.CloseTime != "" ? (
                     <button
                       className={`btn ${
                         outletDetails === 1 ? "btn-primary" : "btn-secondary"

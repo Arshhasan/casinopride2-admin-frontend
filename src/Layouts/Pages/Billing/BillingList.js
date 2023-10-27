@@ -37,7 +37,16 @@ const BillingList = () => {
 
   console.log(
     "loginDetails--------------{{{{{{{{{{{}}}}}}}}}}}}}}-------->",
-    loginDetails?.logindata?.userId
+    loginDetails?.logindata?.UserType
+  );
+
+  const activeDateOfOutlet = useSelector(
+    (state) => state.users?.saveOutletDate?.Details
+  );
+
+  console.log(
+    "activeDateOfOutlet---------->",
+    activeDateOfOutlet?.OutletStatus
   );
 
   const [userBookings, setUserBookings] = useState([]);
@@ -59,7 +68,7 @@ const BillingList = () => {
   const [futureDate, setFutureDate] = useState(
     loginDetails?.logindata?.UserType == 2 ||
       loginDetails?.logindata?.UserType == 3
-      ? todayDate
+      ? activeDateOfOutlet?.OutletDate
       : ""
   );
 
@@ -277,7 +286,7 @@ const BillingList = () => {
             setLoading(false);
             console.log(
               "Callback---------getNoShowGuestList",
-              callback?.response
+              callback?.response?.Details
             );
             setDisplayNoShowGuestList(callback?.response?.Details);
             // setFilteredBillingList(callback?.response?.Details);
@@ -607,7 +616,7 @@ const BillingList = () => {
         voidBillList === false &&
         noShowGuestList === false && ( //show all bills with filters
           <>
-            <div className="container">
+            <div>
               <div className="row">
                 {userId == 0 ? (
                   <div className="col-md-4 col-lg-3 mb-3">
@@ -752,16 +761,21 @@ const BillingList = () => {
                   </th>
 
                   <th scope="col" className="text-center table_heading">
-                    Time
+                    Date & Time
                   </th>
 
                   <th scope="col" className="text-center table_heading">
                     Shift
                   </th>
 
-                  <th scope="col" className="text-center table_heading">
-                    Void Bill
-                  </th>
+                  {loginDetails?.logindata?.UserType === 5 ||
+                  loginDetails?.logindata?.UserType === 1 ? (
+                    <th scope="col" className="text-center table_heading">
+                      Void Bill
+                    </th>
+                  ) : (
+                    <></>
+                  )}
                   <th scope="col" className="text-center table_heading">
                     Reprint Bill
                   </th>
@@ -825,30 +839,50 @@ const BillingList = () => {
                         )}
                       </td>
                       <td className="manager-list">
-                        {item?.Items[0]?.ActualAmount}
+                        {item?.Items[0]?.FinalPrice?.map((price, index) => (
+                          <li key={index} style={{ listStyleType: "none" }}>
+                            {price}
+                          </li>
+                        ))}
                       </td>
+
                       <td className="manager-list">
+                        {item?.Items[0]?.ActualBillingDate.slice(0, 10)}{" "}
                         {item?.Items[0]?.ActualBillingTime}
                       </td>
                       <td className="manager-list">
                         {item.ShiftId === 0 ? "-" : item.ShiftId}
                       </td>
-                      {item?.IsVoid == null || item?.IsVoid == 0 ? (
-                        <td style={{ textAlign: "center" }}>
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => openModal(item)}
-                          >
-                            Void Bill
-                          </button>
-                        </td>
+                      {loginDetails?.logindata?.UserType === 5 ||
+                      loginDetails?.logindata?.UserType === 1 ? (
+                        <>
+                          {" "}
+                          {item?.Items[0]?.IsVoid == null ||
+                          item?.Items[0]?.IsVoid == 0 ? (
+                            <td style={{ textAlign: "center" }}>
+                              <button
+                                className="btn btn-primary"
+                                onClick={() => openModal(item)}
+                              >
+                                Void Bill
+                              </button>
+                            </td>
+                          ) : (
+                            <td
+                              className="manager-list"
+                              style={{
+                                color:
+                                  item?.Items[0]?.IsVoid === 1
+                                    ? "red"
+                                    : "green",
+                              }}
+                            >
+                              {item?.Items[0]?.IsVoid == 1 ? "Void" : "Active"}
+                            </td>
+                          )}
+                        </>
                       ) : (
-                        <td
-                          className="manager-list"
-                          style={{ color: item.IsVoid === 1 ? "red" : "green" }}
-                        >
-                          {item.IsVoid == 1 ? "Void" : "Active"}
-                        </td>
+                        <></>
                       )}
 
                       <td style={{ textAlign: "center" }}>
@@ -883,17 +917,19 @@ const BillingList = () => {
                 <th scope="col" className="text-center table_heading">
                   Bill No
                 </th>
-                <th scope="col" className="text-center table_heading">
-                  Booking Id
-                </th>
+
                 <th scope="col" className="text-center table_heading">
                   Guest Name
                 </th>
-                <th scope="col" className="text-center table_heading">
-                  Phone
-                </th>
+
                 <th scope="col" className="text-center table_heading">
                   Package Name
+                </th>
+                <th scope="col" className="text-center table_heading">
+                  Billing Amount
+                </th>
+                <th scope="col" className="text-center table_heading">
+                  Date & Time
                 </th>
 
                 <th scope="col" className="text-center table_heading">
@@ -902,9 +938,14 @@ const BillingList = () => {
                 <th scope="col" className="text-center table_heading">
                   Status
                 </th>
-                <th scope="col" className="text-center table_heading">
-                  New Bill Id
-                </th>
+                {loginDetails?.logindata?.UserType === 5 ||
+                loginDetails?.logindata?.UserType === 1 ? (
+                  <th scope="col" className="text-center table_heading">
+                    New Bill Id
+                  </th>
+                ) : (
+                  <></>
+                )}
 
                 <th scope="col" className="text-center table_heading">
                   View more
@@ -948,14 +989,11 @@ const BillingList = () => {
                     <td className="manager-list">
                       {item?.Items[0]?.BillingId}
                     </td>
-                    <td className="manager-list ">
-                      {item?.Items[0]?.BookingId}
-                    </td>
 
                     <td className="manager-list ">
                       {item?.Items[0]?.GuestName}
                     </td>
-                    <td className="manager-list">{item?.Items[0]?.Phone}</td>
+
                     <td className="manager-list">
                       {item?.Items[0]?.PackageName ? (
                         JSON.parse(item?.Items[0]?.PackageName).map(
@@ -969,32 +1007,59 @@ const BillingList = () => {
                         <span>No package name available</span>
                       )}
                     </td>
+                    <td className="manager-list">
+                      {item?.Items[0]?.FinalPrice?.map((price, index) => (
+                        <li key={index} style={{ listStyleType: "none" }}>
+                          {price}
+                        </li>
+                      ))}
+                    </td>
+                    <td className="manager-list">
+                      {item?.Items[0]?.ActualBillingDate.slice(0, 10)}{" "}
+                      {item?.Items[0]?.ActualBillingTime}
+                    </td>
 
                     <td className="manager-list">
-                      {item.ShiftId === 0 ? "-" : item.ShiftId}
+                      {item?.Items[0]?.ShiftId === 0
+                        ? "-"
+                        : item?.Items[0]?.ShiftId}
                     </td>
                     <td
                       className="manager-list"
-                      style={{ color: item.IsVoid === 1 ? "red" : "green" }}
+                      style={{
+                        color: item?.Items[0]?.IsVoid === 1 ? "red" : "green",
+                      }}
                     >
-                      {item.IsVoid == 1 ? "Void" : "Active"}
+                      {item?.Items[0]?.IsVoid == 1 ? "Void" : "Active"}
                     </td>
-                    {item?.Items[0]?.NewBillId === null ||
-                    item?.Items[0]?.NewBillId === 0 ? (
-                      <td className="manager-list">
-                        <button
-                          className="btn btn-primary"
-                          onClick={() => handleShow(item?.Items[0])}
-                        >
-                          Add New Bill Id
-                        </button>
-                      </td>
+                    {loginDetails?.logindata?.UserType === 5 ||
+                    loginDetails?.logindata?.UserType === 1 ? (
+                      <>
+                        {" "}
+                        {item?.Items[0]?.NewBillId === null ||
+                        item?.Items[0]?.NewBillId === 0 ? (
+                          <td className="manager-list">
+                            <button
+                              className="btn btn-primary"
+                              onClick={() =>
+                                handleShow(item?.Items[0]?.Items[0])
+                              }
+                            >
+                              Add New Bill Id
+                            </button>
+                          </td>
+                        ) : (
+                          <td className="manager-list">
+                            {item?.Items[0]?.NewBillId}
+                          </td>
+                        )}
+                      </>
                     ) : (
-                      <td className="manager-list">{item.NewBillId}</td>
+                      <></>
                     )}
                     <td
                       className="manager-list"
-                      onClick={() => handleViewMore(item)}
+                      onClick={() => handleViewMore(item?.Items[0])}
                     >
                       <img src={more} className="more_img" />
                     </td>

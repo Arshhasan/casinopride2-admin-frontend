@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Oval } from "react-loader-spinner";
 import logo from "../../assets/Images/logo.png";
+import { connect, useSelector } from "react-redux";
 
 function LoginPage() {
   const dispatch = useDispatch();
@@ -18,6 +19,17 @@ function LoginPage() {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const loginDetails = useSelector(
+    (state) => state.auth?.userDetailsAfterLogin.Details
+  );
+
+  const validateDetails = useSelector(
+    (state) => state.auth?.userDetailsAfterValidation
+  );
+
+  console.log("Login Details------>", loginDetails?.logindata);
+  console.log("validate Details--->", validateDetails);
 
   const onsubmit = () => {
     setLoading(true);
@@ -29,8 +41,6 @@ function LoginPage() {
     dispatch(
       Login(data, (callback) => {
         if (callback.status) {
-          console.log("DEMO------------->", callback);
-
           toast.success("Welcome to casino pride");
           navigate("NewBooking");
           setLoading(false);
@@ -67,7 +77,7 @@ function LoginPage() {
             <h2 className="text-center subtitle mb-2">
               WELCOME BACK TO CASINO PRIDE{" "}
             </h2>
-            {/* <h3 className="text-center description mb-4">Have a great day</h3> */}
+
             <div className="form-group">
               <input
                 type="text"

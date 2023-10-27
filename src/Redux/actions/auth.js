@@ -5,10 +5,13 @@ import { saveOutletDetails } from "../reducers/auth";
 import moment from "moment";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { connect, useSelector } from "react-redux";
 
 console.log("Log from apin ", api);
 
 const today = moment().format("YYYY-MM-DD");
+
+console.log("loginDetails");
 
 export const Login = (data, callback) => async (dispatch) => {
   api.AUTH_PORT.post("/auth/validateuser", data)

@@ -478,7 +478,7 @@ const BillingDetails = () => {
               <h5 style={{ fontSize: "12px" }}>
                 CIN No: U55101GA2005PTC004274{" "}
               </h5>
-              <h5 style={{ fontSize: "12px" }}>PAN No: BACCG7450R</h5>
+              <h5 style={{ fontSize: "12px" }}>PAN No: AACCG7450R</h5>
               {item?.ItemDetails?.ItemTaxName[0] === "VAT" ? (
                 <h5 style={{ fontSize: "12px" }}>TIN No : 30220106332</h5>
               ) : (
@@ -493,12 +493,12 @@ const BillingDetails = () => {
               <div className="row">
                 <div className="col-6 bill-details">
                   <p className="BillPrintFont">
-                    GUEST NAME :
+                    Guest Name :
                     <span style={{ fontWeight: "bold" }}>{item.GuestName}</span>{" "}
                   </p>
                   {item.guestGSTIN ? (
                     <p className="BillPrintFont">
-                      GUEST GSTIN :{" "}
+                      Guest GSTIN :{" "}
                       <span
                         style={{ fontWeight: "bold" }}
                         className="BillPrintFont"
@@ -510,7 +510,7 @@ const BillingDetails = () => {
                     <></>
                   )}
                   <p className="BillPrintFont">
-                    GUEST Mobile :
+                    Guest Mobile :
                     <span
                       className="guest-mobile"
                       style={{ fontWeight: "bold" }}
@@ -520,7 +520,7 @@ const BillingDetails = () => {
                   </p>
                   {item.State ? (
                     <p className="BillPrintFont">
-                      GUEST Address:
+                      Guest Address:
                       <span
                         className="guest-state BillPrintFont"
                         style={{ fontWeight: "bold" }}
@@ -1373,11 +1373,11 @@ const BillingDetails = () => {
           onClick={SendDetailsToUser}
           disabled={loader}
         >
-          Send to User
+          Print
         </button>
       </div>
 
-      <div className="col-lg-6 mb-2 btn-lg mx-auto d-flex justify-content-center ">
+      {/* <div className="col-lg-6 mb-2 btn-lg mx-auto d-flex justify-content-center ">
         <button
           style={{ paddingLeft: "100px", paddingRight: "100px" }}
           type="submit"
@@ -1387,7 +1387,7 @@ const BillingDetails = () => {
         >
           Generate Pdf
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

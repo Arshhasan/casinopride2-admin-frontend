@@ -29,7 +29,8 @@ import checkcircle from "../../assets/Images/checkcircle.png";
 import { recentShiftForOutlet } from "../../Redux/actions/users";
 import { getEnabledPanelDiscount } from "../../Redux/actions/users";
 import { compose } from "@reduxjs/toolkit";
-
+import { Oval } from "react-loader-spinner";
+import { AddBillingDetails } from "../../Redux/actions/billing";
 const NewBooking = () => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -56,6 +57,11 @@ const NewBooking = () => {
   console.log(
     "outlet open Details-----------------|||||||||||||||||||||||||-->",
     outletOpenDetails
+  );
+
+  console.log(
+    "activeDateOfOutlet------------------>",
+    activeDateOfOutlet?.OutletStatus
   );
 
   const validateDetails = useSelector(
@@ -169,6 +175,8 @@ const NewBooking = () => {
   const [cardHoldersName, setcardHoldersName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
   const [cardType, setCardType] = useState("");
+
+  const [loader, setLoader] = useState(false);
   console.log("cardType------->", cardType);
 
   console.log("phone--------------->", phone);
@@ -373,7 +381,10 @@ const NewBooking = () => {
 
   console.log("usedCouponArr-------------->", usedCouponArr);
 
+  const today = moment().format("YYYY-MM-DD");
+
   const onsubmit = () => {
+    setLoader(true);
     console.log("Package ID ------->", [teenpackageId]);
     console.log("Package ID ------->", packageIds);
     const teenpackageIdArray = [];
@@ -483,9 +494,68 @@ const NewBooking = () => {
               couponCodeAppend();
             }
 
-            navigate("/GenerateBill", {
-              state: { userData: callback?.response?.Details },
-            });
+            const data = {
+              bookingId: callback?.response?.Details?.Id,
+              packageId: callback?.response?.Details?.PackageId,
+              packageGuestCount: callback?.response?.Details?.PackageGuestCount,
+              totalGuestCount: callback?.response?.Details?.TotalGuestCount,
+              bookingDate: callback?.response?.Details?.CreatedOn?.slice(0, 10),
+              billingDate: today,
+              teensCount: callback?.response?.Details?.NumOfTeens,
+              actualAmount: callback?.response?.Details?.ActualAmount,
+              amountAfterDiscount:
+                callback?.response?.Details?.AmountAfterDiscount,
+              discount: callback?.response?.Details?.PanelDiscount
+                ? callback?.response?.Details?.PanelDiscount
+                : callback?.response?.Details?.CouponDiscount,
+              packageWeekdayPrice:
+                callback?.response?.Details?.PackageWeekdayPrice,
+              packageWeekendPrice:
+                callback?.response?.Details?.PackageWeekendPrice,
+            };
+
+            console.log("data------------>", data);
+
+            dispatch(
+              AddBillingDetails(
+                loginDetails?.logindata?.Token,
+                data,
+                (callback) => {
+                  if (callback.status) {
+                    console.log(
+                      "Generate Bill --------------?",
+                      callback?.response?.Details[0]?.NumOfTeens,
+                      callback?.response?.Details[0]?.TotalGuestCount
+                    );
+
+                    if (
+                      callback?.response?.Details[0]?.NumOfTeens -
+                        callback?.response?.Details[0]?.TotalGuestCount ==
+                      0
+                    ) {
+                      navigate("/TeensBilling", {
+                        state: { BookingDetails: callback?.response?.Details },
+                      });
+                      setLoader(false);
+                    } else {
+                      navigate("/BillingDetails", {
+                        state: { BookingDetails: callback?.response?.Details },
+                      });
+                      setLoader(false);
+                    }
+
+                    toast.error(callback.error);
+                  } else {
+                    toast.error(callback.error);
+                    setLoader(false);
+                  }
+                }
+              )
+            );
+
+            // navigate("/GenerateBill", {
+            //   state: { userData: callback?.response?.Details },
+            // });
             // navigate(-1);
             toast.error(callback.error);
           } else {
@@ -1213,8 +1283,29 @@ const NewBooking = () => {
             </div>
             <div className="row">
               <div>
-                <Button onClick={onsubmit} className="confirmbtn">
+                {/* <Button onClick={onsubmit} className="confirmbtn">
                   Yes
+                </Button> */}
+
+                <Button
+                  className="confirmbtn"
+                  onClick={onsubmit}
+                  disabled={loader}
+                >
+                  {!loader ? (
+                    "Generate Bill"
+                  ) : (
+                    <Oval
+                      height={20}
+                      width={20}
+                      color="black"
+                      visible={true}
+                      ariaLabel="oval-loading"
+                      secondaryColor="black"
+                      strokeWidth={2}
+                      strokeWidthSecondary={2}
+                    />
+                  )}
                 </Button>
               </div>
               <div>

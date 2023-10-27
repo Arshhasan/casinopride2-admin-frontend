@@ -371,7 +371,7 @@ const TeensBilling = () => {
               <h5 style={{ fontSize: "12px" }}>
                 CIN No: U55101GA2005PTC004274{" "}
               </h5>
-              <h5 style={{ fontSize: "12px" }}>PAN No: BACCG7450R</h5>
+              <h5 style={{ fontSize: "12px" }}>PAN No: AACCG7450R</h5>
 
               <h3>TAX INVOICE</h3>
               <div className="row">

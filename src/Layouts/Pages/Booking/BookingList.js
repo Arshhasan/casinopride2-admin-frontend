@@ -19,6 +19,7 @@ import { updateBooking } from "../../../Redux/actions/booking";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import moment from "moment";
+import { AddBillingDetails } from "../../../Redux/actions/billing";
 
 const BookingList = () => {
   const dispatch = useDispatch();
@@ -187,11 +188,68 @@ const BookingList = () => {
     );
   };
 
+  const today = moment().format("YYYY-MM-DD");
+  console.log("Today------>", today);
+
+  const GenerateBill = (item) => {
+    console.log("Generate Bill--------->", item);
+
+    const data = {
+      bookingId: item.Id,
+      packageId: item.PackageId,
+      packageGuestCount: item.PackageGuestCount,
+      totalGuestCount: item.TotalGuestCount,
+      bookingDate: item.CreatedOn?.slice(0, 10),
+      billingDate: today,
+      teensCount: item.NumOfTeens,
+      actualAmount: item.ActualAmount,
+      amountAfterDiscount: item.AmountAfterDiscount,
+      discount: item.PanelDiscount ? item.PanelDiscount : item.CouponDiscount,
+      packageWeekdayPrice: JSON.stringify(item.PackageWeekdayPrice),
+      packageWeekendPrice: JSON.stringify(item.PackageWeekendPrice),
+    };
+
+    console.log("data------------>", data);
+
+    dispatch(
+      AddBillingDetails(loginDetails?.logindata?.Token, data, (callback) => {
+        if (callback.status) {
+          console.log(
+            "Generate Bill --------------?",
+            callback?.response?.Details[0]?.NumOfTeens,
+            callback?.response?.Details[0]?.TotalGuestCount
+          );
+
+          if (
+            callback?.response?.Details[0]?.NumOfTeens -
+              callback?.response?.Details[0]?.TotalGuestCount ==
+            0
+          ) {
+            navigate("/TeensBilling", {
+              state: { BookingDetails: callback?.response?.Details },
+            });
+            setLoader(false);
+          } else {
+            navigate("/BillingDetails", {
+              state: { BookingDetails: callback?.response?.Details },
+            });
+            setLoader(false);
+          }
+
+          toast.error(callback.error);
+        } else {
+          toast.error(callback.error);
+          setLoader(false);
+        }
+      })
+    );
+  };
+
   return (
     <div>
       <ToastContainer />
       <h3 className="mb-4">Booking List</h3>
-      <div className="container">
+      <div>
         <div className="row">
           <div className="col-md-6 col-lg-6 mb-3">
             <p style={{ fontWeight: "bold" }}>Search By Full Name</p>
@@ -248,6 +306,12 @@ const BookingList = () => {
               Guest Phone no
             </th>
             <th scope="col" className="text-center table_heading">
+              Packages
+            </th>
+            <th scope="col" className="text-center table_heading">
+              Package Amount
+            </th>
+            <th scope="col" className="text-center table_heading">
               Total Amount
             </th>
             <th scope="col" className="text-center table_heading">
@@ -255,6 +319,9 @@ const BookingList = () => {
             </th>
             <th scope="col" className="text-center table_heading">
               Update Booking
+            </th>
+            <th scope="col" className="text-center table_heading">
+              Generate Bill
             </th>
 
             <th scope="col" className="text-center table_heading">
@@ -298,14 +365,43 @@ const BookingList = () => {
               <tr key={item.id}>
                 <td className="manager-list ">{item.FullName}</td>
                 <td className="manager-list">{item.Phone}</td>
+                <td className="manager-list">
+                  {item?.PackageName ? (
+                    JSON.parse(item?.PackageName).map((item, index) => (
+                      <li key={index} style={{ listStyleType: "none" }}>
+                        {item}{" "}
+                      </li>
+                    ))
+                  ) : (
+                    <span>No package name available</span>
+                  )}
+                </td>
+
+                <td className="manager-list">
+                  {item?.FinalPrice?.map((price, index) => (
+                    <li key={index} style={{ listStyleType: "none" }}>
+                      {price}
+                    </li>
+                  ))}
+                </td>
                 <td className="manager-list">{item.ActualAmount}</td>
                 <td className="manager-list">{item.TotalGuestCount}</td>
+
                 <td className="manager-list">
                   <button
                     className="btn btn-primary"
                     onClick={() => startEditing(item)}
                   >
                     Update Booking
+                  </button>
+                </td>
+
+                <td className="manager-list">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => GenerateBill(item)}
+                  >
+                    Generate Bill
                   </button>
                 </td>
 
@@ -475,10 +571,10 @@ const BookingList = () => {
               <div className="col-6">
                 <p className="table-modal-list ">
                   Package Price:{" "}
-                  {selectedUserDetails.PackageName ? (
-                    JSON.parse(selectedUserDetails.PackageName).map(
-                      (item, index) => <span key={index}>{item} </span>
-                    )
+                  {selectedUserDetails.FinalPrice ? (
+                    selectedUserDetails.FinalPrice.map((item, index) => (
+                      <span key={index}>{item} </span>
+                    ))
                   ) : (
                     <span>No package name available</span>
                   )}
