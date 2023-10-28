@@ -32,6 +32,7 @@ const BookingList = () => {
 
   const [packageDetails, setPackageDetails] = useState([]);
   const [filterPackageDetails, setFilterPackageDetails] = useState([]);
+  const [loader, setLoader] = useState(true);
 
   const [userBookings, setUserBookings] = useState([]);
 

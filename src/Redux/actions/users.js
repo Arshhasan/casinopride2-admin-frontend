@@ -819,6 +819,7 @@ export const checkCurrentOutletFn =
 
 export const checkShiftForUser =
   (date, userId, userType, token, callback) => async (dispatch) => {
+    console.log("outlet day", date);
     api.CORE_PORT.get(
       `/core/checkShiftForUser?outletDate=${date}&userId=${userId}&userType=${userType}`,
       {
@@ -877,6 +878,7 @@ export const checkActiveOutlet = (token, callback) => async (dispatch) => {
 
 export const recentShiftForOutlet =
   (date, token, callback) => async (dispatch) => {
+    console.log("outlet date---->", date);
     api.CORE_PORT.get(`/core/recentShiftForOutlet?outletDate=${date}`, {
       headers: { AuthToken: token },
     })
