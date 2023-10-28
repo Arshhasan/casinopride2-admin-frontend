@@ -59,6 +59,18 @@ const SideNav = () => {
     );
   };
 
+  const bookingsLink = () => {
+    navigate("/BookingList");
+  };
+
+  const billingLink = () => {
+    navigate("/BillingList");
+  };
+
+  const ManagerLink = () => {
+    navigate("/ManagerList");
+  };
+
   const openModal = () => {
     setModalVisibility(true);
   };
@@ -99,7 +111,11 @@ const SideNav = () => {
             {loginDetails?.logindata?.UserType == "1" ||
             loginDetails?.logindata?.UserType == "3" ||
             loginDetails?.logindata?.UserType == "2" ? (
-              <Nav.Item eventKey="10" icon={<TagNumberIcon />}>
+              <Nav.Item
+                eventKey="10"
+                icon={<TagNumberIcon />}
+                onClick={() => navigate("/Shifts")}
+              >
                 <Link to="/Shifts" className="links">
                   Shifts
                 </Link>
@@ -110,7 +126,7 @@ const SideNav = () => {
             {loginDetails?.logindata?.UserType == "1" ||
             loginDetails?.logindata?.UserType == "3" ||
             loginDetails?.logindata?.UserType == "2" ? (
-              <Nav.Item eventKey="1" icon={<PageIcon />}>
+              <Nav.Item eventKey="1" icon={<PageIcon />} onClick={bookingsLink}>
                 <Link to="/BookingList" className="links">
                   Bookings
                 </Link>
@@ -122,7 +138,7 @@ const SideNav = () => {
             {loginDetails?.logindata?.UserType == "1" ||
             loginDetails?.logindata?.UserType == "7" ||
             loginDetails?.logindata?.UserType == "3" ? (
-              <Nav.Item eventKey="6" icon={<PageIcon />}>
+              <Nav.Item eventKey="6" icon={<PageIcon />} onClick={billingLink}>
                 <Link to="/BillingList" className="links">
                   Billing
                 </Link>
@@ -149,33 +165,45 @@ const SideNav = () => {
                 title="Users"
                 icon={<AdminIcon />}
               >
-                <Nav.Item eventKey="3-1">
+                <Nav.Item
+                  eventKey="3-1"
+                  onClick={() => navigate("/ManagerList")}
+                >
                   <Link to="/ManagerList" className="links">
                     Manager
                   </Link>
                 </Nav.Item>
-                <Nav.Item eventKey="3-2">
+                <Nav.Item eventKey="3-2" onClick={() => navigate("/GREList")}>
                   <Link to="/GREList" className="links">
                     GRE
                   </Link>
                 </Nav.Item>
-                <Nav.Item eventKey="3-3">
+                <Nav.Item
+                  eventKey="3-3"
+                  onClick={() => navigate("/MasterAgent")}
+                >
                   {" "}
                   <Link to="/MasterAgent" className="links">
                     Master Agent
                   </Link>
                 </Nav.Item>
-                <Nav.Item eventKey="3-4">
+                <Nav.Item eventKey="3-4" onClick={() => navigate("/AgentList")}>
                   <Link to="/AgentList" className="links">
                     Travel Agent
                   </Link>
                 </Nav.Item>
-                <Nav.Item eventKey="3-4">
+                <Nav.Item
+                  eventKey="3-4"
+                  onClick={() => navigate("/DriverList")}
+                >
                   <Link to="/DriverList" className="links">
                     Local Agent
                   </Link>
                 </Nav.Item>
-                <Nav.Item eventKey="3-4">
+                <Nav.Item
+                  eventKey="3-4"
+                  onClick={() => navigate("/AccountsList")}
+                >
                   <Link to="/AccountsList" className="links">
                     Accounts
                   </Link>
@@ -186,7 +214,11 @@ const SideNav = () => {
             )}
             {loginDetails?.logindata?.UserType == "1" ||
             loginDetails?.logindata?.UserType == "4" ? (
-              <Nav.Item eventKey="6" icon={<CouponIcon />}>
+              <Nav.Item
+                eventKey="6"
+                icon={<CouponIcon />}
+                onClick={() => navigate("/CouponsList")}
+              >
                 <Link to="/CouponsList" className="links">
                   Coupons
                 </Link>
@@ -197,7 +229,11 @@ const SideNav = () => {
 
             {loginDetails?.logindata?.UserType == "1" ||
             loginDetails?.logindata?.UserType == "4" ? (
-              <Nav.Item eventKey="7" icon={<ThreeColumnsIcon />}>
+              <Nav.Item
+                eventKey="7"
+                icon={<ThreeColumnsIcon />}
+                onClick={() => navigate("/PackageList")}
+              >
                 <Link to="/PackageList" className="links">
                   Packages
                 </Link>
@@ -207,7 +243,11 @@ const SideNav = () => {
             )}
 
             {loginDetails?.logindata?.UserType == "1" ? (
-              <Nav.Item eventKey="71" icon={<ThreeColumnsIcon />}>
+              <Nav.Item
+                eventKey="71"
+                icon={<ThreeColumnsIcon />}
+                onClick={() => navigate("/AgentSettlementList")}
+              >
                 <Link to="/AgentSettlementList" className="links">
                   Agent Settlement
                 </Link>
@@ -218,7 +258,11 @@ const SideNav = () => {
 
             {loginDetails?.logindata?.UserType == "1" ||
             loginDetails?.logindata?.UserType == "4" ? (
-              <Nav.Item eventKey="7" icon={<CalendarIcon />}>
+              <Nav.Item
+                eventKey="7"
+                icon={<CalendarIcon />}
+                onClick={() => navigate("/FutureBookingDates")}
+              >
                 <Link to="/FutureBookingDates" className="links">
                   Future Booking Dates
                 </Link>
@@ -236,7 +280,10 @@ const SideNav = () => {
               >
                 {loginDetails?.logindata?.UserType == "4" ||
                 loginDetails?.logindata?.UserType == "1" ? (
-                  <Nav.Item eventKey="3-1">
+                  <Nav.Item
+                    eventKey="3-1"
+                    onClick={() => navigate("/Discountonwebsite")}
+                  >
                     <Link to="/Discountonwebsite" className="links">
                       Website Discounts
                     </Link>
@@ -244,7 +291,10 @@ const SideNav = () => {
                 ) : (
                   <></>
                 )}
-                <Nav.Item eventKey="3-2">
+                <Nav.Item
+                  eventKey="3-2"
+                  onClick={() => navigate("/DiscountOnPanel")}
+                >
                   <Link to="/DiscountOnPanel" className="links">
                     Panel Discounts
                   </Link>
