@@ -246,6 +246,11 @@ const BookingList = () => {
     );
   };
 
+  console.log(
+    "filteredUserBookings--------------------->",
+    filteredUserBookings
+  );
+
   return (
     <div>
       <ToastContainer />
@@ -398,12 +403,16 @@ const BookingList = () => {
                 </td>
 
                 <td className="manager-list">
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => GenerateBill(item)}
-                  >
-                    Generate Bill
-                  </button>
+                  {item?.FutureDate == today ? (
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => GenerateBill(item)}
+                    >
+                      Generate Bill
+                    </button>
+                  ) : (
+                    <p>-</p>
+                  )}
                 </td>
 
                 {/* <td className="manager-list">

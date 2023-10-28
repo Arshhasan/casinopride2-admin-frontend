@@ -31,6 +31,7 @@ import { getEnabledPanelDiscount } from "../../Redux/actions/users";
 import { compose } from "@reduxjs/toolkit";
 import { Oval } from "react-loader-spinner";
 import { AddBillingDetails } from "../../Redux/actions/billing";
+import { checkActiveOutlet } from "../../Redux/actions/users";
 const NewBooking = () => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -72,48 +73,99 @@ const NewBooking = () => {
   const outletFormattedData = parsedDate.format("YYYY-MM-DD");
 
   const [shiftDetails, setShiftDetails] = useState("");
+  const [checkActiveOtlet, setCheckActiveOutlet] = useState();
 
   useEffect(() => {
+    // dispatch(
+    //   checkShiftForUser(
+    //     activeDateOfOutlet?.OutletDate,
+    //     loginDetails?.logindata?.userId,
+    //     loginDetails?.logindata?.UserType,
+    //     loginDetails?.logindata?.Token,
+    //     (callback) => {
+    //       if (callback) {
+    //         console.log(
+    //           "Callback from shifts for user NEW BOOKING-------------->",
+    //           callback?.response?.Details
+    //         );
+    //         setShiftDetails(callback?.response?.Details);
+
+    //         if (callback?.response?.Details == null) {
+    //           dispatch(
+    //             recentShiftForOutlet(
+    //               activeDateOfOutlet?.OutletDate,
+
+    //               loginDetails?.logindata?.Token,
+    //               (callback) => {
+    //                 if (callback) {
+    //                   console.log(
+    //                     "Recent shift for outlet       NEW BOOKING-------------------------------------- ->",
+    //                     callback?.response?.Details
+    //                   );
+    //                   setShiftDetails(callback?.response?.Details);
+
+    //                   toast.error(callback.error);
+    //                 } else {
+    //                   toast.error(callback.error);
+    //                 }
+    //               }
+    //             )
+    //           );
+    //         }
+
+    //         toast.error(callback.error);
+    //       } else {
+    //         toast.error(callback.error);
+    //       }
+    //     }
+    //   )
+    // );
+
     dispatch(
-      checkShiftForUser(
-        activeDateOfOutlet?.OutletDate,
-        loginDetails?.logindata?.userId,
-        loginDetails?.logindata?.UserType,
+      checkActiveOutlet(loginDetails?.logindata?.Token, (callback) => {
+        if (callback.status) {
+          console.log("check active outlet--->", callback?.response?.Details);
+
+          if (callback?.response?.Details == null) {
+            setCheckActiveOutlet(false);
+            setLoader(false);
+          } else {
+            setCheckActiveOutlet(
+              callback?.response?.Details?.OutletDate == today ? true : false
+            );
+          }
+        } else {
+          toast.error(callback.error);
+        }
+      })
+    );
+
+    dispatch(
+      recentShiftForOutlet(
+        !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
         loginDetails?.logindata?.Token,
         (callback) => {
           if (callback) {
             console.log(
-              "Callback from shifts for user NEW BOOKING-------------->",
+              "Recent shift for outlet----------------------------------*********************************----- ->",
               callback?.response?.Details
             );
-            setShiftDetails(callback?.response?.Details);
 
-            if (callback?.response?.Details == null) {
-              dispatch(
-                recentShiftForOutlet(
-                  activeDateOfOutlet?.OutletDate,
-
-                  loginDetails?.logindata?.Token,
-                  (callback) => {
-                    if (callback) {
-                      console.log(
-                        "Recent shift for outlet       NEW BOOKING-------------------------------------- ->",
-                        callback?.response?.Details
-                      );
-                      setShiftDetails(callback?.response?.Details);
-
-                      toast.error(callback.error);
-                    } else {
-                      toast.error(callback.error);
-                    }
-                  }
-                )
+            if (callback?.response?.Details?.length == 0) {
+              setShiftDetails(callback?.response?.Details);
+              setLoader(false);
+            } else {
+              console.log(
+                "Else condition for recent shift open",
+                callback?.response?.Details
               );
-            }
 
-            toast.error(callback.error);
+              setShiftDetails(callback?.response?.Details[0]);
+
+              setLoader(false);
+            }
           } else {
-            toast.error(callback.error);
+            console.log("Nothing");
           }
         }
       )

@@ -804,7 +804,7 @@ const Shifts = () => {
                         setLoader(false);
                       }
                     } else {
-                      toast.error(callback.error);
+                      // toast.error(callback.error);
                     }
                   }
                 )
@@ -819,9 +819,9 @@ const Shifts = () => {
               setLoader(false);
             }
 
-            toast.error(callback.error);
+            // toast.error(callback.error);
           } else {
-            toast.error(callback.error);
+            // toast.error(callback.error);
           }
         }
       )
@@ -839,7 +839,7 @@ const Shifts = () => {
             );
             setOutletDetails(callback?.response?.Details[0]?.OutletStatus);
           } else {
-            toast.error(callback.error);
+            // toast.error(callback.error);
           }
         }
       )
@@ -1816,7 +1816,7 @@ const Shifts = () => {
               </div>
               <div className={`card ${isOpen ? "open" : "closed"}`}>
                 <div className="card-header">
-                  <h5 className="mb-0">Open the shift one</h5>1
+                  <h5 className="mb-0">Open the shift one</h5>
                 </div>
 
                 <div className="card-footer">
