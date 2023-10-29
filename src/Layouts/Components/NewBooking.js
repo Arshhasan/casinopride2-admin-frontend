@@ -444,14 +444,72 @@ const NewBooking = () => {
     teenpackageIdArray.push(teenpackageId);
     if (guestName == "" || phone === "" || address == "") {
       toast.warning("Please fill all the fields");
+      setLoader(false);
+      handleClose();
     } else if (paymentOption == "") {
       toast.warning("Please select the payment option");
+      setLoader(false);
+      handleClose();
     } else if (!isValidEmail(email)) {
       toast.warning("Please enter a valid email address");
+      setLoader(false);
+      handleClose();
     } else if (guestName.length > 80) {
       toast.warning("Guest name is too long");
+      setLoader(false);
+      handleClose();
     } else if (guestName.address > 100) {
-      toast.warning("Guest name is too long");
+      toast.warning("Guest address is too long");
+      setLoader(false);
+      handleClose();
+    } else if (
+      paymentOption == "Card" &&
+      cardType == "" &&
+      cardNumber == "" &&
+      cardHoldersName == "" &&
+      cardAmount == ""
+    ) {
+      toast.warning("Please enter all card details");
+      setLoader(false);
+      handleClose();
+    } else if (paymentOption == "Online (UPI)" && upiAmount == "") {
+      toast.warning("Please enter upi details");
+      setLoader(false);
+      handleClose();
+    } else if (
+      paymentOption == "Part Card / Part Cash" &&
+      cardType == "" &&
+      cardNumber == "" &&
+      cardHoldersName == "" &&
+      cardAmount == "" &&
+      cashAmount == ""
+    ) {
+      toast.warning("Please enter all the details");
+      setLoader(false);
+      handleClose();
+    } else if (
+      paymentOption == "Part Card / Part Online (UPI)" &&
+      cardType == "" &&
+      cardNumber == "" &&
+      cardHoldersName == "" &&
+      cardAmount == "" &&
+      upiAmount == ""
+    ) {
+      toast.warning("Please enter all the details");
+      setLoader(false);
+      handleClose();
+    } else if (
+      paymentOption == "Part Cash / Part Online (UPI)" &&
+      cashAmount == "" &&
+      upiAmount == ""
+    ) {
+      toast.warning("Please enter all the details");
+      setLoader(false);
+      handleClose();
+    } else if (paymentOption == "Cash" && cashAmount == "") {
+      toast.warning("Please enter the cash amount");
+      setLoader(false);
+      handleClose();
     } else {
       const data = {
         guestName: guestName,
@@ -494,6 +552,7 @@ const NewBooking = () => {
             : 0,
         actualAmount: amount,
         paymentMode: paymentOption,
+        cardAmount: cardAmount,
 
         // amountAfterDiscount:
         //   amountAfterDiscount == "" ? amount : amountAfterDiscount,
@@ -969,7 +1028,7 @@ const NewBooking = () => {
           <div className="row">
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
-                Cash Amount
+                Cash Amount <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 class="form-control mt-2"
@@ -984,10 +1043,10 @@ const NewBooking = () => {
         )}
 
         {paymentOption == "Card" ? (
-          <div className="row">
+          <>
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
-                Card Amount
+                Card Amount <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 class="form-control mt-2"
@@ -998,7 +1057,7 @@ const NewBooking = () => {
             </div>
             <div className="col-lg-6 mt-3">
               <label htmlFor="formGroupExampleInput" className="form_text">
-                Card Holder's Name
+                Card Holder's Name <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 className="form-control mt-2"
@@ -1010,7 +1069,7 @@ const NewBooking = () => {
 
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
-                Card Type
+                Card Type <span style={{ color: "red" }}>*</span>
               </label>
               <select
                 id="dropdown"
@@ -1019,14 +1078,14 @@ const NewBooking = () => {
                 onChange={(e) => setCardType(e.target.value)}
               >
                 <option value="">Select...</option>
-                <option value="Visa card">Visa card </option>
-                <option value="MasterCard">MasterCard </option>
-                <option value="Rupay Card">Rupay Card </option>
+                <option value="VISA">Visa card </option>
+                <option value="MAST">MasterCard </option>
+                <option value="Rupay">Rupay Card </option>
               </select>
             </div>
             <div className="col-lg-6 mt-3">
               <label htmlFor="formGroupExampleInput" className="form_text">
-                Card Number
+                Card Number <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 className="form-control mt-2"
@@ -1035,12 +1094,10 @@ const NewBooking = () => {
                 onChange={(e) => setCardNumber(e.target.value)}
               />
             </div>
-          </div>
+          </>
         ) : (
           <></>
         )}
-
-        {paymentOption === "Card" ? <div className="row"></div> : <></>}
 
         {paymentOption == "Online (UPI)" ? (
           <div className="row">
@@ -1061,10 +1118,10 @@ const NewBooking = () => {
         )}
 
         {paymentOption == "Part Card / Part Cash" ? (
-          <div className="row">
+          <>
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
-                Part Card
+                Part Card Amount <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 class="form-control mt-2"
@@ -1073,9 +1130,21 @@ const NewBooking = () => {
                 onChange={(e) => setCardAmount(e.target.value)}
               />
             </div>
+
+            <div className="col-lg-6 mt-3">
+              <label for="formGroupExampleInput " className="form_text">
+                Part Cash Amount <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                class="form-control mt-2"
+                type="text"
+                placeholder="Enter the amount"
+                onChange={(e) => setCashAmount(e.target.value)}
+              />
+            </div>
             <div className="col-lg-6 mt-3">
               <label htmlFor="formGroupExampleInput" className="form_text">
-                Card Holder's Name
+                Card Holder's Name <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 className="form-control mt-2"
@@ -1086,7 +1155,7 @@ const NewBooking = () => {
             </div>
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
-                Card Type
+                Card Type <span style={{ color: "red" }}>*</span>
               </label>
               <select
                 id="dropdown"
@@ -1095,14 +1164,14 @@ const NewBooking = () => {
                 onChange={(e) => setCardType(e.target.value)}
               >
                 <option value="">Select...</option>
-                <option value="Visa card">Visa card </option>
-                <option value="MasterCard">MasterCard </option>
-                <option value="Rupay Card">Rupay Card </option>
+                <option value="VISA">Visa card </option>
+                <option value="MAST">MasterCard </option>
+                <option value="Rupay">Rupay Card </option>
               </select>
             </div>
             <div className="col-lg-6 mt-3">
               <label htmlFor="formGroupExampleInput" className="form_text">
-                Card Number
+                Card Number <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 className="form-control mt-2"
@@ -1111,27 +1180,16 @@ const NewBooking = () => {
                 onChange={(e) => setCardNumber(e.target.value)}
               />
             </div>
-            <div className="col-lg-6 mt-3">
-              <label for="formGroupExampleInput " className="form_text">
-                Part Cash
-              </label>
-              <input
-                class="form-control mt-2"
-                type="text"
-                placeholder="Enter the amount"
-                onChange={(e) => setCashAmount(e.target.value)}
-              />
-            </div>
-          </div>
+          </>
         ) : (
           <></>
         )}
 
         {paymentOption == "Part Card / Part Online (UPI)" ? (
-          <div className="row">
+          <>
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
-                Part Card
+                Part Card Amount <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 class="form-control mt-2"
@@ -1142,7 +1200,7 @@ const NewBooking = () => {
             </div>
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
-                Part Online(UPI)
+                Part Online(UPI) Amount <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 class="form-control mt-2"
@@ -1151,16 +1209,55 @@ const NewBooking = () => {
                 onChange={(e) => setUpiAmount(e.target.value)}
               />
             </div>
-          </div>
+
+            <div className="col-lg-6 mt-3">
+              <label htmlFor="formGroupExampleInput" className="form_text">
+                Card Holder's Name <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                className="form-control mt-2"
+                type="text"
+                placeholder="Enter the card holder's name"
+                onChange={(e) => setcardHoldersName(e.target.value)}
+              />
+            </div>
+            <div className="col-lg-6 mt-3">
+              <label for="formGroupExampleInput " className="form_text">
+                Card Type <span style={{ color: "red" }}>*</span>
+              </label>
+              <select
+                id="dropdown"
+                class="form-control mt-2"
+                value={cardType}
+                onChange={(e) => setCardType(e.target.value)}
+              >
+                <option value="">Select...</option>
+                <option value="VISA">Visa card </option>
+                <option value="MAST">MasterCard </option>
+                <option value="Rupay">Rupay Card </option>
+              </select>
+            </div>
+            <div className="col-lg-6 mt-3">
+              <label htmlFor="formGroupExampleInput" className="form_text">
+                Card Number <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                className="form-control mt-2"
+                type="text"
+                placeholder="Enter the card number"
+                onChange={(e) => setCardNumber(e.target.value)}
+              />
+            </div>
+          </>
         ) : (
           <></>
         )}
 
         {paymentOption == "Part Cash / Part Online (UPI)" ? (
-          <div className="row">
+          <>
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
-                Part Cash
+                Part Cash <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 class="form-control mt-2"
@@ -1171,7 +1268,7 @@ const NewBooking = () => {
             </div>
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
-                Part Online(UPI)
+                Part Online(UPI) <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 class="form-control mt-2"
@@ -1180,7 +1277,7 @@ const NewBooking = () => {
                 onChange={(e) => setUpiAmount(e.target.value)}
               />
             </div>
-          </div>
+          </>
         ) : (
           <></>
         )}
@@ -1288,7 +1385,7 @@ const NewBooking = () => {
           {referredByToggle || discountToggle ? (
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
-                Referred By
+                Referred By <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 class="form-control mt-2"
