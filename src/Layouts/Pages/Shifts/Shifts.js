@@ -88,8 +88,8 @@ const Shifts = () => {
   const [shiftDetailsForUser, setSHiftDetaislForUser] = useState();
   const [closeShiftButton, setCloseShiftButton] = useState(false);
   const [openCloseOtletModal, setOpenCloseOutletModal] = useState(false);
-  const [showGenerateCashierModal,setShowGenerateCashierModal] = useState(false)
-
+  const [showGenerateCashierModal, setShowGenerateCashierModal] =
+    useState(false);
 
   const openOutletModal = () => {
     setOutletModalOpen(true);
@@ -706,7 +706,7 @@ const Shifts = () => {
           setShiftDetails("");
           setOutletDetails(callback?.response?.Details?.OutletStatus);
           toast.success("Outlet  is Closed");
-          setShowGenerateCashierModal(true)
+          setShowGenerateCashierModal(true);
           // window.location.reload();
         } else {
           toast.error(callback.error);
@@ -714,7 +714,6 @@ const Shifts = () => {
       })
     );
   };
-
 
   const OpenCLoseOutletModalFn = () => {
     setOpenCloseOutletModal(true);
@@ -1513,7 +1512,7 @@ const Shifts = () => {
                     className={`btn ${
                       outletDetails === 1 ? "btn-primary" : "btn-secondary"
                     } mr-2`}
-                    onClick={handleShowOpenShift}
+                    onClick={handleConfirmShow}
                     style={{ width: "100%" }}
                   >
                     close
@@ -1887,8 +1886,12 @@ const Shifts = () => {
           </div>
         );
       } else if (
-        recentShiftOpen[0]?.ShiftTypeId == 3 &&
-        recentShiftOpen[0]?.ShiftOpen == 1
+        (recentShiftOpen[0]?.ShiftTypeId == 3 &&
+          recentShiftOpen[0]?.ShiftOpen == 1) ||
+        (recentShiftOpen[0]?.ShiftTypeId == 2 &&
+          recentShiftOpen[0]?.ShiftOpen == 0 &&
+          recentShiftOpen[0]?.OpenTime != "" &&
+          recentShiftOpen[0]?.CloseTime != "")
       ) {
         return (
           <div className="row">
@@ -1949,8 +1952,12 @@ const Shifts = () => {
           </div>
         );
       } else if (
-        recentShiftOpen[0]?.ShiftTypeId == 2 &&
-        recentShiftOpen[0]?.ShiftOpen == 1
+        (recentShiftOpen[0]?.ShiftTypeId == 2 &&
+          recentShiftOpen[0]?.ShiftOpen == 1) ||
+        (recentShiftOpen[0]?.ShiftTypeId == 1 &&
+          recentShiftOpen[0]?.ShiftOpen == 0 &&
+          recentShiftOpen[0]?.OpenTime != "" &&
+          recentShiftOpen[0]?.CloseTime != "")
       ) {
         return (
           <div className="row">
@@ -2113,7 +2120,7 @@ const Shifts = () => {
   };
 
   const generateCashierReport = () => {
-    console.log('outletFormattedData>>',outletFormattedData);
+    console.log("outletFormattedData>>", outletFormattedData);
     dispatch(
       cashierReport(
         loginDetails?.logindata?.Token,
@@ -2123,7 +2130,7 @@ const Shifts = () => {
             // setLoading(false);
             console.log("cashierReport--->>", callback?.response);
             window.open(callback?.response?.Details?.ReportFile, "_blank");
-            setShowGenerateCashierModal(false)
+            setShowGenerateCashierModal(false);
             window.location.reload();
           } else {
             console.log("cashierReport>>>Callback------", callback.error);
@@ -2134,10 +2141,10 @@ const Shifts = () => {
     );
   };
 
-  const closeCashierReportModal = ()=>{
-    setShowGenerateCashierModal(false)
+  const closeCashierReportModal = () => {
+    setShowGenerateCashierModal(false);
     window.location.reload();
-  }
+  };
   return (
     <div>
       {loader ? (
@@ -2184,9 +2191,9 @@ const Shifts = () => {
                   Close Outlet
                 </Button>
               </div>
-          ) : (
+            ) : (
               <></>
-            )} 
+            )}
           </div>
 
           {shiftOneComponent({
@@ -2376,9 +2383,7 @@ const Shifts = () => {
             </div>
           </div>
         </Modal.Body>
-
       </Modal>
-
 
       <Modal
         show={showGenerateCashierModal}
@@ -2389,24 +2394,27 @@ const Shifts = () => {
           <div className="row">
             {/* <img src={xcircle} alt="Check Circle" className="check-circle" /> */}
             <p className="outletTitle">Generate Cashier Report</p>
-            <p className="outletTex">
-              Generate Cashier Report
-            </p>
+            <p className="outletTex">Generate Cashier Report</p>
           </div>
           <div className="row">
             <div>
-              <Button onClick={generateCashierReport} className="closeConfirmBtn">
+              <Button
+                onClick={generateCashierReport}
+                className="closeConfirmBtn"
+              >
                 Generate
               </Button>
             </div>
             <div>
-              <Button onClick={closeCashierReportModal} className="closecancelBtn">
+              <Button
+                onClick={closeCashierReportModal}
+                className="closecancelBtn"
+              >
                 Cancel
               </Button>
             </div>
           </div>
         </Modal.Body>
-
       </Modal>
 
       <Modal show={showConfirmModal} onHide={handleConfirmClose}>

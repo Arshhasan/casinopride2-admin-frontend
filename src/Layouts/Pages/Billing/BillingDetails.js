@@ -218,7 +218,7 @@ const BillingDetails = () => {
 
         console.log(
           "BookingDetails[0]?.BillingId------newww-->",
-          BookingDetails[0]?.BillingId
+          BookingDetails[0]?.BookingId
         );
 
         formData.forEach((value, key) => {
@@ -352,6 +352,7 @@ const BillingDetails = () => {
                           sendEmail(data, (callback) => {
                             if (callback.status) {
                               toast.success("Email sent");
+                              navigate("/NewBooking");
 
                               toast.error(callback.error);
                             } else {
@@ -456,6 +457,8 @@ const BillingDetails = () => {
       SendDetailsToUser();
     },
   });
+
+  useEffect(() => {}, []);
 
   return (
     <div>
@@ -572,7 +575,7 @@ const BillingDetails = () => {
                         {item.Phone}
                       </span>
                     </p>
-                    {item.State ? (
+                    {item.State || item?.Address || item?.Country ? (
                       <p className="BillPrintFont">
                         Guest Address:
                         <span
@@ -580,7 +583,7 @@ const BillingDetails = () => {
                           style={{ fontWeight: "bold" }}
                         >
                           {" "}
-                          {item?.Address} {item.State}- {item?.Country}
+                          {item?.Address} {item.State} {item?.Country}
                         </span>
                       </p>
                     ) : (

@@ -36,7 +36,7 @@ const AcknowledgementDetails = () => {
           if (callback.status) {
             console.log(
               "Callback---------get user bookings",
-              callback?.response?.Details.PackageId
+              callback?.response?.Details
             );
 
             const data = {
@@ -44,7 +44,7 @@ const AcknowledgementDetails = () => {
               packageId: callback?.response?.Details.PackageId,
               packageGuestCount: callback?.response?.Details.PackageGuestCount,
               totalGuestCount: callback?.response?.Details.TotalGuestCount,
-              bookingDate: callback?.response?.Details.CreatedOn?.slice(0, 10),
+              bookingDate: callback?.response?.Details?.FutureDate,
               billingDate: today,
               teensCount: callback?.response?.Details.NumOfTeens,
               actualAmount: callback?.response?.Details.ActualAmount,
@@ -52,14 +52,16 @@ const AcknowledgementDetails = () => {
                 callback?.response?.Details.AmountAfterDiscount,
               discount: callback?.response?.Details.PanelDiscount
                 ? callback?.response?.Details.PanelDiscount
+                : callback?.response?.Details.WebsiteDiscount
+                ? callback?.response?.Details.WebsiteDiscount
                 : callback?.response?.Details.CouponDiscount,
-              packageWeekdayPrice: JSON.stringify(
-                callback?.response?.Details.PackageWeekdayPrice
-              ),
-              packageWeekendPrice: JSON.stringify(
-                callback?.response?.Details.PackageWeekendPrice
-              ),
+              packageWeekdayPrice:
+                callback?.response?.Details.PackageWeekdayPrice,
+              packageWeekendPrice:
+                callback?.response?.Details.PackageWeekendPrice,
             };
+
+            console.log("Data-----from ack booking>", data);
 
             dispatch(
               AddBillingDetails(
@@ -68,7 +70,7 @@ const AcknowledgementDetails = () => {
                 (callback) => {
                   if (callback.status) {
                     console.log(
-                      "Generate Bill --------------?",
+                      "Generate Bill --------------",
                       callback?.response?.Details
                     );
 
