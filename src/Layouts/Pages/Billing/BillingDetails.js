@@ -37,10 +37,6 @@ const BillingDetails = () => {
   );
 
   console.log("Data to be passed as sms------------------->", BookingDetails);
-  console.log(
-    "Data to be passed as sms------------------->",
-    BookingDetails[0]?.BillingId
-  );
 
   const [totalDiscount, setTotalDiscount] = useState(0);
 
@@ -216,26 +212,12 @@ const BillingDetails = () => {
         );
         formData.append("bookingId", BookingDetails[0]?.BookingId);
 
-        console.log(
-          "BookingDetails[0]?.BillingId------newww-->",
-          BookingDetails[0]?.BookingId
-        );
-
-        formData.forEach((value, key) => {
-          console.log("Hiiiiii", key, value);
-        });
         dispatch(
           uploadBillFile(
             loginDetails?.logindata?.Token,
             formData,
             (callback) => {
               if (callback.status) {
-                console.log(
-                  "Callback pdf details---->",
-                  callback?.response?.Details
-                );
-
-                console.log("Called hereeeeeeeeeeeeee");
                 const data = {
                   longURL: callback?.response?.Details[0]?.BillingFile,
                 };
@@ -258,15 +240,8 @@ const BillingDetails = () => {
                     }
                   )
                 );
-
-                // setUpatedQrcodeImage(
-                //   callback?.response?.Details[0]?.BillingFile
-                // );
-
-                // resolve(callback);
               } else {
                 toast.error(callback.error);
-                // reject(callback);
               }
             }
           )
@@ -458,7 +433,22 @@ const BillingDetails = () => {
     },
   });
 
-  useEffect(() => {}, []);
+  const [finalUseState, setFinalUseState] = useState("");
+
+  useEffect(() => {
+    console.log("Calculations for package guest count-->", BookingDetails);
+    const finalDetails = BookingDetails.reduce((total, item) => {
+      const guestCountData = item?.ItemDetails.packageGuestCount || [];
+      const calculatedTotal = guestCountData.reduce(
+        (count, num) => count + num,
+        0
+      );
+      return calculatedTotal;
+    }, 0);
+
+    console.log("finalDetails--------->", finalDetails);
+    setFinalUseState(finalDetails);
+  }, []);
 
   return (
     <div>
@@ -708,6 +698,7 @@ const BillingDetails = () => {
                           ) : (
                             <p>No data</p>
                           )}
+                          {/* {finalUseState} */}
                         </td>
 
                         {/* <td

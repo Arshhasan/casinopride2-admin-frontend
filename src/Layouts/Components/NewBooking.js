@@ -1424,7 +1424,7 @@ const NewBooking = () => {
             shiftDetails == null
           }
         >
-          To payments
+          Generate Bill
         </button>
       </div>
 
