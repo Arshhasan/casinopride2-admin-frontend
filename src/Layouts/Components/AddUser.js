@@ -12,6 +12,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../assets/global.css";
 import QRCode from "qrcode";
+import { uploadQRFile } from "../../Redux/actions/users";
 
 const AddUser = () => {
   const location = useLocation();
@@ -114,12 +115,48 @@ const AddUser = () => {
                   callback?.response?.Details?.UserType,
                   (callback) => {
                     if (callback.status) {
-                      console.log(
-                        "Callback from QR CODE ---------------------->",
-                        callback?.response
+                    
+                      QRCode.toCanvas(
+                        document.createElement("canvas"),
+                        callback?.response?.Details?.QRLink,
+                        (error, canvas) => {
+                          if (error) {
+                            console.error("QR code generation error:", error);
+                          } else {
+                            const qrCodeDataURL = canvas.toDataURL("image/png");
+                            console.log('check qrCodeDataURL>>>.',qrCodeDataURL);
+                            console.log('callback?.response?.Details?.Id>>>.',callback?.response?.Details?.Id);
+                              // Convert the data URL to a blob
+                              const imageBlob =  dataURLtoBlob(qrCodeDataURL);
+                              console.log('imageBlob>>',imageBlob);
+                            // setQRCodeImage(qrCodeDataURL);
+                            const formData = new FormData();
+                            formData.append(
+                            "File",
+                            imageBlob,
+                            `${callback?.response?.Details?.Id}user.png`
+                            );
+                            formData.append("userId", callback?.response?.Details?.Id);
+
+                            dispatch(
+                              uploadQRFile(
+                                loginDetails?.logindata?.Token,
+                                formData,
+                                (callback) => {
+                                  if (callback.status) {
+                                    console.log('uploadQRFile>>callback>>',callback);
+                                    toast.success("User Added");
+                                    navigate(-1);
+                                  } else {
+                                    toast.error(callback.error);
+                                  }
+                                }
+                              )
+                            );
+                          }
+                        }
                       );
-                    toast.success("User Added");
-                      navigate(-1);
+  
                     }
                   }
                 )
@@ -136,6 +173,19 @@ const AddUser = () => {
       );
     }
   };
+
+  function dataURLtoBlob(dataURL) {
+    console.log('dataURLtoBlob>>>dataURL>>>',dataURL);
+    const arr = dataURL.split(",");
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  }
 
   const onSubmitEdit = () => {
     if (fullName == "") {
@@ -205,8 +255,17 @@ const AddUser = () => {
     );
   }, [updatedQrcodeImage]);
 
+  const open =(imageUrl)=>{
+    // window.open("_blank")
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = 'downloaded-image.jpg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   return (
-    console.log("Tu huyeeeeeeeeeee", userData),
     (
       <div>
         <ToastContainer />
@@ -363,10 +422,8 @@ const AddUser = () => {
 
           {userType == "5" ||
           userType == "6" ||
-          userType == "8" ||
           userData?.UserType == "5" ||
-          userData?.UserType == "6" ||
-          userType?.UserType=="8" ? (
+          userData?.UserType == "6" ? (
             <div className="col-lg-6 mt-3">
               {userType == "5" || userData?.UserType == "5" ? (
                 <label for="formGroupExampleInput " className="form_text">
@@ -391,8 +448,7 @@ const AddUser = () => {
           )}
           {userType == "5" ||
           userData?.UserType == "5" ||
-          userData?.UserType == "6" ||
-          userData?.UserType=="8" ? (
+          userData?.UserType == "6" ? (
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
                 Monthly settlement
@@ -444,6 +500,17 @@ const AddUser = () => {
                   onChange={handleToggle}
                 />
               </div>
+            </div>
+          ) : (
+            <></>
+          )}
+          {userData?.QRFile != null ? (
+            <div className="col-lg-6 mt-3">
+              <label for="formGroupExampleInput " className="form_text">
+              Click to download QR Code <span style={{ color: "red" }}>*</span>
+              </label>
+              <div onClick={()=>{open(userData?.QRFile)}}>  <img src={userData?.QRFile} alt="Description of the image" /></div>
+           
             </div>
           ) : (
             <></>
