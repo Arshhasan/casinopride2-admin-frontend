@@ -1071,3 +1071,29 @@ export const getLongUrl = (code, token, callback) => async (dispatch) => {
       }
     });
 };
+export const uploadQRFile = (token,data, callback) => async (dispatch) => {
+  console.log("Data for uploadQRFile>>>", data);
+  api.CORE_PORT.post("/core/uploadQRFile", data, {
+    headers: { AuthToken: token,"Content-Type": "application/pdf" },
+  })
+    .then((response) => {
+      console.log("Upload>>QRFile>>response.data>>>", response.data);
+      if (response.data?.Details) {
+        console.log(response.data?.Details);
+        callback({
+          status: true,
+          response: response?.data,
+        });
+      } else if (response.data?.Error) {
+        callback({
+          status: false,
+          error: response.data?.Error?.ErrorMessage,
+        });
+      }
+    })
+    .catch((err) => {
+      {
+        console.log("error", err);
+      }
+    });
+};
