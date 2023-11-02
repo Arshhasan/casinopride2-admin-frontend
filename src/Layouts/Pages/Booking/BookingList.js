@@ -375,7 +375,7 @@ const BookingList = () => {
               <tr key={item.id}>
                 <td className="manager-list ">{item.FullName}</td>
                 <td className="manager-list">{item.Phone}</td>
-                <td className="manager-list">
+                <td className="manager-list" style={{ fontSize: "12px" }}>
                   {item?.PackageName ? (
                     JSON.parse(item?.PackageName).map((item, index) => (
                       <li key={index} style={{ listStyleType: "none" }}>

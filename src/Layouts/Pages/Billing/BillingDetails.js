@@ -39,6 +39,11 @@ const BillingDetails = () => {
 
   console.log("Data to be passed as sms------------------->", BookingDetails);
 
+  const DiscountedAmount =
+    BookingDetails[0]?.ActualAmount - BookingDetails[0]?.AmountAfterDiscount;
+
+  const FinalAmount = BookingDetails[0]?.ActualAmount - DiscountedAmount;
+
   const [totalDiscount, setTotalDiscount] = useState(0);
 
   useEffect(() => {
@@ -258,7 +263,7 @@ const BillingDetails = () => {
   };
 
   const SendDetailsToUser = useCallback(() => {
-    updateReportsItemDetails();
+    // updateReportsItemDetails();
     setLoader(true);
     if (elementRef.current === null) {
       return;
@@ -319,7 +324,7 @@ const BillingDetails = () => {
                           receiverMail: JSON.stringify(
                             BookingDetails[0]?.Email
                           ),
-                          amount: BookingDetails[0]?.ActualAmount,
+                          amount: FinalAmount,
                           billFile: JSON.stringify(
                             callback?.response?.shortUrl
                           ),
@@ -329,7 +334,7 @@ const BillingDetails = () => {
                           sendEmail(data, (callback) => {
                             if (callback.status) {
                               toast.success("Email sent");
-                              navigate("/NewBooking");
+                              // navigate("/NewBooking");
 
                               toast.error(callback.error);
                             } else {
@@ -338,7 +343,7 @@ const BillingDetails = () => {
                           })
                         );
 
-                        const apiUrl = `http://commnestsms.com/api/push.json?apikey=635cd8e64fddd&route=transactional&sender=CPGOAA&mobileno=${BookingDetails[0]?.Phone}&text=Thank%20you%20for%20choosing%20Casino%20Pride.%20View%20e-bill%20of%20Rs%20${BookingDetails[0]?.ActualAmount}%20at%20-%20${callback?.response?.shortUrl}%0ALets%20Play%20with%20Pride%20!%0AGood%20luck%20!%0ACPGOAA`;
+                        const apiUrl = `http://commnestsms.com/api/push.json?apikey=635cd8e64fddd&route=transactional&sender=CPGOAA&mobileno=${BookingDetails[0]?.Phone}&text=Thank%20you%20for%20choosing%20Casino%20Pride.%20View%20e-bill%20of%20Rs%20${FinalAmount}%20at%20-%20${callback?.response?.shortUrl}%0ALets%20Play%20with%20Pride%20!%0AGood%20luck%20!%0ACPGOAA`;
                         fetch(apiUrl)
                           .then((response) => {
                             if (!response.ok) {
@@ -393,6 +398,7 @@ const BillingDetails = () => {
 
   useEffect(() => {
     onButtonClick();
+    updateReportsItemDetails();
   }, []);
 
   useEffect(() => {
@@ -499,6 +505,92 @@ const BillingDetails = () => {
   //   }),
   // };
 
+  // const updatededBillDetails = {
+  //   updatedItemDetails: BookingDetails.map((item) => {
+  //     const Rate = item?.ItemDetails?.Rate;
+  //     const packageGuestCount = item?.ItemDetails?.packageGuestCount;
+  //     const resultRate = Rate.map(
+  //       (value, index) => value * packageGuestCount[index]
+  //     );
+
+  //     const Price = item?.ItemDetails?.Price;
+  //     const resultPrice = Price.map(
+  //       (value, index) => value * packageGuestCount[index]
+  //     );
+
+  //     const taxDiffSum = item?.ItemDetails?.TaxDiff.reduce(
+  //       (acc, value) => acc + value,
+  //       0
+  //     );
+  //     console.log("taxDiffSum", taxDiffSum);
+
+  //     const itemTaxName = item?.ItemDetails?.ItemTaxName;
+  //     const adjustedTaxDiffSum =
+  //       itemTaxName[0] === "GST" ? taxDiffSum / 2 : taxDiffSum;
+
+  //     console.log("adjusted Tax Diff Sum----->", adjustedTaxDiffSum);
+  //     const itemTeensTaxName = item?.TeensTaxName;
+  //     console.log("Teens Tax name", itemTeensTaxName);
+
+  //     const KidsItemName = "Kids";
+
+  //     const KidsCount = item?.NumOfTeens;
+  //     console.log("Kids count==>", KidsCount);
+  //     const KidsRate = item?.TeensRate * item?.NumOfTeens;
+  //     console.log("Kids rate", KidsRate);
+
+  //     const KidsPrice = item?.TeensPrice * item?.NumOfTeens;
+  //     console.log("Kids Price", KidsPrice);
+
+  //     const KidsCgstProperty = `CGST ${item?.TeensTax / 2} %`;
+  //     console.log("Kids cgst", KidsCgstProperty);
+
+  //     const KidsSgstProperty = `CGST ${item?.TeensTax / 2} %`;
+  //     console.log("Kids sgst", KidsSgstProperty);
+
+  //     const KidsTax = item?.TeensTaxBifurcation;
+
+  //     // Define dynamic property names
+  //     const cgstProperty = `CGST ${item?.ItemDetails?.ItemTax / 2} %`;
+  //     const sgstProperty = `SGST ${item?.ItemDetails?.ItemTax / 2} %`;
+  //     const vatProperty = `VAT ${item?.ItemDetails?.ItemTax} %`;
+
+  //     // Create an object to store the properties
+  //     const properties = {
+  //       ItemTax: item?.ItemDetails?.ItemTax,
+  //       ItemId: item?.ItemDetails?.ItemId,
+  //       ItemName: item?.ItemDetails?.ItemName,
+  //       Price: resultPrice,
+  //       Rate: resultRate,
+  //       ItemTaxName: itemTaxName[0],
+  //       TaxDiff: item?.ItemDetails?.TaxDiff,
+  //       IsDeductable: item?.ItemDetails?.IsDeductable,
+  //       PackageId: item?.PackageId,
+  //       packageGuestCount: packageGuestCount,
+  //     };
+
+  //     if (itemTaxName[0] === "GST") {
+  //       if (KidsCount > 0) {
+  //         properties["KidsItemName"] = KidsItemName;
+  //         properties["KidsCount"] = KidsCount;
+  //         properties["KidsRate"] = KidsRate;
+  //         properties["KidsPrice"] = KidsPrice;
+  //         properties[KidsCgstProperty] = KidsTax;
+  //         properties[KidsSgstProperty] = KidsTax;
+  //         properties[cgstProperty] = adjustedTaxDiffSum / 2;
+  //         properties[sgstProperty] = adjustedTaxDiffSum / 2;
+  //       } else {
+  //         properties[cgstProperty] = adjustedTaxDiffSum / 2;
+  //         properties[sgstProperty] = adjustedTaxDiffSum / 2;
+  //       }
+  //     } else if (itemTaxName[0] === "VAT") {
+  //       properties[vatProperty] = adjustedTaxDiffSum;
+  //     }
+
+  //     return properties;
+  //   }),
+  // };
+
   const updatededBillDetails = {
     updatedItemDetails: BookingDetails.map((item) => {
       const Rate = item?.ItemDetails?.Rate;
@@ -507,10 +599,40 @@ const BillingDetails = () => {
         (value, index) => value * packageGuestCount[index]
       );
 
+      console.log("Result Rate----->", resultRate);
+
+      const FinalRateResult = resultRate.reduce((acc, item) => acc + item, 0);
+
+      console.log("Reuslted rate------->", FinalRateResult);
+
       const Price = item?.ItemDetails?.Price;
       const resultPrice = Price.map(
         (value, index) => value * packageGuestCount[index]
       );
+
+      const TotalBillAmount = resultPrice.reduce(
+        (accumulator, currentValue) => accumulator + currentValue,
+        0
+      );
+
+      console.log("Result price----->", resultPrice);
+
+      const finalResultPrice = resultPrice.reduce(
+        (accumulator, currentValue) => accumulator + currentValue,
+        0
+      );
+
+      const ActualAmount = item?.ActualAmount;
+      const AmountAfterDiscount = item?.AmountAfterDiscount;
+
+      // if (ActualAmount - AmountAfterDiscount == 0) {
+      // }
+
+      const Discount = ActualAmount - AmountAfterDiscount;
+
+      const DiscountedFigure = finalResultPrice - Discount;
+
+      console.log("DiscountedFigure------------->", DiscountedFigure);
 
       const taxDiffSum = item?.ItemDetails?.TaxDiff.reduce(
         (acc, value) => acc + value,
@@ -554,8 +676,8 @@ const BillingDetails = () => {
         ItemTax: item?.ItemDetails?.ItemTax,
         ItemId: item?.ItemDetails?.ItemId,
         ItemName: item?.ItemDetails?.ItemName,
-        Price: resultPrice,
-        Rate: resultRate,
+        Price: finalResultPrice,
+        Rate: FinalRateResult,
         ItemTaxName: itemTaxName[0],
         TaxDiff: item?.ItemDetails?.TaxDiff,
         IsDeductable: item?.ItemDetails?.IsDeductable,
@@ -573,19 +695,20 @@ const BillingDetails = () => {
           properties[KidsSgstProperty] = KidsTax;
           properties[cgstProperty] = adjustedTaxDiffSum / 2;
           properties[sgstProperty] = adjustedTaxDiffSum / 2;
+          properties["TotalBillAmount"] = DiscountedFigure;
         } else {
           properties[cgstProperty] = adjustedTaxDiffSum / 2;
           properties[sgstProperty] = adjustedTaxDiffSum / 2;
+          properties["TotalBillAmount"] = DiscountedFigure;
         }
       } else if (itemTaxName[0] === "VAT") {
         properties[vatProperty] = adjustedTaxDiffSum;
+        properties["TotalBillAmount"] = TotalBillAmount;
       }
 
       return properties;
     }),
   };
-
-  // console.log("Dummy Data-------->", updatededBillDetails);
 
   const BillIdDetails = {
     billId: BookingDetails.map((item) => {
@@ -656,12 +779,6 @@ const BillingDetails = () => {
         ) : (
           <></>
         )}
-
-        {/* <div>
-          <button onClick={updateReportsItemDetails}>
-            Send calculated Item Details
-          </button>
-        </div> */}
 
         <div className="container-fluid" ref={elementRef}>
           {BookingDetails &&
@@ -812,14 +929,14 @@ const BillingDetails = () => {
                 <div className="bill-details">
                   <div className="date-time-bill-row">
                     <p className="BillPrintFont">
-                      Date & Time:
+                      Date & Time :
                       <span
                         style={{ fontWeight: "bold" }}
                         className="BillPrintFont"
                       >
                         {" "}
                         {moment
-                          .utc(item?.BillingDate)
+                          .utc(item?.BillDateTime)
                           .format("DD/MM/YYYY HH:mm")}
                       </span>
                     </p>
@@ -1683,39 +1800,95 @@ const BillingDetails = () => {
                       <div className="col-lg-4"></div>
                     </div>
 
-                    <p className="BillPrintFontPrint">
+                    <p
+                      className="BillPrintFontPrint"
+                      style={{
+                        marginBottom: "5px",
+                      }}
+                    >
                       A unit of Goa Coastal Resorts & Recreation Pvt.Ltd
                     </p>
-                    <h5 className="BillPrintFontPrint">
+                    <h5
+                      className="BillPrintFontPrint"
+                      style={{
+                        marginBottom: "5px",
+                      }}
+                    >
                       Hotel Neo Majestic, Plot No. 104/14, Porvorim, Bardez, Goa
                       - 403 521 <br></br>Tel. + 91 9158885000
                     </h5>
-                    <h5 className="BillPrintFontPrint">
+                    <h5
+                      className="BillPrintFontPrint"
+                      style={{
+                        marginBottom: "5px",
+                      }}
+                    >
                       Email : info@casinoprideofficial.com
                     </h5>
-                    <h5 className="BillPrintFontPrint">
+                    <h5
+                      className="BillPrintFontPrint"
+                      style={{
+                        marginBottom: "5px",
+                      }}
+                    >
                       Website : www.casinoprideofficial.com
                     </h5>
-                    <h5 className="BillPrintFontPrint">Instagram :</h5>
-                    <h5 className="BillPrintFontPrint">
+                    <h5
+                      className="BillPrintFontPrint"
+                      style={{
+                        marginBottom: "5px",
+                      }}
+                    >
+                      Instagram :
+                    </h5>
+                    <h5
+                      className="BillPrintFontPrint"
+                      style={{
+                        marginBottom: "5px",
+                      }}
+                    >
                       CIN No: U55101GA2005PTC004274{" "}
                     </h5>
-                    <h5 className="BillPrintFontPrint">PAN No: AACCG7450R</h5>
+                    <h5
+                      className="BillPrintFontPrint"
+                      style={{
+                        marginBottom: "5px",
+                      }}
+                    >
+                      PAN No: AACCG7450R
+                    </h5>
                     {item?.ItemDetails?.ItemTaxName[0] === "VAT" ? (
-                      <h5 className="BillPrintFontPrint">
+                      <h5
+                        className="BillPrintFontPrint"
+                        style={{
+                          marginBottom: "5px",
+                        }}
+                      >
                         TIN No : 30220106332
                       </h5>
                     ) : (
                       <></>
                     )}
                     {item?.ItemDetails?.ItemTaxName[0] === "GST" ? (
-                      <h5 className="BillPrintFontPrint">
+                      <h5
+                        className="BillPrintFontPrint"
+                        style={{
+                          marginBottom: "5px",
+                        }}
+                      >
                         GSTIN : 30AACCG7450R1ZC
                       </h5>
                     ) : (
                       <></>
                     )}
-                    <h5 className="BillPrintFontPrint">TAX INVOICE</h5>
+                    <h5
+                      className="BillPrintFontPrint"
+                      style={{
+                        marginBottom: "5px",
+                      }}
+                    >
+                      TAX INVOICE
+                    </h5>
                     <div className="row">
                       <div className="col-6 bill-details">
                         <p className="BillPrintFontPrint">
@@ -1799,7 +1972,7 @@ const BillingDetails = () => {
                           <span className="BillPrintFontPrint">
                             {" "}
                             {moment
-                              .utc(item?.BillingDate)
+                              .utc(item?.BillDateTime)
                               .format("DD/MM/YYYY HH:mm")}
                           </span>
                         </p>

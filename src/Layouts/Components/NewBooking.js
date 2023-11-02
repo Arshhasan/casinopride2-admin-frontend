@@ -322,6 +322,7 @@ const NewBooking = () => {
   const [selectedCity, setSelectedCity] = useState(null);
   const [partCash, setPartCash] = useState("");
   const [partCard, setPartCard] = useState("");
+  const [upiId, setUpiId] = useState("");
 
   console.log(
     "Selected city-------------------------------------------->",
@@ -627,6 +628,7 @@ const NewBooking = () => {
         cardNumber: cardNumber,
         cardType: cardType,
         localAgentName: localAgentDetails?.Name,
+        UPIId: upiId,
       };
 
       console.log("Data from booking ------->", data);
@@ -1195,6 +1197,18 @@ const NewBooking = () => {
                 onChange={(e) => setUpiAmount(e.target.value)}
               />
             </div>
+
+            <div className="col-lg-6 mt-3">
+              <label for="formGroupExampleInput " className="form_text">
+                UPI Id
+              </label>
+              <input
+                class="form-control mt-2"
+                type="text"
+                placeholder="Enter the UPI Id"
+                onChange={(e) => setUpiId(e.target.value)}
+              />
+            </div>
           </div>
         ) : (
           <></>
@@ -1294,6 +1308,18 @@ const NewBooking = () => {
             </div>
 
             <div className="col-lg-6 mt-3">
+              <label for="formGroupExampleInput " className="form_text">
+                UPI Id
+              </label>
+              <input
+                class="form-control mt-2"
+                type="text"
+                placeholder="Enter the UPI Id"
+                onChange={(e) => setUpiId(e.target.value)}
+              />
+            </div>
+
+            <div className="col-lg-6 mt-3">
               <label htmlFor="formGroupExampleInput" className="form_text">
                 Card Holder's Name <span style={{ color: "red" }}>*</span>
               </label>
@@ -1358,6 +1384,17 @@ const NewBooking = () => {
                 type="text"
                 placeholder="Enter the amount"
                 onChange={(e) => setUpiAmount(e.target.value)}
+              />
+            </div>
+            <div className="col-lg-6 mt-3">
+              <label for="formGroupExampleInput " className="form_text">
+                UPI Id
+              </label>
+              <input
+                class="form-control mt-2"
+                type="text"
+                placeholder="Enter the UPI Id"
+                onChange={(e) => setUpiId(e.target.value)}
               />
             </div>
           </>
