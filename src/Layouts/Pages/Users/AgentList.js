@@ -55,16 +55,17 @@ const AgentList = () => {
   const [filterAgentList, setFilterAgentList] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  const filterAgentDetails = () => {
-    if (searchQuery.trim() === "") {
-      setFilterAgentList([]);
+  const filterAgentDetails = (value) => {
+    if (value?.trim() === "") {
+      // setFilterAgentList([]);
+      fetchAgentDetails()
     } else {
-      const lowerCaseQuery = searchQuery.toLowerCase();
+      const lowerCaseQuery = value?.toLowerCase();
       const filtered = agent.filter(
         (item) =>
-          item.Name.toLowerCase().includes(lowerCaseQuery) ||
-          item.Phone.includes(searchQuery) ||
-          item.Email.toLowerCase().includes(lowerCaseQuery)
+          item?.Name?.toLowerCase()?.includes(lowerCaseQuery) ||
+          item?.Phone?.includes(value) ||
+          item?.Email?.toLowerCase()?.includes(lowerCaseQuery)
       );
       setFilterAgentList(filtered);
     }
@@ -96,7 +97,7 @@ const AgentList = () => {
                 placeholder="Search"
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  filterAgentDetails();
+                  filterAgentDetails(e.target.value);
                 }}
               />
             </div>

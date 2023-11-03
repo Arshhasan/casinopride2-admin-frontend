@@ -56,16 +56,17 @@ const LocalAgentList = () => {
   const [filterDriverList, setFilterDriverList] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  const filterDriverDetails = () => {
-    if (searchQuery.trim() === "") {
-      setFilterDriverList([]);
+  const filterDriverDetails = (value) => {
+    if (value?.trim() === "") {
+      fetchLocalAgentDetails()
+      // setFilterDriverList([]);
     } else {
-      const lowerCaseQuery = searchQuery.toLowerCase();
+      const lowerCaseQuery = value?.toLowerCase();
       const filtered = driver.filter(
         (item) =>
-          item.Name.toLowerCase().includes(lowerCaseQuery) ||
-          item.Phone.includes(searchQuery) ||
-          item.Email.toLowerCase().includes(lowerCaseQuery)
+          item?.Name?.toLowerCase()?.includes(lowerCaseQuery) ||
+          item?.Phone?.includes(value) ||
+          item?.Email?.toLowerCase()?.includes(lowerCaseQuery)
       );
       setFilterDriverList(filtered);
     }
@@ -97,7 +98,7 @@ const LocalAgentList = () => {
                 placeholder="Search"
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  filterDriverDetails();
+                  filterDriverDetails(e.target.value);
                 }}
               />
             </div>

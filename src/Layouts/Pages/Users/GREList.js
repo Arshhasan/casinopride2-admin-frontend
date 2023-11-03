@@ -51,16 +51,18 @@ const GREList = () => {
     );
   };
 
-  const filterGreDetails = () => {
-    if (searchQuery.trim() === "") {
-      setFilteredGreDetails([]);
-    } else {
-      const lowerCaseQuery = searchQuery.toLowerCase();
+  const filterGreDetails = (value) => {
+    if (value?.trim() == "") {
+      // setFilteredGreDetails([]); 
+      fetchGreDetails()
+    } 
+    else {
+      const lowerCaseQuery = value.toLowerCase();
       const filtered = greList.filter(
         (item) =>
-          item.Name.toLowerCase().includes(lowerCaseQuery) ||
-          item.Phone.includes(searchQuery) ||
-          item.Email.toLowerCase().includes(lowerCaseQuery)
+          item?.Name?.toLowerCase()?.includes(lowerCaseQuery) ||
+          item?.Phone?.includes(value) ||
+          item?.Email?.toLowerCase()?.includes(lowerCaseQuery)
       );
       setFilteredGreDetails(filtered);
     }
@@ -92,7 +94,7 @@ const GREList = () => {
                 placeholder="Search"
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  filterGreDetails();
+                  filterGreDetails(e.target.value);
                 }}
               />
             </div>

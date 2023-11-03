@@ -40,16 +40,17 @@ const ManagerList = () => {
     setUserId(Id);
   };
 
-  const filterManagerDetails = () => {
-    if (searchQuery.trim() === "") {
-      setFilteredManagerDetails([]);
+  const filterManagerDetails = (value) => {
+    if (value?.trim() === "") {
+      fetchUserDetails()
+      // setFilteredManagerDetails([]);
     } else {
-      const lowerCaseQuery = searchQuery.toLowerCase();
+      const lowerCaseQuery = value?.toLowerCase();
       const filtered = managerDetailsList.filter(
         (item) =>
-          item.Name.toLowerCase().includes(lowerCaseQuery) ||
-          item.Phone.includes(searchQuery) ||
-          item.Email.toLowerCase().includes(lowerCaseQuery)
+          item?.Name?.toLowerCase()?.includes(lowerCaseQuery) ||
+          item?.Phone?.includes(value) ||
+          item?.Email?.toLowerCase()?.includes(lowerCaseQuery)
       );
       setFilteredManagerDetails(filtered);
     }
@@ -113,7 +114,7 @@ const ManagerList = () => {
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  filterManagerDetails();
+                  filterManagerDetails(e.target.value);
                 }}
               />
             </div>

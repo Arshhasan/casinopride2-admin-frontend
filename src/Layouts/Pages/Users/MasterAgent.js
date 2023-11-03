@@ -57,16 +57,17 @@ const MasterAgent = () => {
   const [filterMasterAgent, setFilterMasterAgent] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  const filterMasterAgentDetails = () => {
-    if (searchQuery.trim() === "") {
-      setFilterMasterAgent([]);
+  const filterMasterAgentDetails = (value) => {
+    if (value?.trim() === "") {
+      fetchMasterAgentDetails()
+      // setFilterMasterAgent([]);
     } else {
-      const lowerCaseQuery = searchQuery.toLowerCase();
+      const lowerCaseQuery = value?.toLowerCase();
       const filtered = masterAgent.filter(
         (item) =>
-          item.Name.toLowerCase().includes(lowerCaseQuery) ||
-          item.Phone.includes(searchQuery) ||
-          item.Email.toLowerCase().includes(lowerCaseQuery)
+          item?.Name?.toLowerCase()?.includes(lowerCaseQuery) ||
+          item?.Phone?.includes(value) ||
+          item?.Email?.toLowerCase()?.includes(lowerCaseQuery)
       );
       setFilterMasterAgent(filtered);
     }
@@ -98,7 +99,7 @@ const MasterAgent = () => {
                 placeholder="Search"
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  filterMasterAgentDetails();
+                  filterMasterAgentDetails(e.target.value);
                 }}
               />
             </div>

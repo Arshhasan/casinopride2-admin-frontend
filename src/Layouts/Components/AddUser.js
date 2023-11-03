@@ -74,12 +74,14 @@ const AddUser = () => {
     return passwordPattern.test(password);
   };
   const onsubmit = () => {
+    console.log('onsubmit',email);
     if (fullName == "") {
       toast.warning("Please fill all the fields");
     }
-    //  else if (!isValidEmail(email)) {
-    //   toast.warning("Please enter a valid email address");
-    // }
+     else if (!isValidEmail(email) && email != "") {
+        console.log('isValidEmail');
+      toast.warning("Please enter a valid email address");
+    }
     // else if (phone.length > 10 || phone.length < 10) {
     //   toast.warning("Please enter a valid phone number (up to 10 digits)");
     // }
@@ -265,6 +267,36 @@ const AddUser = () => {
     document.body.removeChild(link);
   }
 
+  const handleInputChange = (e) => {
+    const inputValue = e.target.value;
+
+    // Use a regular expression to check if the input contains only alphabets
+    const isValidInput = /^[a-zA-Z\s]*$/.test(inputValue);
+    console.log("kho gaye>>",isValidInput);
+    if (!isValidInput) {
+      console.log('!isValidInput');
+      // setFullName(inputValue);
+      e.preventDefault();
+    }
+    else{
+      setFullName(inputValue);
+    }
+  };
+
+  // const handleInputChange = (e) => {
+  //   const inputText = e.target.value;
+  //   // Use regular expression to match only numbers and limit to 2 digits
+  //   const regex = /^[0-9]{0,2}$/;
+  //   if (regex.test(inputText)) {
+  //     if (
+  //       inputText === "" ||
+  //       (parseInt(inputText, 10) >= 0 && parseInt(inputText, 10) <= 99)
+  //     ) {
+  //       // setcouponDiscount(inputText);
+  //     }
+  //   }
+  // };
+
   return (
     (
       <div>
@@ -329,7 +361,15 @@ const AddUser = () => {
               type="text"
               disabled={userData ? disabled : ""}
               placeholder="Full Name"
-              onChange={(e) => setFullName(e.target.value)}
+              // onChange={(e) => setFullName(e.target.value)}
+              onChange={(e) => handleInputChange(e)}
+              onkeydown={event => {
+                // if (event.key == "." || event.key === "-") {
+                if (event.key == /^[0-9]{0,2}$/) {
+                  event.preventdefault();
+                }
+              }}
+              
               defaultValue={userData?.Name}
             />
           </div>
@@ -456,7 +496,8 @@ const AddUser = () => {
               <input
                 class="form-control mt-2"
                 type="text"
-                disabled={!userData}
+                // disabled={!userData}
+                disabled={true}
                 placeholder="0"
                 onChange={(e) => setMonrhtlysettlement(e.target.value)}
                 defaultValue={userData?.MonthlySettlement}
