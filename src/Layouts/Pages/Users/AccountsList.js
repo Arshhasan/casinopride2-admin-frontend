@@ -51,16 +51,17 @@ const AccountsList = () => {
   const [filterAccountantList, setFilterAccountantList] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  const filterAccountantDetails = () => {
-    if (searchQuery.trim() === "") {
-      setFilterAccountantList([]);
+  const filterAccountantDetails = (value) => {
+    if (value?.trim() === "") {
+      fetchAccountsDetails()
+      // setFilterAccountantList([]);
     } else {
-      const lowerCaseQuery = searchQuery.toLowerCase();
+      const lowerCaseQuery = value?.toLowerCase();
       const filtered = accounts.filter(
         (item) =>
-          item.Name.toLowerCase().includes(lowerCaseQuery) ||
-          item.Phone.includes(searchQuery) ||
-          item.Email.toLowerCase().includes(lowerCaseQuery)
+          item?.Name?.toLowerCase()?.includes(lowerCaseQuery) ||
+          item?.Phone?.includes(value) ||
+          item?.Email?.toLowerCase()?.includes(lowerCaseQuery)
       );
       setFilterAccountantList(filtered);
     }
@@ -92,7 +93,7 @@ const AccountsList = () => {
                 placeholder="Search"
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  filterAccountantDetails();
+                  filterAccountantDetails(e.target.value);
                 }}
               />
             </div>
