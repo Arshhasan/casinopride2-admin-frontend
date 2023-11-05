@@ -35,8 +35,10 @@ const AddFutureBookingDates = () => {
     } else {
       const data = {
         futureDateId: 0,
-        startDate: startDate,
-        endDate: endDate,
+        // startDate: startDate,
+        startDate: moment(startDate).format("YYYY-MM-DD"),
+        // endDate: endDate,
+        endDate: moment(endDate).format("YYYY-MM-DD"),
       };
 
       dispatch(
@@ -66,8 +68,10 @@ const AddFutureBookingDates = () => {
     } else {
       const data = {
         futureDateId: 1,
-        startDate: startDate,
-        endDate: endDate,
+        // startDate: startDate,
+        startDate: moment(startDate).format("YYYY-MM-DD"),
+        // endDate: endDate,
+        endDate: moment(endDate).format("YYYY-MM-DD"),
       };
 
       console.log(data, "inside data--------------------->");
