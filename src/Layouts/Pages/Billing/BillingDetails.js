@@ -224,8 +224,12 @@ const BillingDetails = () => {
             formData,
             (callback) => {
               if (callback.status) {
+                console.log(
+                  "callback?.response?.Details[0]--->",
+                  callback?.response?.Details[0]?.Bill
+                );
                 const data = {
-                  longURL: callback?.response?.Details[0]?.BillingFile,
+                  longURL: callback?.response?.Details[0]?.Bill,
                 };
 
                 dispatch(
@@ -305,7 +309,7 @@ const BillingDetails = () => {
                 // );
 
                 const data = {
-                  longURL: callback?.response?.Details[0]?.BillingFile,
+                  longURL: callback?.response?.Details[0]?.Bill,
                 };
 
                 dispatch(
@@ -334,7 +338,7 @@ const BillingDetails = () => {
                           sendEmail(data, (callback) => {
                             if (callback.status) {
                               toast.success("Email sent");
-                              // navigate("/NewBooking");
+                              navigate("/NewBooking");
 
                               toast.error(callback.error);
                             } else {
@@ -731,8 +735,6 @@ const BillingDetails = () => {
         itemDetailsData,
         (callback) => {
           if (callback.status) {
-            setLoading(false);
-
             console.log("Item details updated", callback);
           } else {
             console.log("Callback--------voidt>>error", callback.error);

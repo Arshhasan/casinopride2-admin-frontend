@@ -116,7 +116,10 @@ const BillingList = () => {
         (callback) => {
           if (callback.status) {
             setLoading(false);
-            console.log("Callback---------get billings", callback?.response);
+            console.log(
+              "Callback---------get billings",
+              callback?.response?.Details
+            );
             setBillingDetails(callback?.response?.Details);
             setFilteredBillingList(callback?.response?.Details);
           } else {
@@ -519,8 +522,30 @@ const BillingList = () => {
     }
   });
 
-  const combinedDataArray = Object.values(combinedData);
-  // Now, combinedDataArray contains the data grouped by BookingId
+  const dataArray = Object.values(combinedData);
+
+  dataArray.sort((a, b) => b.BookingId - a.BookingId);
+
+  dataArray.forEach((group) => {
+    group.Items.sort((a, b) => {
+      if (
+        a?.ItemDetails?.ItemTaxName[0] === "GST" &&
+        b?.ItemDetails?.ItemTaxName[0] !== "GST"
+      ) {
+        return -1; // "GST" comes first
+      } else if (
+        a?.ItemDetails?.ItemTaxName[0] !== "GST" &&
+        b?.ItemDetails?.ItemTaxName[0] === "GST"
+      ) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  });
+
+  const combinedDataArray = dataArray;
+
   console.log("Combined Array-------------------------->", combinedDataArray);
 
   const combinedVoidBillsData = {};
@@ -562,6 +587,7 @@ const BillingList = () => {
   };
 
   console.log("Combined Array--->", combinedDataArray);
+
   return (
     <div>
       <ToastContainer />

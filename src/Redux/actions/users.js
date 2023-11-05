@@ -1110,7 +1110,7 @@ export const getUserById = (userId, callback) => async (dispatch) => {
           status: true,
           response: response?.data,
         });
-        dispatch(saveDriverDetails(response.data));
+        // dispatch(saveDriverDetails(response.data));
       } else if (response.data?.Error) {
         callback({
           status: false,

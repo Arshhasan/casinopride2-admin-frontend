@@ -812,7 +812,7 @@ const TeensBilling = () => {
             (callback) => {
               if (callback.status) {
                 const data = {
-                  longURL: callback?.response?.Details[0]?.BillingFile,
+                  longURL: callback?.response?.Details[0]?.Bill,
                 };
 
                 dispatch(
@@ -892,7 +892,7 @@ const TeensBilling = () => {
                 // );
 
                 const data = {
-                  longURL: callback?.response?.Details[0]?.BillingFile,
+                  longURL: callback?.response?.Details[0]?.Bill,
                 };
 
                 dispatch(
@@ -921,7 +921,7 @@ const TeensBilling = () => {
                           sendEmail(data, (callback) => {
                             if (callback.status) {
                               toast.success("Email sent");
-                              // navigate("/NewBooking");
+                              navigate("/NewBooking");
 
                               toast.error(callback.error);
                             } else {
@@ -1220,8 +1220,6 @@ const TeensBilling = () => {
         itemDetailsData,
         (callback) => {
           if (callback.status) {
-            setLoading(false);
-
             console.log("Item details updated", callback);
           } else {
             console.log("Callback--------voidt>>error", callback.error);
@@ -1369,7 +1367,9 @@ const TeensBilling = () => {
                       className="BillPrintFont"
                     >
                       {" "}
-                      {moment.utc(item?.BillingDate).format("DD/MM/YYYY HH:mm")}
+                      {moment
+                        .utc(item?.BillDateTime)
+                        .format("DD/MM/YYYY HH:mm")}
                     </span>
                   </p>
 

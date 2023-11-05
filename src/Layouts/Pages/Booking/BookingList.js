@@ -130,10 +130,35 @@ const BookingList = () => {
   };
   const cancelEditing = () => setIsEditing(false);
 
+  // const [guestName, setGuestName] = useState(
+  //   editBookingDetails?.FullName ? editBookingDetails?.FullName : ""
+  // );
+  // const [address, setAddress] = useState(
+  //   editBookingDetails?.Address ? editBookingDetails?.Address : ""
+  // );
+  // const [dateofbirth, setDateofbirth] = useState(
+  //   editBookingDetails?.DOB ? editBookingDetails?.DOB : ""
+  // );
+  // const [gstNumber, setgstNumber] = useState(
+  //   editBookingDetails.GSTNumber ? editBookingDetails.GSTNumber : ""
+  // );
+
   const [guestName, setGuestName] = useState("");
   const [address, setAddress] = useState("");
   const [dateofbirth, setDateofbirth] = useState("");
   const [gstNumber, setgstNumber] = useState("");
+
+  // Use a single useEffect to initialize all fields when editBookingDetails changes
+  useEffect(() => {
+    if (editBookingDetails) {
+      setGuestName(editBookingDetails?.FullName || "");
+      setAddress(editBookingDetails?.Address || "");
+      setDateofbirth(editBookingDetails?.DOB || "");
+      setgstNumber(editBookingDetails?.GSTNumber || "");
+    }
+  }, [isEditing]);
+
+  // Use a single useEffect to initialize all fields when editBookingDetails changes
 
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [selectedState, setSelectedState] = useState(null);
@@ -157,10 +182,14 @@ const BookingList = () => {
 
   console.log("Backend Data---------->", backendData);
 
+  console.log("guestName============>", guestName);
+
   const updateBookingFn = () => {
-    if (gstNumber.length > 15 && gstNumber.length < 15) {
+    if (!guestName) {
+      toast.error("Please enter the guest name");
+    } else if (gstNumber && gstNumber?.length != 15) {
       console.log("Error");
-      toast.success("ERRORRRRR");
+      toast.error("Enter a valid GST number");
     } else {
       const data = {
         bookingId: editBookingDetails?.Id,
@@ -173,29 +202,28 @@ const BookingList = () => {
         GSTNumber: gstNumber ? gstNumber : editBookingDetails.GSTNumber,
         isActive: 1,
       };
-      console.log("Data from update booking ------->", data);
+
+      dispatch(
+        updateBooking(loginDetails?.logindata?.Token, data, (callback) => {
+          if (callback.status) {
+            console.log(
+              "update booking details --------------?",
+              callback?.response?.Details
+            );
+
+            toast.success("Updated Booking details success");
+
+            navigate("/GenerateBill", {
+              state: { userData: callback?.response?.Details },
+            });
+            // navigate(-1);
+            toast.error(callback.error);
+          } else {
+            toast.error(callback.error);
+          }
+        })
+      );
     }
-
-    dispatch(
-      updateBooking(loginDetails?.logindata?.Token, data, (callback) => {
-        if (callback.status) {
-          console.log(
-            "update booking details --------------?",
-            callback?.response?.Details
-          );
-
-          toast.success("Updated Booking details success");
-
-          navigate("/GenerateBill", {
-            state: { userData: callback?.response?.Details },
-          });
-          // navigate(-1);
-          toast.error(callback.error);
-        } else {
-          toast.error(callback.error);
-        }
-      })
-    );
   };
 
   const today = moment().format("YYYY-MM-DD");
@@ -378,7 +406,7 @@ const BookingList = () => {
                 <td className="manager-list ">{item.FullName}</td>
                 <td className="manager-list">{item.Phone}</td>
                 <td className="manager-list" style={{ fontSize: "12px" }}>
-                  {item?.PackageName ? (
+                  {item && item?.PackageName && item?.PackageName ? (
                     JSON.parse(item?.PackageName).map((item, index) => (
                       <li key={index} style={{ listStyleType: "none" }}>
                         {item}{" "}

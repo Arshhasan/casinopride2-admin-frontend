@@ -67,7 +67,7 @@ const NewBooking = () => {
 
   console.log(
     "outlet open Details-----------------|||||||||||||||||||||||||-->",
-    outletOpenDetails
+    outletOpenDetails?.Details?.OutletStatus
   );
 
   console.log(
@@ -88,6 +88,10 @@ const NewBooking = () => {
 
   const [shiftDetails, setShiftDetails] = useState("");
   const [checkActiveOtlet, setCheckActiveOutlet] = useState();
+
+  const [shiftDisable, setShiftDisable] = useState(true);
+
+  const [outletStatus, setOutletStatus] = useState();
 
   useEffect(() => {
     // dispatch(
@@ -139,6 +143,7 @@ const NewBooking = () => {
       checkActiveOutlet(loginDetails?.logindata?.Token, (callback) => {
         if (callback.status) {
           console.log("check active outlet--->", callback?.response?.Details);
+          setOutletStatus(callback?.response?.Details);
 
           if (callback?.response?.Details == null) {
             setCheckActiveOutlet(false);
@@ -201,7 +206,7 @@ const NewBooking = () => {
           if (callback.status) {
             console.log(
               "callabck.response.details>>",
-              callback?.response?.Details?.Id
+              callback?.response?.Details
             );
             setLocalAgentId(callback?.response?.Details?.Id);
             setLocalAgentDetails(callback?.response?.Details);
@@ -492,10 +497,7 @@ const NewBooking = () => {
       toast.warning("Please select the payment option");
       setLoader(false);
       handleClose();
-    } else if (
-      (gstNumber != "" && gstNumber.length > 15) ||
-      gstNumber.length < 15
-    ) {
+    } else if (gstNumber && gstNumber.length == 15) {
       toast.warning("Please enter a valid GST number");
       setLoader(false);
       handleClose();
@@ -694,6 +696,7 @@ const NewBooking = () => {
                       const agentDetails = {
                         userId: localAgentDetails?.Id,
                         userType: localAgentDetails?.UserType,
+                        localAgentName: localAgentDetails?.Name,
                       };
                       dispatch(
                         countDriverBookings(
@@ -868,6 +871,209 @@ const NewBooking = () => {
     e.target.type = "date";
   };
 
+  //new code for shifts messages
+  const [shiftDetailsForUser, setSHiftDetaislForUser] = useState();
+  const [recentShiftOpen, setRecentShiftOpen] = useState([]);
+
+  const [shiftForUserOne, setShiftForUserOne] = useState(false);
+  const checkShiftFn = () => {
+    dispatch(
+      checkShiftForUser(
+        checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
+        validateDetails?.Details?.Id,
+        validateDetails?.Details?.UserType,
+        loginDetails?.logindata?.Token,
+        (callback) => {
+          if (callback) {
+            console.log(
+              "Callback from shifts for user -----------***********************8--->",
+              callback?.response?.Details
+            );
+            if (
+              callback?.response?.Details == null ||
+              callback?.response?.Details.length == 0
+            ) {
+              setShiftForUserOne(true);
+              dispatch(
+                recentShiftForOutlet(
+                  !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
+                  loginDetails?.logindata?.Token,
+                  (callback) => {
+                    if (callback) {
+                      console.log(
+                        "Recent shift for outlet----------------------------------*********************************----- ->",
+                        callback?.response?.Details
+                      );
+
+                      if (callback?.response?.Details?.length == 0) {
+                        setSHiftDetaislForUser(callback?.response?.Details);
+                        setLoader(false);
+                      } else {
+                        console.log(
+                          "Else condition for recent shift open",
+                          callback?.response?.Details
+                        );
+                        setRecentShiftOpen(callback?.response?.Details);
+
+                        setLoader(false);
+                      }
+                    } else {
+                      toast.error(callback.error);
+                    }
+                  }
+                )
+              );
+            } else {
+              console.log(
+                "Else for check shift for user",
+                callback?.response?.Details
+              );
+              setSHiftDetaislForUser(callback?.response?.Details);
+
+              setLoader(false);
+            }
+
+            toast.error(callback.error);
+          } else {
+            toast.error(callback.error);
+          }
+        }
+      )
+    );
+  };
+
+  useEffect(() => {
+    checkShiftFn();
+  }, []);
+
+  const shifts = {};
+  if (shiftDetailsForUser) {
+    shiftDetailsForUser.forEach((item) => {
+      const { ShiftTypeId, OpenTime, CloseTime, ShiftOpen } = item;
+      if (!shifts[ShiftTypeId]) {
+        shifts[ShiftTypeId] = [];
+      }
+      shifts[ShiftTypeId].push({ ShiftTypeId, OpenTime, CloseTime, ShiftOpen });
+    });
+  }
+
+  const handleOpenShift = () => {
+    if (
+      shiftDetailsForUser &&
+      shiftDetailsForUser?.length > 0 &&
+      recentShiftOpen &&
+      recentShiftOpen?.length === 0
+    ) {
+      if (shifts && shifts[1] && shifts[1][0]?.ShiftOpen === 1) {
+        console.log("Shift 1 is open");
+        // setShiftDisable(false);
+        return (
+          <div>
+            <p>Shift 1 is open</p>
+          </div>
+        );
+      } else if (
+        shifts &&
+        shifts[1] &&
+        shifts[1][0]?.ShiftOpen === 0 &&
+        !shifts[2]
+      ) {
+        return (
+          <div>
+            <p>Shift 1 is Closed</p>
+          </div>
+        );
+      } else if (shifts && shifts[2] && shifts[2][0]?.ShiftOpen === 1) {
+        console.log("Shift 3 is open");
+        // setShiftDisable(false);
+        return (
+          <div>
+            <p>Shift 2 is open</p>
+          </div>
+        );
+      } else if (
+        shifts &&
+        shifts[2] &&
+        shifts[2][0]?.ShiftOpen === 0 &&
+        !shifts[3]
+      ) {
+        console.log("Shift 4 is open");
+        return (
+          <div>
+            <p>Shift 2 is closed</p>
+          </div>
+        );
+      } else if (shifts && shifts[3] && shifts[3][0]?.ShiftOpen === 1) {
+        console.log("Shift 5 is open");
+        // setShiftDisable(false);
+        return (
+          <div>
+            <p>Shift 3 is open</p>
+          </div>
+        );
+      }
+    } else if (
+      Object.keys(shifts).length === 0 &&
+      recentShiftOpen?.length > 0
+    ) {
+      if (
+        recentShiftOpen[0]?.ShiftTypeId === 1 &&
+        recentShiftOpen[0]?.ShiftOpen === 1
+      ) {
+        return (
+          <div>
+            <p>Open Shift 1</p>
+          </div>
+        );
+      } else if (
+        recentShiftOpen[0]?.ShiftTypeId === 1 &&
+        recentShiftOpen[0]?.ShiftOpen === 0
+      ) {
+        return (
+          <div>
+            <p>Open shift 2</p>
+          </div>
+        );
+      } else if (
+        recentShiftOpen[0]?.ShiftTypeId === 3 &&
+        recentShiftOpen[0]?.ShiftOpen === 1
+      ) {
+        return (
+          <div>
+            <p>Open shift 3</p>
+          </div>
+        );
+      } else if (
+        recentShiftOpen[0]?.ShiftTypeId === 2 &&
+        recentShiftOpen[0]?.ShiftOpen === 1
+      ) {
+        return (
+          <div>
+            <p>Open shift 2</p>
+          </div>
+        );
+      } else if (
+        recentShiftOpen[0]?.ShiftTypeId === 2 &&
+        recentShiftOpen[0]?.ShiftOpen === 0
+      ) {
+        console.log("Shift 8 is open");
+        return (
+          <div>
+            <p>Open shift 3</p>
+          </div>
+        );
+      }
+    }
+
+    console.log("Default case");
+
+    return (
+      <div>
+        <p>Open the Shift to create a new booking </p>
+      </div>
+    );
+  };
+
   return (
     <div>
       <ToastContainer />
@@ -876,15 +1082,6 @@ const NewBooking = () => {
           <button
             className="col-lg-3 col-md-6 col-sm-8 text-right"
             onClick={shiftPageFn}
-            disabled={
-              (shiftDetails?.ShiftOpen == 1 &&
-                shiftDetails?.ShiftTypeId == 1) ||
-              (shiftDetails?.ShiftOpen == 1 &&
-                shiftDetails?.ShiftTypeId == 2) ||
-              (shiftDetails?.ShiftOpen == 1 &&
-                shiftDetails?.ShiftTypeId == 3) ||
-              (shiftDetails == null && !outletOpenDetails?.Details[0] == null)
-            }
           >
             <div className="card p-4">
               <div className="d-flex align-items-center justify-content-between">
@@ -901,7 +1098,8 @@ const NewBooking = () => {
                   className="ml-auto"
                 />
               </div>
-              <p className="card_title_shifts">{getShiftStatusMessage()}</p>
+              {/* <p className="card_title_shifts">{getShiftStatusMessage()}</p> */}
+              <p className="card_title_shifts">{handleOpenShift()}</p>
             </div>
           </button>
         </div>
@@ -1551,10 +1749,38 @@ const NewBooking = () => {
           className="btn btn_colour mt-5 btn-lg"
           onClick={handleShow}
           disabled={
-            (shiftDetails?.ShiftOpen == 0 && shiftDetails?.ShiftTypeId == 1) ||
-            (shiftDetails?.ShiftOpen == 0 && shiftDetails?.ShiftTypeId == 2) ||
-            (shiftDetails?.ShiftOpen == 0 && shiftDetails?.ShiftTypeId == 3) ||
-            shiftDetails == null
+            (shifts && shifts[1] && shifts[1][0]?.ShiftOpen === 0) ||
+            (shifts && shifts[3] && shifts[3][0]?.ShiftOpen === 0) ||
+            (shifts && shifts[2] && shifts[2][0]?.ShiftOpen === 0) ||
+            (recentShiftOpen &&
+              recentShiftOpen[0]?.ShiftTypeId === 2 &&
+              recentShiftOpen &&
+              recentShiftOpen[0]?.ShiftOpen === 0) ||
+            (recentShiftOpen &&
+              recentShiftOpen[0]?.ShiftTypeId === 2 &&
+              recentShiftOpen &&
+              recentShiftOpen[0]?.ShiftOpen === 1) ||
+            (recentShiftOpen &&
+              recentShiftOpen[0]?.ShiftTypeId === 3 &&
+              recentShiftOpen &&
+              recentShiftOpen[0]?.ShiftOpen === 1) ||
+            (recentShiftOpen &&
+              recentShiftOpen[0]?.ShiftTypeId === 1 &&
+              recentShiftOpen &&
+              recentShiftOpen[0]?.ShiftOpen === 0) ||
+            (recentShiftOpen &&
+              recentShiftOpen[0]?.ShiftTypeId === 1 &&
+              recentShiftOpen &&
+              recentShiftOpen[0]?.ShiftOpen === 1) ||
+            (shifts &&
+              shifts[2] &&
+              shifts[2][0]?.ShiftOpen === 0 &&
+              !shifts[3]) ||
+            (shifts &&
+              shifts[1] &&
+              shifts[1][0]?.ShiftOpen === 0 &&
+              !shifts[2]) ||
+            shiftForUserOne
           }
         >
           Generate Bill

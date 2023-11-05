@@ -16,6 +16,7 @@ const AcknowledgementDetails = () => {
     (state) => state.auth?.userDetailsAfterLogin.Details
   );
 
+  const [loader, setLoader] = useState(false);
   const today = moment().format("YYYY-MM-DD");
   useEffect(() => {
     if (!loginDetails) {
@@ -108,28 +109,28 @@ const AcknowledgementDetails = () => {
     );
   }, []);
 
-  const fetchUserBookingFn = () => {
-    dispatch(
-      fetchBookingDetailsById(
-        loginDetails?.logindata?.Token,
-        BookingId,
-        (callback) => {
-          if (callback.status) {
-            setLoading(false);
-            console.log(
-              "Callback---------get user bookings",
-              callback?.response
-            );
-            setUserBookings(callback?.response?.Details);
-            setFilteredUserBookings(callback?.response?.Details);
-          } else {
-            console.log(callback.error);
-            toast.error(callback.error);
-          }
-        }
-      )
-    );
-  };
+  // const fetchUserBookingFn = () => {
+  //   dispatch(
+  //     fetchBookingDetailsById(
+  //       loginDetails?.logindata?.Token,
+  //       BookingId,
+  //       (callback) => {
+  //         if (callback.status) {
+  //           setLoading(false);
+  //           console.log(
+  //             "Callback---------get user bookings",
+  //             callback?.response
+  //           );
+  //           setUserBookings(callback?.response?.Details);
+  //           setFilteredUserBookings(callback?.response?.Details);
+  //         } else {
+  //           console.log(callback.error);
+  //           toast.error(callback.error);
+  //         }
+  //       }
+  //     )
+  //   );
+  // };
 
   return <div>AcknowledgementDetails</div>;
 };
