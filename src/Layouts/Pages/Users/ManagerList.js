@@ -42,7 +42,7 @@ const ManagerList = () => {
 
   const filterManagerDetails = (value) => {
     if (value?.trim() === "") {
-      fetchUserDetails()
+      fetchUserDetails();
       // setFilteredManagerDetails([]);
     } else {
       const lowerCaseQuery = value?.toLowerCase();

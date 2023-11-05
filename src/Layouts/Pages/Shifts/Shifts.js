@@ -1565,6 +1565,15 @@ const Shifts = () => {
                 <div className="card-header">
                   <h5 className="mb-0">Open the shift one</h5>
                 </div>
+                <div className="card-footer">
+                  <button
+                    className="btn btn-secondary mr-2"
+                    style={{ width: "100%" }}
+                    disabled={true}
+                  >
+                    open
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1625,6 +1634,16 @@ const Shifts = () => {
                 <div className="card-header">
                   <h5 className="mb-0">Open the shift one</h5>
                 </div>
+
+                <div className="card-footer">
+                  <button
+                    className="btn btn-secondary mr-2"
+                    style={{ width: "100%" }}
+                    disabled={true}
+                  >
+                    open
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1683,6 +1702,15 @@ const Shifts = () => {
               <div className={`card ${isOpen ? "open" : "closed"}`}>
                 <div className="card-header">
                   <h5 className="mb-0">Open the shift one</h5>
+                </div>
+                <div className="card-footer">
+                  <button
+                    className="btn btn-secondary mr-2"
+                    style={{ width: "100%" }}
+                    disabled={true}
+                  >
+                    open
+                  </button>
                 </div>
               </div>
             </div>
@@ -1909,6 +1937,15 @@ const Shifts = () => {
               <div className={`card ${isOpen ? "open" : "closed"}`}>
                 <div className="card-header">
                   <h5 className="mb-0">Open the shift one</h5>
+                </div>
+                <div className="card-footer">
+                  <button
+                    className="btn btn-secondary mr-2"
+                    style={{ width: "100%" }}
+                    disabled={true}
+                  >
+                    open
+                  </button>
                 </div>
               </div>
             </div>
@@ -2212,13 +2249,15 @@ const Shifts = () => {
           })}
 
           <div className="row mt-5 mx-auto">
-            <div className="col-lg mx-auto">
-              <button
-                className="btn btn-primary"
-                onClick={() => navigate("/NewBooking")}
-              >
-                Create New booking
-              </button>
+            <div className="col-lg mx-auto text-center">
+              <div className="d-flex justify-content-center align-items-center">
+                <button
+                  className="btn btn-primary m-4 p-4"
+                  onClick={() => navigate("/NewBooking")}
+                >
+                  Create New Booking
+                </button>
+              </div>
             </div>
           </div>
 

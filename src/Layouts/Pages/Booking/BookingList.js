@@ -176,8 +176,24 @@ const BookingList = () => {
   };
 
   useEffect(() => {
-    setSelectedCountry({ name: backendData.selectedCountryName });
-    setSelectedState({ name: backendData.selectedStateName });
+    console.log(
+      "backendData.selectedCountryName--------->",
+      backendData.selectedCountryName
+    );
+
+    if (backendData.selectedCountryName) {
+      setSelectedCountry({ name: backendData.selectedCountryName });
+    } else {
+      setSelectedCountry(null);
+    }
+
+    if (backendData.selectedStateName) {
+      setSelectedState({ name: backendData.selectedStateName });
+    } else {
+      setSelectedState(null);
+    }
+    // setSelectedCountry({ name: backendData.selectedCountryName });
+    // setSelectedState({ name: backendData.selectedStateName });
   }, [editBookingDetails]);
 
   console.log("Backend Data---------->", backendData);
@@ -286,6 +302,21 @@ const BookingList = () => {
     filteredUserBookings
   );
 
+  const filterBookingDetails = (value) => {
+    if (value?.trim() === "") {
+      fetchUserBookingFn();
+      // setFilteredManagerDetails([]);
+    } else {
+      const lowerCaseQuery = value?.toLowerCase();
+      const filtered = filteredUserBookings?.filter(
+        (item) =>
+          item?.FullName?.toLowerCase()?.includes(lowerCaseQuery) ||
+          item?.Phone?.includes(value)
+      );
+      setFilteredUserBookings(filtered);
+    }
+  };
+
   return (
     <div>
       <ToastContainer />
@@ -293,15 +324,16 @@ const BookingList = () => {
       <div>
         <div className="row">
           <div className="col-md-6 col-lg-6 mb-3">
-            <p style={{ fontWeight: "bold" }}>Search By Full Name</p>
+            <p style={{ fontWeight: "bold" }}>Search</p>
             <div className="input-group">
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search name"
+                placeholder="Search"
                 onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  filterPackageDetailsFn();
+                  // setSearchQuery(e.target.value);
+                  // filterPackageDetailsFn();
+                  filterBookingDetails(e.target.value);
                 }}
               />
             </div>
@@ -490,152 +522,155 @@ const BookingList = () => {
           <Modal.Title>Guest Booking Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="row">
-            <div className="col-6">
-              <p className="table-modal-list">
-                Guest Name: <span> {selectedUserDetails.FullName}</span>
-              </p>
+          {/* <div className="row">
+            <div className="col-2">
+              <p className="table-modal-list">Guest Name:</p>
             </div>
-            <div className="col-6">
-              <p className="table-modal-list ">
-                Guest Phone no: {selectedUserDetails.Phone}
-              </p>
+            <div className="col-9">
+              <p className="table-modal-list">{selectedUserDetails.FullName}</p>
             </div>
-            {!selectedUserDetails.Email == "" ? (
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Guest Email: {selectedUserDetails.Email}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}{" "}
-            <div className="col-6">
-              <p className="table-modal-list ">
-                Guest Count: {selectedUserDetails.TotalGuestCount}
-              </p>
-            </div>
-            {!selectedUserDetails.Address == "" ? (
-              <div className="col-12">
-                <p className="table-modal-list ">
-                  Guest Address: {selectedUserDetails.Address}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {!selectedUserDetails.Country == "" ? (
-              <div className={`col-${!selectedUserDetails.City == "" ? 4 : 6}`}>
-                <p className="table-modal-list ">
-                  Country: {selectedUserDetails.Country}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {!selectedUserDetails.State == "" ? (
-              <div className={`col-${!selectedUserDetails.City == "" ? 4 : 6}`}>
-                <p className="table-modal-list ">
-                  State: {selectedUserDetails.State}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {!selectedUserDetails.City == "" ? (
-              <div className="col-4">
-                <p className="table-modal-list ">
-                  City: {selectedUserDetails.City}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
+          </div> */}
+          <div className="col-6">
+            <p className="table-modal-list">
+              Guest Name: <span> {selectedUserDetails.FullName}</span>
+            </p>
+          </div>
+          <div className="col-6">
+            <p className="table-modal-list ">
+              Guest Phone no: {selectedUserDetails.Phone}
+            </p>
+          </div>
+          {!selectedUserDetails.Email == "" ? (
             <div className="col-6">
               <p className="table-modal-list ">
-                Total Amount: {selectedUserDetails.ActualAmount}
+                Guest Email: {selectedUserDetails.Email}
               </p>
             </div>
+          ) : (
+            <></>
+          )}{" "}
+          <div className="col-6">
+            <p className="table-modal-list ">
+              Guest Count: {selectedUserDetails.TotalGuestCount}
+            </p>
+          </div>
+          {!selectedUserDetails.Address == "" ? (
+            <div className="col-12">
+              <p className="table-modal-list ">
+                Guest Address: {selectedUserDetails.Address}
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          {!selectedUserDetails.Country == "" ? (
+            <div className={`col-${!selectedUserDetails.City == "" ? 4 : 6}`}>
+              <p className="table-modal-list ">
+                Country: {selectedUserDetails.Country}
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          {!selectedUserDetails.State == "" ? (
+            <div className={`col-${!selectedUserDetails.City == "" ? 4 : 6}`}>
+              <p className="table-modal-list ">
+                State: {selectedUserDetails.State}
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          {!selectedUserDetails.City == "" ? (
+            <div className="col-4">
+              <p className="table-modal-list ">
+                City: {selectedUserDetails.City}
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          <div className="col-6">
+            <p className="table-modal-list ">
+              Total Amount: {selectedUserDetails.ActualAmount}
+            </p>
+          </div>
+          <div className="col-6">
+            <p className="table-modal-list ">
+              Booking Date :{" "}
+              {moment(selectedUserDetails.BookingDate).format(
+                "YYYY-MM-DD HH:mm"
+              )}
+            </p>
+          </div>
+          {selectedUserDetails.DOB == "" ? (
             <div className="col-6">
               <p className="table-modal-list ">
-                Booking Date :{" "}
-                {moment(selectedUserDetails.BookingDate).format(
-                  "YYYY-MM-DD HH:mm"
-                )}
+                Date of Birth: {selectedUserDetails.DOB}
               </p>
             </div>
-            {selectedUserDetails.DOB == "" ? (
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Date of Birth: {selectedUserDetails.DOB}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {selectedUserDetails.PanelDiscount > 0 ? (
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Panel Discount : {selectedUserDetails.PanelDiscount} %
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {selectedUserDetails.WebsiteDiscount > 0 ? (
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Website Discount : {selectedUserDetails.WebsiteDiscount} %
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {selectedUserDetails.CouponDiscount > 0 ? (
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Coupon Discount : {selectedUserDetails.CouponDiscount} %
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {!selectedUserDetails.ReferredBy === "" ? (
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Referred By : {selectedUserDetails.ReferredBy}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            <div className="row">
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Package Name:{" "}
-                  {selectedUserDetails.PackageName ? (
-                    JSON.parse(selectedUserDetails.PackageName).map(
-                      (item, index) => <span key={index}>{item} </span>
-                    )
-                  ) : (
-                    <span>No package name available</span>
-                  )}
-                </p>
-              </div>
-
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Package Price:{" "}
-                  {selectedUserDetails.FinalPrice ? (
-                    selectedUserDetails.FinalPrice.map((item, index) => (
-                      <span key={index}>{item} </span>
-                    ))
-                  ) : (
-                    <span>No package name available</span>
-                  )}
-                </p>
-              </div>
+          ) : (
+            <></>
+          )}
+          {selectedUserDetails.PanelDiscount > 0 ? (
+            <div className="col-6">
+              <p className="table-modal-list ">
+                Panel Discount : {selectedUserDetails.PanelDiscount} %
+              </p>
             </div>
+          ) : (
+            <></>
+          )}
+          {selectedUserDetails.WebsiteDiscount > 0 ? (
+            <div className="col-6">
+              <p className="table-modal-list ">
+                Website Discount : {selectedUserDetails.WebsiteDiscount} %
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          {selectedUserDetails.CouponDiscount > 0 ? (
+            <div className="col-6">
+              <p className="table-modal-list ">
+                Coupon Discount : {selectedUserDetails.CouponDiscount} %
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          {!selectedUserDetails.ReferredBy === "" ? (
+            <div className="col-6">
+              <p className="table-modal-list ">
+                Referred By : {selectedUserDetails.ReferredBy}
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          <div className="col-6">
+            <p className="table-modal-list ">
+              Package Name:{" "}
+              {selectedUserDetails.PackageName ? (
+                JSON.parse(selectedUserDetails.PackageName).map(
+                  (item, index) => <span key={index}>{item} </span>
+                )
+              ) : (
+                <span>No package name available</span>
+              )}
+            </p>
+          </div>
+          <div className="col-6">
+            <p className="table-modal-list ">
+              Package Price:{" "}
+              {selectedUserDetails.FinalPrice ? (
+                selectedUserDetails.FinalPrice.map((item, index) => (
+                  <span key={index}>{item} </span>
+                ))
+              ) : (
+                <span>No package name available</span>
+              )}
+            </p>
           </div>
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
@@ -715,6 +750,7 @@ const BookingList = () => {
                 getOptionValue={(options) => options["name"]}
                 value={selectedCountry}
                 onChange={(item) => setSelectedCountry(item)}
+                placeholder="Select"
               />
             </div>
 
@@ -729,6 +765,7 @@ const BookingList = () => {
                 getOptionValue={(options) => options["name"]}
                 value={selectedState}
                 onChange={(item) => setSelectedState(item)}
+                placeholder="Select"
               />
             </div>
 

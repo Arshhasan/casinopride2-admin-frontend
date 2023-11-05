@@ -1749,9 +1749,9 @@ const NewBooking = () => {
           className="btn btn_colour mt-5 btn-lg"
           onClick={handleShow}
           disabled={
-            (shifts && shifts[1] && shifts[1][0]?.ShiftOpen === 0) ||
-            (shifts && shifts[3] && shifts[3][0]?.ShiftOpen === 0) ||
-            (shifts && shifts[2] && shifts[2][0]?.ShiftOpen === 0) ||
+            (shifts && shifts[1] && !shifts[1][0]?.ShiftOpen === 1) ||
+            (shifts && shifts[3] && !shifts[3][0]?.ShiftOpen === 1) ||
+            (shifts && shifts[2] && !shifts[2][0]?.ShiftOpen === 1) ||
             (recentShiftOpen &&
               recentShiftOpen[0]?.ShiftTypeId === 2 &&
               recentShiftOpen &&
