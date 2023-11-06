@@ -813,7 +813,9 @@ const BillingList = () => {
                     <></>
                   )}
 
-                  {!loginDetails?.logindata?.UserType === 7 ? (
+                  {loginDetails?.logindata?.UserType === 1 ||
+                  loginDetails?.logindata?.UserType === 2 ||
+                  loginDetails?.logindata?.UserType === 3 ? (
                     <th scope="col" className="text-center table_heading">
                       Reprint Bill
                     </th>
@@ -954,7 +956,9 @@ const BillingList = () => {
                             </p>
                           )}
 
-                          {!loginDetails?.logindata?.UserType === 7 ? (
+                          {loginDetails?.logindata?.UserType === 1 ||
+                          loginDetails?.logindata?.UserType === 2 ||
+                          loginDetails?.logindata?.UserType === 3 ? (
                             <td style={{ textAlign: "center" }}>
                               <AiOutlinePrinter
                                 style={{ height: "22px", width: "22px" }}
