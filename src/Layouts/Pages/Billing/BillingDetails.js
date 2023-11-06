@@ -1983,7 +1983,10 @@ const BillingDetails = () => {
                           </span>
                         </p>
 
-                        <p className="BillPrintFontPrint">
+                        <p
+                          className="BillPrintFontPrint"
+                          style={{ marginRight: "25px" }}
+                        >
                           BILL#: {item.BillNumber}
                         </p>
                       </div>

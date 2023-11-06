@@ -138,7 +138,7 @@ export const OTPpackage = ({
             </div>
           </div>
           <div className="col-lg-12">
-            <div className="family-box">
+            <div>
               <div className="family-box-inner">
                 <div className=" align-items-center mb-2 row">
                   <div className="col-lg-12">
