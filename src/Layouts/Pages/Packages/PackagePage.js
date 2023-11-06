@@ -258,7 +258,7 @@ const PackagesPage = ({
     setPackageWeekdaysPrice(formattedData?.packageWeekdayPrices);
     setTeensWeekendPrice(groupedData[0]?.PackageWeekendPrice);
     setTeensWeekdayPrice(groupedData[0]?.PackageWeekdayPrice);
-    setTeensPackageName(groupedData[0]?.PackageName);
+    setTeensPackageName([groupedData[0]?.PackageName]);
   }, [TotalAmount, teensCount]);
 
   console.log("total amount-------->", TotalAmount);
