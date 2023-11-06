@@ -137,7 +137,8 @@ const SideNav = () => {
 
             {loginDetails?.logindata?.UserType == "1" ||
             loginDetails?.logindata?.UserType == "7" ||
-            loginDetails?.logindata?.UserType == "3" ? (
+            loginDetails?.logindata?.UserType == "3" ||
+            loginDetails?.logindata?.UserType == "2" ? (
               <Nav.Item eventKey="6" icon={<PageIcon />} onClick={billingLink}>
                 <Link to="/BillingList" className="links">
                   Billing

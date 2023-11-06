@@ -88,6 +88,19 @@ const AgentSettlementList = () => {
     }
   };
 
+  const filterAgentSettlementDetails = (value) => {
+    if (value?.trim() === "") {
+      fetchAgentSettlementDetails();
+      // setFilteredManagerDetails([]);
+    } else {
+      const lowerCaseQuery = value?.toLowerCase();
+      const filtered = agentDetails?.filter((item) =>
+        item?.Name?.toLowerCase()?.includes(lowerCaseQuery)
+      );
+      setFilteredAgentDetails(filtered);
+    }
+  };
+
   const [showViewMoreModal, setShowViewMoreModal] = useState(false);
   const [selectedUserDetails, setSelectedUserDetails] = useState({});
 
@@ -170,8 +183,9 @@ const AgentSettlementList = () => {
                 className="form-control"
                 placeholder="Search name"
                 onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  filterCouponListDetails();
+                  // setSearchQuery(e.target.value);
+                  // filterCouponListDetails();
+                  filterAgentSettlementDetails(e.target.value);
                 }}
               />
             </div>

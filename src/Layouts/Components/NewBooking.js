@@ -67,7 +67,7 @@ const NewBooking = () => {
 
   console.log(
     "outlet open Details-----------------|||||||||||||||||||||||||-->",
-    outletOpenDetails?.Details?.OutletStatus
+    outletOpenDetails?.Details
   );
 
   console.log(
@@ -482,6 +482,11 @@ const NewBooking = () => {
 
   const today = moment().format("YYYY-MM-DD");
 
+  console.log(
+    "activeDateOfOutlet?.OutletDate-------------->",
+    activeDateOfOutlet?.OutletDate
+  );
+
   const onsubmit = () => {
     setLoader(true);
     console.log("Package ID ------->", [teenpackageId]);
@@ -523,7 +528,7 @@ const NewBooking = () => {
       toast.warning("Please enter all card details");
       setLoader(false);
       handleClose();
-    } else if (paymentOption == "Online (UPI)" && upiAmount == "") {
+    } else if (paymentOption == "UPI" && upiAmount == "") {
       toast.warning("Please enter upi details");
       setLoader(false);
       handleClose();
@@ -539,7 +544,7 @@ const NewBooking = () => {
       setLoader(false);
       handleClose();
     } else if (
-      paymentOption == "Part Card / Part Online (UPI)" &&
+      paymentOption == "Part Card / Part UPI" &&
       cardType == "" &&
       cardNumber == "" &&
       cardHoldersName == "" &&
@@ -550,7 +555,7 @@ const NewBooking = () => {
       setLoader(false);
       handleClose();
     } else if (
-      paymentOption == "Part Cash / Part Online (UPI)" &&
+      paymentOption == "Part Cash / Part UPI" &&
       cashAmount == "" &&
       upiAmount == ""
     ) {
@@ -664,7 +669,7 @@ const NewBooking = () => {
               packageGuestCount: callback?.response?.Details?.PackageGuestCount,
               totalGuestCount: callback?.response?.Details?.TotalGuestCount,
               bookingDate: callback?.response?.Details?.CreatedOn?.slice(0, 10),
-              billingDate: today,
+              billingDate: activeDateOfOutlet?.OutletDate,
               teensCount: callback?.response?.Details?.NumOfTeens,
               actualAmount: callback?.response?.Details?.ActualAmount,
               amountAfterDiscount:
@@ -1263,7 +1268,9 @@ const NewBooking = () => {
             onChange={(e) => settoalGuestCount(e.target.value)}
           />
         </div> */}
-        <div className="col-lg-6 mt-3">
+
+        {/* date of birth */}
+        {/* <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
             Date of birth
           </label>
@@ -1274,7 +1281,7 @@ const NewBooking = () => {
             onChange={(e) => setDateofbirth(e.target.value)}
             onFocus={handleFocus}
           />
-        </div>
+        </div> */}
 
         {/* <div className="col-lg-6 mt-3">
           <label htmlFor="formGroupExampleInput" className="form_text">
@@ -1305,6 +1312,138 @@ const NewBooking = () => {
         ) : (
           <></>
         )}
+
+        <div className="row mt-3">
+          <div className="col-lg-6 mt-3">
+            <div className="row">
+              <div className="col-4">
+                <label for="formGroupExampleInput " className="form_text">
+                  Dicount
+                </label>
+
+                <div className="form-check form-switch">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="discountSwitch"
+                    checked={discountToggle}
+                    onChange={() => handleToggle("discount")}
+                  />
+                </div>
+              </div>
+
+              <div className="col-4">
+                <label for="formGroupExampleInput " className="form_text">
+                  Coupon
+                </label>
+
+                <div className="form-check form-switch">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="couponSwitch"
+                    checked={couponToggle}
+                    onChange={() => handleToggle("coupon")}
+                  />
+                </div>
+              </div>
+
+              <div className="col-4">
+                <label for="formGroupExampleInput " className="form_text">
+                  Settled by company
+                </label>
+
+                <div className="form-check form-switch">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="referredBySwitch"
+                    checked={referredByToggle}
+                    onChange={() => handleToggle("referredBy")}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-lg-6 mt-3">
+            <label for="formGroupExampleInput " className="form_text">
+              Date of birth
+            </label>
+            <input
+              class="form-control mt-2"
+              type="date"
+              placeholder="Enter Start Date"
+              onChange={(e) => setDateofbirth(e.target.value)}
+              onFocus={handleFocus}
+            />
+          </div>
+
+          <div className="row">
+            {couponToggle ? (
+              <div className="col-lg-6 mt-3">
+                <div className="input-group">
+                  <input
+                    className="form-control mt-2"
+                    type="text"
+                    placeholder="Coupon Code"
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    value={couponCode}
+                  />
+                  <button
+                    className="btn btn-primary"
+                    style={{ marginTop: "8px" }}
+                    type="button"
+                    onClick={separateInitials}
+                  >
+                    Check
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
+
+          {discountToggle || referredByToggle ? (
+            <div className="col-lg-6 mt-3">
+              <label for="formGroupExampleInput mt-3" className="form_text">
+                Discount
+              </label>
+              <select
+                className="form-select form-control mt-2"
+                value={selectedOption}
+                onChange={handleSelectChange}
+              >
+                <option value="">Select an option</option>
+                {panelDiscounts.map((item, index) => (
+                  <option key={index} value={item?.Id}>
+                    {item?.PanelDiscount}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <></>
+          )}
+
+          {referredByToggle || discountToggle ? (
+            <div className="col-lg-6 mt-3">
+              <label for="formGroupExampleInput " className="form_text">
+                Referred By <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                class="form-control mt-2"
+                type="text"
+                placeholder="Referred By"
+                onChange={(e) => setreferredBy(e.target.value)}
+              />
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+
         <div className="col-lg-6 mt-3">
           <label for="formGroupExampleInput " className="form_text">
             Payment Option <span style={{ color: "red" }}>*</span>
@@ -1318,15 +1457,11 @@ const NewBooking = () => {
             <option value="">Select...</option>
             <option value="Cash">Cash </option>
             <option value="Card">Card </option>
-            <option value="Online (UPI)">UPI </option>
+            <option value="UPI">UPI </option>
 
             <option value="Part Card / Part Cash">Part Card / Part Cash</option>
-            <option value="Part Card / Part Online (UPI)">
-              Part Card / Part Online (UPI)
-            </option>
-            <option value="Part Cash / Part Online (UPI)">
-              Part Cash / Part Online (UPI)
-            </option>
+            <option value="Part Card / Part UPI">Part Card / Part UPI</option>
+            <option value="Part Cash / Part UPI">Part Cash / Part UPI</option>
 
             <option value="Company Settlement">Company Settlement </option>
           </select>
@@ -1358,7 +1493,7 @@ const NewBooking = () => {
               </label>
               <input
                 class="form-control mt-2"
-                type="text"
+                type="number"
                 placeholder="Enter the amount"
                 onChange={(e) => setCardAmount(e.target.value)}
               />
@@ -1397,7 +1532,7 @@ const NewBooking = () => {
               </label>
               <input
                 className="form-control mt-2"
-                type="text"
+                type="number"
                 placeholder="Enter the card number"
                 onChange={(e) => setCardNumber(e.target.value)}
               />
@@ -1407,11 +1542,11 @@ const NewBooking = () => {
           <></>
         )}
 
-        {paymentOption == "Online (UPI)" ? (
+        {paymentOption == "UPI" ? (
           <div className="row">
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
-                Online (UPI) Amount
+                UPI Amount
               </label>
               <input
                 class="form-control mt-2"
@@ -1457,7 +1592,7 @@ const NewBooking = () => {
               </label>
               <input
                 class="form-control mt-2"
-                type="text"
+                type="number"
                 placeholder="Enter the amount"
                 onChange={(e) => setCashAmount(e.target.value)}
               />
@@ -1495,7 +1630,7 @@ const NewBooking = () => {
               </label>
               <input
                 className="form-control mt-2"
-                type="text"
+                type="number"
                 placeholder="Enter the card number"
                 onChange={(e) => setCardNumber(e.target.value)}
               />
@@ -1505,7 +1640,7 @@ const NewBooking = () => {
           <></>
         )}
 
-        {paymentOption == "Part Card / Part Online (UPI)" ? (
+        {paymentOption == "Part Card / Part UPI" ? (
           <>
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
@@ -1575,7 +1710,7 @@ const NewBooking = () => {
               </label>
               <input
                 className="form-control mt-2"
-                type="text"
+                type="number"
                 placeholder="Enter the card number"
                 onChange={(e) => setCardNumber(e.target.value)}
               />
@@ -1585,7 +1720,7 @@ const NewBooking = () => {
           <></>
         )}
 
-        {paymentOption == "Part Cash / Part Online (UPI)" ? (
+        {paymentOption == "Part Cash / Part UPI" ? (
           <>
             <div className="col-lg-6 mt-3">
               <label for="formGroupExampleInput " className="form_text">
@@ -1624,7 +1759,7 @@ const NewBooking = () => {
         ) : (
           <></>
         )}
-        <div className="row mt-3">
+        {/* <div className="row mt-3">
           <div className="col-lg-6 mt-3">
             <div className="row">
               <div className="col-4">
@@ -1740,7 +1875,7 @@ const NewBooking = () => {
           ) : (
             <></>
           )}
-        </div>
+        </div> */}
       </div>
       <div className="col-lg-6 mb-2 btn-lg mx-auto d-flex justify-content-center ">
         <button

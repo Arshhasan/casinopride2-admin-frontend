@@ -42,7 +42,13 @@ function LoginPage() {
       Login(data, (callback) => {
         if (callback.status) {
           toast.success("Welcome to casino pride");
-          navigate("NewBooking");
+
+          if (loginDetails?.logindata?.UserType == "7") {
+            navigate("BillingList");
+          } else {
+            navigate("NewBooking");
+          }
+
           setLoading(false);
         } else {
           toast.error(callback.error);

@@ -48,10 +48,7 @@ const BillingList = () => {
     (state) => state.users?.saveOutletDate?.Details
   );
 
-  console.log(
-    "activeDateOfOutlet---------->",
-    activeDateOfOutlet?.OutletStatus
-  );
+  console.log("activeDateOfOutlet---------->", activeDateOfOutlet);
 
   const [userBookings, setUserBookings] = useState([]);
   const [billingDetails, setBillingDetails] = useState([]);
@@ -588,6 +585,13 @@ const BillingList = () => {
 
   console.log("Combined Array--->", combinedDataArray);
 
+  const outletOpenDetails = useSelector((state) => state.auth?.outeltDetails);
+
+  console.log(
+    "activeDateOfOutlet?.OutletDate------------->",
+    activeDateOfOutlet?.OutletDate
+  );
+
   return (
     <div>
       <ToastContainer />
@@ -799,17 +803,23 @@ const BillingList = () => {
                     Shift
                   </th>
 
-                  {loginDetails?.logindata?.UserType === 5 ||
-                  loginDetails?.logindata?.UserType === 1 ? (
+                  {loginDetails?.logindata?.UserType === 2 ||
+                  loginDetails?.logindata?.UserType === 1 ||
+                  loginDetails?.logindata?.UserType === 7 ? (
                     <th scope="col" className="text-center table_heading">
                       Void Bill
                     </th>
                   ) : (
                     <></>
                   )}
-                  <th scope="col" className="text-center table_heading">
-                    Reprint Bill
-                  </th>
+
+                  {!loginDetails?.logindata?.UserType === 7 ? (
+                    <th scope="col" className="text-center table_heading">
+                      Reprint Bill
+                    </th>
+                  ) : (
+                    <></>
+                  )}
 
                   <th scope="col" className="text-center table_heading">
                     View more
@@ -848,111 +858,130 @@ const BillingList = () => {
                     </td>
                   </tr>
                 ) : (
-                  combinedDataArray.map((item) => (
-                    <tr key={item.id}>
-                      <td className="manager-list">
-                        {/* {item?.Items[0]?.BillingId} */}
-                        {item?.Items[0]?.BillNumber}
-                      </td>
-                      <td className="manager-list ">
-                        {item?.Items[0]?.GuestName}
-                      </td>
-                      <td className="manager-list">
-                        {item &&
-                        item?.Items[0] &&
-                        item?.Items[0]?.PackageName ? (
-                          JSON.parse(item?.Items[0]?.PackageName).map(
-                            (item, index) => (
+                  combinedDataArray.map(
+                    (item) => (
+                      console.log(
+                        "bill dateeeeee_>>>>>.",
+
+                        moment(item?.Items[0]?.BillingDate).format("YYYY-MM-DD")
+                      ),
+                      (
+                        <tr key={item.id}>
+                          <td className="manager-list">
+                            {/* {item?.Items[0]?.BillingId} */}
+                            {item?.Items[0]?.BillNumber}
+                          </td>
+                          <td className="manager-list ">
+                            {item?.Items[0]?.GuestName}
+                          </td>
+                          <td className="manager-list">
+                            {item &&
+                            item?.Items[0] &&
+                            item?.Items[0]?.PackageName ? (
+                              JSON.parse(item?.Items[0]?.PackageName).map(
+                                (item, index) => (
+                                  <li
+                                    key={index}
+                                    style={{ listStyleType: "none" }}
+                                  >
+                                    {item}{" "}
+                                  </li>
+                                )
+                              )
+                            ) : (
+                              <span>No package name available</span>
+                            )}
+                          </td>
+                          <td className="manager-list">
+                            {item?.Items[0]?.FinalPrice?.map((price, index) => (
                               <li key={index} style={{ listStyleType: "none" }}>
-                                {item}{" "}
+                                {price}
                               </li>
-                            )
-                          )
-                        ) : (
-                          <span>No package name available</span>
-                        )}
-                      </td>
-                      <td className="manager-list">
-                        {item?.Items[0]?.FinalPrice?.map((price, index) => (
-                          <li key={index} style={{ listStyleType: "none" }}>
-                            {price}
-                          </li>
-                        ))}
-                      </td>
+                            ))}
+                          </td>
 
-                      <td className="manager-list">
-                        {item?.Items[0]?.ActualBillingDate.slice(0, 10)}{" "}
-                        {item?.Items[0]?.ActualBillingTime}
-                      </td>
-                      <td className="manager-list">
-                        {item.Items[0]?.ShiftId == 0
-                          ? "-"
-                          : item.Items[0]?.ShiftId}
-                      </td>
-                      {loginDetails?.logindata?.UserType === 5 ||
-                      loginDetails?.logindata?.UserType === 1 ? (
-                        <>
-                          {" "}
-                          {item?.Items[0]?.IsVoid == null ||
-                          item?.Items[0]?.IsVoid == 0 ? (
+                          <td className="manager-list">
+                            {item?.Items[0]?.ActualBillingDate.slice(0, 10)}{" "}
+                            {item?.Items[0]?.ActualBillingTime}
+                          </td>
+                          <td className="manager-list">
+                            {item.Items[0]?.ShiftId == 0
+                              ? "-"
+                              : item.Items[0]?.ShiftId}
+                          </td>
+                          {!loginDetails?.logindata?.UserType === 7 ||
+                          (loginDetails?.logindata?.UserType === 2 &&
+                            activeDateOfOutlet?.OutletDate ==
+                              moment(item?.Items[0]?.BillingDate).format(
+                                "YYYY-MM-DD"
+                              )) ||
+                          (loginDetails?.logindata?.UserType === 1 &&
+                            activeDateOfOutlet?.OutletDate ==
+                              moment(item?.Items[0]?.BillingDate).format(
+                                "YYYY-MM-DD"
+                              )) ? (
+                            <>
+                              {item?.Items[0]?.IsVoid == null ||
+                              item?.Items[0]?.IsVoid == 0 ? (
+                                <td style={{ textAlign: "center" }}>
+                                  <FcCancel
+                                    onClick={() => openModal(item)}
+                                    style={{ height: "22px", width: "22px" }}
+                                  />
+                                </td>
+                              ) : (
+                                <td
+                                  className="manager-list"
+                                  style={{
+                                    color:
+                                      item?.Items[0]?.IsVoid === 1
+                                        ? "red"
+                                        : "green",
+                                  }}
+                                >
+                                  {item?.Items[0]?.IsVoid == 1
+                                    ? "Void"
+                                    : "Active"}
+                                </td>
+                              )}
+                            </>
+                          ) : (
+                            <p
+                              className="text-center"
+                              style={{ fontSize: "25px" }}
+                            >
+                              -
+                            </p>
+                          )}
+
+                          {!loginDetails?.logindata?.UserType === 7 ? (
                             <td style={{ textAlign: "center" }}>
-                              {/* <button
-                                className="btn btn-primary"
-                                onClick={() => openModal(item)}
-                              > */}
-
-                              {/* </button> */}
-                              <FcCancel
-                                onClick={() => openModal(item)}
+                              <AiOutlinePrinter
                                 style={{ height: "22px", width: "22px" }}
+                                onClick={() => regenerateBillFn(item)}
                               />
                             </td>
                           ) : (
-                            <td
-                              className="manager-list"
-                              style={{
-                                color:
-                                  item?.Items[0]?.IsVoid === 1
-                                    ? "red"
-                                    : "green",
-                              }}
-                            >
-                              {item?.Items[0]?.IsVoid == 1 ? "Void" : "Active"}
-                            </td>
+                            <></>
                           )}
-                        </>
-                      ) : (
-                        <></>
-                      )}
 
-                      <td style={{ textAlign: "center" }}>
-                        {/* <button onClick={() => regenerateBillFn(item)}> */}
-                        {/* <img
-                            src={printerpng}
-                            style={{ height: "40px", width: "40px" }}
-                          /> */}
-                        <AiOutlinePrinter
-                          style={{ height: "22px", width: "22px" }}
-                          onClick={() => regenerateBillFn(item)}
-                        />
-                        {/* </button> */}
-                      </td>
-
-                      <td
-                        className="manager-list"
-                        // onClick={() => handleViewMore(item?.Items[0])}
-                      >
-                        {/* <img src={more} className="more_img" /> */}
-                        <CiCircleMore
-                          onClick={() => handleViewMore(item?.Items[0])}
-                          style={{
-                            height: "22px",
-                            width: "22px",
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  ))
+                          <td
+                            className="manager-list"
+                            // onClick={() => handleViewMore(item?.Items[0])}
+                          >
+                            {/* <img src={more} className="more_img" /> */}
+                            <CiCircleMore
+                              onClick={() => handleViewMore(item?.Items[0])}
+                              style={{
+                                height: "22px",
+                                width: "22px",
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      )
+                    )
+                  )
                 )}
               </tbody>
             </table>

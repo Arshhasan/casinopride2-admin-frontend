@@ -16,7 +16,8 @@ console.log("loginDetails");
 export const Login = (data, callback) => async (dispatch) => {
   api.AUTH_PORT.post("/auth/validateuser", data)
     .then((response) => {
-      console.log("Validate user data ->", response.data);
+      console.log("Validate user data ->", response.data?.Details);
+      const validateDetailsData = response.data?.Details;
 
       if (response.data?.Details) {
         dispatch(saveValidateData(response.data));
@@ -33,9 +34,10 @@ export const Login = (data, callback) => async (dispatch) => {
               ) {
                 toast.error("IPS do not match");
               } else {
+                console.log("Callled Here--->", response.data?.Details);
                 api.AUTH_PORT.post("/auth/login", {
-                  UserId: response.data?.Details?.Id,
-                  UserType: response.data?.Details?.UserType,
+                  UserId: validateDetailsData?.Id,
+                  UserType: validateDetailsData?.UserType,
                 })
                   .then((response) => {
                     console.log("Login data -->", response.data);
