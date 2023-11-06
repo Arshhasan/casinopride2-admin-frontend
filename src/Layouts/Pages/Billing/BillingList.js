@@ -803,15 +803,9 @@ const BillingList = () => {
                     Shift
                   </th>
 
-                  {loginDetails?.logindata?.UserType === 2 ||
-                  loginDetails?.logindata?.UserType === 1 ||
-                  loginDetails?.logindata?.UserType === 7 ? (
-                    <th scope="col" className="text-center table_heading">
-                      Void Bill
-                    </th>
-                  ) : (
-                    <></>
-                  )}
+                  <th scope="col" className="text-center table_heading">
+                    Void Bill
+                  </th>
 
                   {loginDetails?.logindata?.UserType === 1 ||
                   loginDetails?.logindata?.UserType === 2 ||
@@ -911,8 +905,7 @@ const BillingList = () => {
                               ? "-"
                               : item.Items[0]?.ShiftId}
                           </td>
-                          {!loginDetails?.logindata?.UserType === 7 ||
-                          (loginDetails?.logindata?.UserType === 2 &&
+                          {(loginDetails?.logindata?.UserType === 2 &&
                             activeDateOfOutlet?.OutletDate ==
                               moment(item?.Items[0]?.BillingDate).format(
                                 "YYYY-MM-DD"

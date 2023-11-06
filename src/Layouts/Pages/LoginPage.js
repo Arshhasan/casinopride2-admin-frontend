@@ -45,6 +45,10 @@ function LoginPage() {
 
           if (loginDetails?.logindata?.UserType == "7") {
             navigate("BillingList");
+          } else if (loginDetails?.logindata?.UserType == "4") {
+            navigate("CouponsList");
+          } else if (loginDetails?.logindata?.UserType == "2") {
+            navigate("Shifts");
           } else {
             navigate("NewBooking");
           }
