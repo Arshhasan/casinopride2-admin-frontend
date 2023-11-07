@@ -795,6 +795,10 @@ const BillingList = () => {
                     Billing Amount
                   </th>
 
+                  {/* <th scope="col" className="text-center table_heading">
+                    Total Amount
+                  </th> */}
+
                   <th scope="col" className="text-center table_heading">
                     Date & Time
                   </th>
@@ -888,16 +892,67 @@ const BillingList = () => {
                               <span>No package name available</span>
                             )}
                           </td>
-                          <td className="manager-list">
+                          {/* <td className="manager-list">
                             {item?.Items[0]?.FinalPrice?.map((price, index) => (
                               <li key={index} style={{ listStyleType: "none" }}>
                                 {price}
                               </li>
                             ))}
+                          </td> */}
+                          <td className="manager-list">
+                            {/* {item?.Items[0]?.FinalPrice?.map((price, index) => (
+                              <li key={index} style={{ listStyleType: "none" }}>
+                                {price}
+                              </li>
+                            ))} */}
+                            {item?.Items[0]?.TeensPrice === 0 &&
+                              item?.Items[0]?.FinalPrice.length !== 0 && (
+                                // Display only price
+                                <div>
+                                  {item?.Items[0]?.FinalPrice?.map(
+                                    (price, index) => (
+                                      <li
+                                        key={index}
+                                        style={{ listStyleType: "none" }}
+                                      >
+                                        {price}
+                                      </li>
+                                    )
+                                  )}
+                                </div>
+                              )}
+                            {item?.Items[0]?.TeensPrice !== 0 &&
+                              item?.Items[0]?.FinalPrice.length !== 0 && (
+                                <div>
+                                  {item?.Items[0]?.FinalPrice?.map(
+                                    (price, index) => (
+                                      <li
+                                        key={index}
+                                        style={{ listStyleType: "none" }}
+                                      >
+                                        {price}
+                                      </li>
+                                    )
+                                  )}
+                                  <div>{item?.Items[0]?.TeensPrice}</div>
+                                </div>
+                              )}
+                            {item?.Items[0]?.TeensPrice !== 0 &&
+                              item?.Items[0]?.FinalPrice.length === 0 && (
+                                <div>{item?.Items[0]?.TeensPrice}</div>
+                              )}
                           </td>
 
+                          {/* <td className="manager-list">
+                            {item?.Items[0]?.ActualAmount -
+                              item?.Items[0]?.AmountAfterDiscount ==
+                            0
+                              ? item?.Items[0]?.ActualAmount
+                              : item?.Items[0]?.AmountAfterDiscount}
+                          </td> */}
+
                           <td className="manager-list">
-                            {item?.Items[0]?.ActualBillingDate.slice(0, 10)}{" "}
+                            {item?.Items[0]?.BillingDate.slice(0, 10)}{" "}
                             {item?.Items[0]?.ActualBillingTime}
                           </td>
                           <td className="manager-list">
