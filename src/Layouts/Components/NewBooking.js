@@ -283,6 +283,8 @@ const NewBooking = () => {
   console.log("remainingCoupons------------>remaining", remainingCoupons);
 
   const handleToggle = (field) => {
+    console.log('handleToggle>>field>>',field);
+    console.log('handleToggle>>discountToggle>>',discountToggle);
     // Toggle the state of the corresponding field
     if (field === "discount") {
       setDiscountToggle(!discountToggle); // Toggle the state
@@ -293,11 +295,16 @@ const NewBooking = () => {
         setCouponCode("");
         setSelectedOption("");
         setamountAfterDiscount("");
+        setCouponDiscout('')
+
       } else if (discountToggle) {
+        console.log('inside discountToggle');
         setamountAfterDiscount("");
         setCouponDiscout("");
+        setCouponCode("")
       }
     } else if (field === "coupon") {
+      console.log('couponToggle>>',couponToggle);
       setCouponToggle(!couponToggle);
       if (!couponToggle) {
         setDiscountToggle(false);
@@ -305,6 +312,7 @@ const NewBooking = () => {
         setCouponCode("");
         setSelectedOption("");
         setamountAfterDiscount("");
+
       } else if (couponToggle) {
         setCouponDiscout("");
       }
@@ -314,9 +322,16 @@ const NewBooking = () => {
         setDiscountToggle(false);
         setCouponToggle(false);
         setCouponCode("");
-        setSelectedOption("");
+        
+        setCouponDiscout("");
+        
       } else if (referredByToggle) {
+        setSelectedOption("")
+        setCouponDiscout("");
         setamountAfterDiscount("");
+       
+      
+        
       }
     }
   };
@@ -1133,6 +1148,7 @@ const NewBooking = () => {
 
     return () => {
       clearTimeout(openTabTimer);
+      inputRef.current = null;
     };
   }, [scannedData]);
 
