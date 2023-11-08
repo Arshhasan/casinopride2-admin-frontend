@@ -61,13 +61,25 @@ const DiscountOnPanel = () => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const filterPackageDetailsFn = () => {
-    if (searchQuery.trim() === "") {
-      setFilteredDiscountDetails([]);
+  // const filterPackageDetailsFn = () => {
+  //   if (searchQuery.trim() === "") {
+  //     setFilteredDiscountDetails([]);
+  //   } else {
+  //     const lowerCaseQuery = searchQuery.toLowerCase();
+  //     const filtered = discountDetails.filter((item) =>
+  //       item?.PanelDiscountTitle.toLowerCase().includes(lowerCaseQuery)
+  //     );
+  //     setFilteredDiscountDetails(filtered);
+  //   }
+  // };
+
+  const filterDiscountDetailsFn = (value) => {
+    if (value?.trim() === "") {
+      fetchDiscountDetails();
     } else {
-      const lowerCaseQuery = searchQuery.toLowerCase();
-      const filtered = discountDetails.filter((item) =>
-        item?.PanelDiscountTitle.toLowerCase().includes(lowerCaseQuery)
+      const lowerCaseQuery = value?.toLowerCase();
+      const filtered = discountDetails?.filter((item) =>
+        item?.PanelDiscountTitle?.toLowerCase()?.includes(lowerCaseQuery)
       );
       setFilteredDiscountDetails(filtered);
     }
@@ -104,8 +116,8 @@ const DiscountOnPanel = () => {
                 className="form-control"
                 placeholder="Search Discount title"
                 onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  filterPackageDetailsFn();
+                  filterDiscountDetailsFn(e.target.value);
+                  // filterPackageDetailsFn();
                 }}
               />
             </div>

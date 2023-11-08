@@ -471,26 +471,24 @@ const NewBooking = () => {
     const selectedValue = e.target.value;
     if (selectedValue == "") {
       setamountAfterDiscount("");
-    }
-    else{
+    } else {
       console.log("Discount valueeeeeeeeeee", e.target.value);
 
       const selectedPanelDiscount = panelDiscounts.find(
         (item) => item.Id == selectedValue
       );
-  
+
       console.log(
         "selectedPanelDiscount-----------------------********************************8-------------->",
         selectedPanelDiscount?.PanelDiscount
       );
       setDiscountFigure(selectedPanelDiscount?.PanelDiscount);
-  
+
       setSelectedOption(e.target.value);
       const discount = (amount * selectedPanelDiscount?.PanelDiscount) / 100;
       const discountedAmount = amount - discount;
       setamountAfterDiscount(discountedAmount);
     }
-
   };
 
   console.log("usedCouponArr-------------->", usedCouponArr);
@@ -624,9 +622,6 @@ const NewBooking = () => {
         actualAmount: amount,
         paymentMode: paymentOption,
         cardAmount: cardAmount,
-
-        // amountAfterDiscount:
-        //   amountAfterDiscount == "" ? amount : amountAfterDiscount,
         amountAfterDiscount:
           amountAfterDiscount !== ""
             ? amountAfterDiscount
@@ -2057,6 +2052,12 @@ const NewBooking = () => {
                   className="confirmbtn"
                   onClick={onsubmit}
                   disabled={loader}
+                  style={{
+                    position: "relative",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                 >
                   {!loader ? (
                     "Generate Bill"

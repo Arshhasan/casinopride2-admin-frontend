@@ -110,7 +110,7 @@ const ManagerList = () => {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search name"
+                placeholder="Search "
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);

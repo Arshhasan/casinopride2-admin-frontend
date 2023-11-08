@@ -61,13 +61,13 @@ const Discountonwebsite = () => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const filterPackageDetailsFn = () => {
-    if (searchQuery.trim() === "") {
-      setFilteredDiscountDetails([]);
+  const filterDiscountDetailsFn = (value) => {
+    if (value?.trim() === "") {
+      fetchDiscountDetails();
     } else {
-      const lowerCaseQuery = searchQuery.toLowerCase();
-      const filtered = discountDetails.filter((item) =>
-        item?.DiscountTitle.toLowerCase().includes(lowerCaseQuery)
+      const lowerCaseQuery = value?.toLowerCase();
+      const filtered = discountDetails?.filter((item) =>
+        item?.DiscountTitle?.toLowerCase()?.includes(lowerCaseQuery)
       );
       setFilteredDiscountDetails(filtered);
     }
@@ -104,8 +104,7 @@ const Discountonwebsite = () => {
                 className="form-control"
                 placeholder="Search Discount title"
                 onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  filterPackageDetailsFn();
+                  filterDiscountDetailsFn(e.target.value);
                 }}
               />
             </div>

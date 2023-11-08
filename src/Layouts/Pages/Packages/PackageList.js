@@ -103,17 +103,18 @@ const PackageList = () => {
     };
   });
 
-  const filterPackageDetailsFn = () => {
-    if (searchQuery.trim() === "") {
-      setFilterPackageDetails([]);
+  const filterPackageDetailsFn = (value) => {
+    if (value?.trim() === "") {
+      fetchPackageDetails();
     } else {
-      const lowerCaseQuery = searchQuery.toLowerCase();
-      const filtered = groupedData.filter((item) =>
-        item?.PackageName.toLowerCase().includes(lowerCaseQuery)
+      const lowerCaseQuery = value?.toLowerCase();
+      const filtered = packageDetails?.filter((item) =>
+        item?.PackageName?.toLowerCase()?.includes(lowerCaseQuery)
       );
-      setFilterPackageDetails(filtered);
+      setPackageDetails(filtered);
     }
   };
+
   return (
     <div>
       <h3 className="mb-4">Package List</h3>
@@ -126,8 +127,7 @@ const PackageList = () => {
                 className="form-control"
                 placeholder="Search package name"
                 onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  filterPackageDetailsFn();
+                  filterPackageDetailsFn(e.target.value);
                 }}
               />
             </div>

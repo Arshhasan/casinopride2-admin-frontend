@@ -16,6 +16,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button, Modal } from "react-bootstrap";
 import more from "../../../assets/Images/more.png";
+import deal from "../../../assets/Images/deal.png";
+
 import moment from "moment";
 
 const AgentSettlementList = () => {
@@ -260,7 +262,7 @@ const AgentSettlementList = () => {
                     className="manager-list"
                     onClick={() => handleViewMore(item)}
                   >
-                    <img src={more} className="more_img" />
+                    <img src={deal} style={{ height: "30px", width: "30px" }} />
                   </td>
                 ) : (
                   <td className="manager-list" style={{ color: "green" }}>

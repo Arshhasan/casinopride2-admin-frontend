@@ -63,13 +63,26 @@ const CouponsList = () => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const filterCouponListDetails = () => {
-    if (searchQuery.trim() === "") {
-      setFilteredCouponDetails([]);
+  // const filterCouponListDetails = () => {
+  //   if (searchQuery.trim() === "") {
+  //     setFilteredCouponDetails([]);
+  //   } else {
+  //     const lowerCaseQuery = searchQuery.toLowerCase();
+  //     const filtered = couponDetails.filter((item) =>
+  //       item?.CouponTitle.toLowerCase().includes(lowerCaseQuery)
+  //     );
+  //     setFilteredCouponDetails(filtered);
+  //   }
+  // };
+
+  const filterCouponListDetails = (value) => {
+    if (value?.trim() === "") {
+      fetchCouponDetails();
+      // setFilteredManagerDetails([]);
     } else {
-      const lowerCaseQuery = searchQuery.toLowerCase();
-      const filtered = couponDetails.filter((item) =>
-        item?.CouponTitle.toLowerCase().includes(lowerCaseQuery)
+      const lowerCaseQuery = value?.toLowerCase();
+      const filtered = couponDetails?.filter((item) =>
+        item?.CouponTitle?.toLowerCase()?.includes(lowerCaseQuery)
       );
       setFilteredCouponDetails(filtered);
     }
@@ -125,8 +138,8 @@ const CouponsList = () => {
                 className="form-control"
                 placeholder="Search coupon name"
                 onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  filterCouponListDetails();
+                  // setSearchQuery(e.target.value);
+                  filterCouponListDetails(e.target.value);
                 }}
               />
             </div>
