@@ -655,12 +655,12 @@ const BillingList = () => {
               <div className="row">
                 {userId == 0 ? (
                   <div className="col-md-4 col-lg-3 mb-3">
-                    <p style={{ fontWeight: "bold" }}>Search By Bill Id</p>
+                    <p style={{ fontWeight: "bold" }}>Search By Bill No.</p>
                     <div className="input-group">
                       <input
                         type="number"
                         className="form-control"
-                        placeholder="Search Bill Id"
+                        placeholder="Search Bill No."
                         onChange={(e) => {
                           setSearhBillId(e.target.value);
                         }}
@@ -1448,127 +1448,116 @@ const BillingList = () => {
           <Modal.Title>Booking Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="row">
-            <div className="col-6">
-              <p className="table-modal-list ">
-                Full Name: {selectedNoShowListDetails.GuestName}
-              </p>
-            </div>
-            <div className="col-6">
-              <p className="table-modal-list ">
-                Phone: {selectedNoShowListDetails.Phone}
-              </p>
-            </div>
-            {!selectedNoShowListDetails.Email == "" ? (
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Email: {selectedNoShowListDetails.Email}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}{" "}
-            <div className="col-6">
-              <p className="table-modal-list ">
-                Guest Count: {selectedNoShowListDetails.TotalGuestCount}
-              </p>
-            </div>
-            {!selectedNoShowListDetails.Address == "" ? (
-              <div className="col-12">
-                <p className="table-modal-list ">
-                  Address: {selectedNoShowListDetails.Address}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {!selectedNoShowListDetails.Country == "" ? (
-              <div
-                className={`col-${
-                  !selectedNoShowListDetails.City == "" ? 4 : 6
-                }`}
-              >
-                <p className="table-modal-list ">
-                  Country: {selectedNoShowListDetails.Country}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {!selectedNoShowListDetails.State == "" ? (
-              <div
-                className={`col-${
-                  !selectedNoShowListDetails.City == "" ? 4 : 6
-                }`}
-              >
-                <p className="table-modal-list ">
-                  State: {selectedNoShowListDetails.State}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {!selectedNoShowListDetails.City == "" ? (
-              <div className="col-4">
-                <p className="table-modal-list ">
-                  City: {selectedNoShowListDetails.City}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            <div className="col-6">
-              <p className="table-modal-list ">
-                Actual Amount: {selectedNoShowListDetails.ActualAmount}
-              </p>
-            </div>{" "}
-            {selectedNoShowListDetails.DOB == "" ? (
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Date of Birth: {selectedNoShowListDetails.DOB}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {selectedNoShowListDetails.PanelDiscount > 0 ? (
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Panel Discount : {selectedNoShowListDetails.PanelDiscount} %
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {selectedNoShowListDetails.WebsiteDiscount > 0 ? (
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Website Discount : {selectedNoShowListDetails.WebsiteDiscount}{" "}
-                  %
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {selectedNoShowListDetails.CouponDiscount > 0 ? (
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Coupon Discount : {selectedNoShowListDetails.CouponDiscount} %
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-            {!selectedNoShowListDetails.ReferredBy === "" ? (
-              <div className="col-6">
-                <p className="table-modal-list ">
-                  Referred By : {selectedNoShowListDetails.ReferredBy}
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
+          <div className="col-6">
+            <p className="table-modal-list ">
+              Full Name: {selectedNoShowListDetails.GuestName}
+            </p>
           </div>
+          <div className="col-6">
+            <p className="table-modal-list ">
+              Phone: {selectedNoShowListDetails.Phone}
+            </p>
+          </div>
+          {!selectedNoShowListDetails.Email == "" ? (
+            <div className="col-6">
+              <p className="table-modal-list ">
+                Email: {selectedNoShowListDetails.Email}
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}{" "}
+          <div className="col-6">
+            <p className="table-modal-list ">
+              Guest Count: {selectedNoShowListDetails.TotalGuestCount}
+            </p>
+          </div>
+          {!selectedNoShowListDetails.Address == "" ? (
+            <div className="col-12">
+              <p className="table-modal-list ">
+                Address: {selectedNoShowListDetails.Address}
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          {!selectedNoShowListDetails.Country == "" ? (
+            <div className="col-6">
+              <p className="table-modal-list ">
+                Country: {selectedNoShowListDetails.Country}
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          {!selectedNoShowListDetails.State == "" ? (
+            <div className="col-6">
+              <p className="table-modal-list ">
+                State: {selectedNoShowListDetails.State}
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          {!selectedNoShowListDetails.City == "" ? (
+            <div className="col-4">
+              <p className="table-modal-list ">
+                City: {selectedNoShowListDetails.City}
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          <div className="col-6">
+            <p className="table-modal-list ">
+              Actual Amount: {selectedNoShowListDetails.ActualAmount}
+            </p>
+          </div>{" "}
+          {selectedNoShowListDetails.DOB == "" ? (
+            <div className="col-6">
+              <p className="table-modal-list ">
+                Date of Birth: {selectedNoShowListDetails.DOB}
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          {selectedNoShowListDetails.PanelDiscount > 0 ? (
+            <div className="col-6">
+              <p className="table-modal-list ">
+                Panel Discount : {selectedNoShowListDetails.PanelDiscount} %
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          {selectedNoShowListDetails.WebsiteDiscount > 0 ? (
+            <div className="col-6">
+              <p className="table-modal-list ">
+                Website Discount : {selectedNoShowListDetails.WebsiteDiscount} %
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          {selectedNoShowListDetails.CouponDiscount > 0 ? (
+            <div className="col-6">
+              <p className="table-modal-list ">
+                Coupon Discount : {selectedNoShowListDetails.CouponDiscount} %
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          {!selectedNoShowListDetails.ReferredBy === "" ? (
+            <div className="col-6">
+              <p className="table-modal-list ">
+                Referred By : {selectedNoShowListDetails.ReferredBy}
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
       </Modal>
