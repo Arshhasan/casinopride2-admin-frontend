@@ -33,6 +33,10 @@ const BillingDetails = () => {
   const { BookingDetails } = location.state;
   const [loader, setLoader] = useState(false);
 
+  const sourcePage = location.state?.sourcePage || "";
+
+  console.log("sourcePage-------------->", sourcePage);
+
   const loginDetails = useSelector(
     (state) => state.auth?.userDetailsAfterLogin.Details
   );
@@ -338,37 +342,42 @@ const BillingDetails = () => {
                           ),
                         };
 
-                        dispatch(
-                          sendEmail(data, (callback) => {
-                            if (callback.status) {
-                              toast.success("Email sent");
-                              navigate("/NewBooking");
+                        if (sourcePage == "") {
+                          dispatch(
+                            sendEmail(data, (callback) => {
+                              if (callback.status) {
+                                toast.success("Email sent");
+                                navigate("/NewBooking");
 
-                              toast.error(callback.error);
-                            } else {
-                              toast.error(callback.error);
-                            }
-                          })
-                        );
+                                toast.error(callback.error);
+                              } else {
+                                toast.error(callback.error);
+                              }
+                            })
+                          );
 
-                        const apiUrl = `http://commnestsms.com/api/push.json?apikey=635cd8e64fddd&route=transactional&sender=CPGOAA&mobileno=${BookingDetails[0]?.Phone}&text=Thank%20you%20for%20choosing%20Casino%20Pride.%20View%20e-bill%20of%20Rs%20${FinalAmount}%20at%20-%20${callback?.response?.shortUrl}%0ALets%20Play%20with%20Pride%20!%0AGood%20luck%20!%0ACPGOAA`;
-                        fetch(apiUrl)
-                          .then((response) => {
-                            if (!response.ok) {
-                              throw new Error(
-                                `HTTP error! Status: ${response.status}`
-                              );
-                            }
-                            return response.json(); // Parse the JSON response
-                          })
-                          .then((data) => {
-                            console.log(data); // Handle the parsed JSON data here
-                            toast.success("Details sent to customer");
-                          })
-                          .catch((error) => {
-                            console.error("Fetch error:", error);
-                            toast.success("Details sent to customer");
-                          });
+                          const apiUrl = `http://commnestsms.com/api/push.json?apikey=635cd8e64fddd&route=transactional&sender=CPGOAA&mobileno=${BookingDetails[0]?.Phone}&text=Thank%20you%20for%20choosing%20Casino%20Pride.%20View%20e-bill%20of%20Rs%20${FinalAmount}%20at%20-%20${callback?.response?.shortUrl}%0ALets%20Play%20with%20Pride%20!%0AGood%20luck%20!%0ACPGOAA`;
+                          fetch(apiUrl)
+                            .then((response) => {
+                              if (!response.ok) {
+                                throw new Error(
+                                  `HTTP error! Status: ${response.status}`
+                                );
+                              }
+                              return response.json(); // Parse the JSON response
+                            })
+                            .then((data) => {
+                              console.log(data); // Handle the parsed JSON data here
+                              toast.success("Details sent to customer");
+                            })
+                            .catch((error) => {
+                              console.error("Fetch error:", error);
+                              toast.success("Details sent to customer");
+                            });
+                        } else {
+                          navigate("/NewBooking");
+                        }
+
                         setLoader(false);
                       } else {
                         toast.error(callback.error);
@@ -900,7 +909,7 @@ const BillingDetails = () => {
 
                     {!BookingDetails[0].NumOfTeens == 0 ? (
                       <p className="BillPrintFont">
-                        Number of Teens :{" "}
+                        Number of Kids :{" "}
                         <span
                           style={{ fontWeight: "bold" }}
                           className="BillPrintFont"
@@ -1082,7 +1091,7 @@ const BillingDetails = () => {
                               style={{ textAlign: "center" }}
                               className="BillPrintFont"
                             >
-                              <p>Teens</p>
+                              <p>Kids</p>
                             </td>
 
                             <td
@@ -1096,7 +1105,10 @@ const BillingDetails = () => {
                               style={{ textAlign: "right" }}
                               className="BillPrintFont"
                             >
-                              {item?.TeensRate.toFixed(2)}
+                              {/* {item?.TeensRate.toFixed(2)} */}
+                              {item?.TeensRate &&
+                                item?.NumOfTeens &&
+                                (item.TeensRate / item.NumOfTeens).toFixed(2)}
                             </td>
 
                             <td
@@ -1888,9 +1900,11 @@ const BillingDetails = () => {
                       <></>
                     )}
                     <h5
-                      className="BillPrintFontPrint"
                       style={{
                         marginBottom: "5px",
+                        fontSize: "12px",
+                        lineHeight: "10px",
+                        fontWeight: "bold",
                       }}
                     >
                       TAX INVOICE
@@ -1941,7 +1955,7 @@ const BillingDetails = () => {
 
                         {!BookingDetails[0].NumOfTeens == 0 ? (
                           <p className="BillPrintFontPrint">
-                            Number of Teens :{" "}
+                            Number of Kids :{" "}
                             <span className="BillPrintFontPrint">
                               {BookingDetails[0].NumOfTeens}
                             </span>
@@ -2066,7 +2080,7 @@ const BillingDetails = () => {
                             item?.TeensPrice > 0 && (
                               <tr>
                                 <td style={{ textAlign: "center" }}>
-                                  <p className="BillPrintFontPrint">Teens</p>
+                                  <p className="BillPrintFontPrint">Kids</p>
                                 </td>
 
                                 <td
@@ -2080,7 +2094,12 @@ const BillingDetails = () => {
 
                                 <td style={{ textAlign: "right" }}>
                                   <p className="BillPrintFontPrint">
-                                    {item?.TeensRate.toFixed(2)}
+                                    {/* {item?.TeensRate.toFixed(2)} */}
+                                    {item?.TeensRate &&
+                                      item?.NumOfTeens &&
+                                      (
+                                        item.TeensRate / item.NumOfTeens
+                                      ).toFixed(2)}
                                   </p>
                                 </td>
 

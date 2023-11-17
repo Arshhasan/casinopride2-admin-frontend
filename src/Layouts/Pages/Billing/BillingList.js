@@ -566,21 +566,40 @@ const BillingList = () => {
     combinedVoidDataArray
   );
 
+  // const regenerateBillFn = (item) => {
+  //   console.log(
+  //     "Item--------------------------------- regenerate bill------------>",
+  //     item?.Items
+  //   );
+
+  //   if (item?.Items[0]?.NumOfTeens - item?.Items[0]?.TotalGuestCount == 0) {
+  //     navigate("/TeensBilling", {
+  //       state: { BookingDetails: item?.Items },
+  //     });
+  //   } else {
+  //     navigate("/BillingDetails", {
+  //       state: { BookingDetails: item?.Items },
+  //     });
+  //   }
+  // };
+
   const regenerateBillFn = (item) => {
     console.log(
-      "Item--------------------------------- regenerate bill------------>",
+      "Item --------------------------------- regenerate bill ----------->",
       item?.Items
     );
 
-    if (item?.Items[0]?.NumOfTeens - item?.Items[0]?.TotalGuestCount == 0) {
-      navigate("/TeensBilling", {
-        state: { BookingDetails: item?.Items },
-      });
-    } else {
-      navigate("/BillingDetails", {
-        state: { BookingDetails: item?.Items },
-      });
-    }
+    const route =
+      item?.Items[0]?.NumOfTeens - item?.Items[0]?.TotalGuestCount === 0
+        ? "/TeensBilling"
+        : "/BillingDetails";
+
+    navigate(route, {
+      state: {
+        BookingDetails: item?.Items,
+        sourcePage: "fromBillingList", // Add your source page identifier here
+      },
+    });
   };
 
   console.log("Combined Array--->", combinedDataArray);

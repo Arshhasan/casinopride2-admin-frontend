@@ -332,7 +332,12 @@ const NewBooking = () => {
 
   console.log("couponCode--------------->", couponCode);
 
-  const [selectedCountry, setSelectedCountry] = useState(null);
+  // const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState({
+    label: "India",
+    name: "India",
+    isoCode: "IN",
+  });
   const [selectedState, setSelectedState] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
   const [partCash, setPartCash] = useState("");
@@ -349,6 +354,8 @@ const NewBooking = () => {
     console.log(selectedCountry?.isoCode);
     console.log(State?.getStatesOfCountry(selectedCountry?.isoCode));
   }, [selectedCountry]);
+
+  console.log("selectedCountry------------->", selectedCountry);
 
   const fetchCouponCodes = () => {
     dispatch(
@@ -1299,8 +1306,8 @@ const NewBooking = () => {
           <label for="formGroupExampleInput " className="form_text mb-2">
             Country
           </label>
-          <Select
-            // className="form-control"
+          {/* <Select
+      
             options={Country.getAllCountries()}
             getOptionLabel={(options) => {
               return options["name"];
@@ -1309,6 +1316,21 @@ const NewBooking = () => {
               return options["name"];
             }}
             value={selectedCountry}
+            onChange={(item) => {
+              setSelectedCountry(item);
+            }}
+          /> */}
+
+          <Select
+            options={Country.getAllCountries().map((country) => ({
+              label: country.name,
+              value: country.name,
+              isoCode: country.isoCode,
+            }))}
+            getOptionLabel={(options) => options.label}
+            getOptionValue={(options) => options.value}
+            value={selectedCountry}
+            defaultValue={selectedCountry}
             onChange={(item) => {
               setSelectedCountry(item);
             }}
