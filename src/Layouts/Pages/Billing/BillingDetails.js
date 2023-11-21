@@ -349,7 +349,7 @@ const BillingDetails = () => {
                             sendEmail(data, (callback) => {
                               if (callback.status) {
                                 toast.success("Email sent");
-                                navigate("/NewBooking");
+                                // navigate("/NewBooking");
 
                                 toast.error(callback.error);
                               } else {
@@ -1894,6 +1894,7 @@ const BillingDetails = () => {
                         className="BillPrintFontPrint"
                         style={{
                           marginBottom: "5px",
+                          marginTop: "5px",
                         }}
                       >
                         TIN No : 30220106332
@@ -1914,17 +1915,25 @@ const BillingDetails = () => {
                       <></>
                     )}
                     <h5
-                      style={{
-                        marginBottom: "5px",
-                        fontSize: "12px",
-                        lineHeight: "10px",
-                        fontWeight: "bold",
-                      }}
+                      // style={{
+                      //   marginTop: "10px",
+                      //   marginBottom: "5px",
+                      //   fontSize: "14px",
+                      //   lineHeight: "14px",
+                      //   fontWeight: "bold",
+                      // }}
+                      className="taxinvoicename"
                     >
                       TAX INVOICE
                     </h5>
                     <div className="row">
-                      <div className="col-6 bill-details">
+                      <div className="col-10  bill-details">
+                        <p
+                          className="BillPrintFontPrint"
+                          style={{ marginRight: "5px" }}
+                        >
+                          BILL#: {item.BillNumber}
+                        </p>
                         <p className="BillPrintFontPrint">
                           Guest Name :
                           <span className="BillPrintFontPrint ">
@@ -1985,7 +1994,7 @@ const BillingDetails = () => {
                           </span>
                         </p>
                       </div>
-                      <div className="col-6">
+                      {/* <div className="col-6">
                         <div className="d-flex justify-content-end qr-code">
                           {qrCodeImage && (
                             <div className="qr-code-image">
@@ -1997,9 +2006,9 @@ const BillingDetails = () => {
                             </div>
                           )}
                         </div>
-                      </div>
+                      </div> */}
                     </div>
-                    <div className="bill-details">
+                    <div className="bill-details" style={{ marginTop: "10px" }}>
                       <div className="date-time-bill-row">
                         <p className="BillPrintFontPrint">
                           Date & Time:
@@ -2011,29 +2020,33 @@ const BillingDetails = () => {
                           </span>
                         </p>
 
-                        <p
+                        {/* <p
                           className="BillPrintFontPrint"
-                          style={{ marginRight: "25px" }}
+                          style={{ marginRight: "5px" }}
                         >
                           BILL#: {item.BillNumber}
-                        </p>
+                        </p> */}
                       </div>
                       <hr />
                       <table className="ticket_table">
                         <thead>
                           <tr>
                             <th style={{ textAlign: "center" }}>
-                              <p className="BillPrintFontPrint">ITEM NAME</p>
+                              <p className="BillPrintFontPrintterms">
+                                ITEM NAME
+                              </p>
                             </th>
                             <th style={{ textAlign: "center" }}>
-                              <p className="BillPrintFontPrint">GUEST COUNT</p>
+                              <p className="BillPrintFontPrintterms">
+                                GUEST COUNT
+                              </p>
                             </th>
 
                             <th style={{ textAlign: "center" }}>
-                              <p className="BillPrintFontPrint"> RATE</p>
+                              <p className="BillPrintFontPrintterms"> RATE</p>
                             </th>
                             <th style={{ textAlign: "center" }}>
-                              <p className="BillPrintFontPrint"> VALUE</p>
+                              <p className="BillPrintFontPrintterms"> VALUE</p>
                             </th>
                           </tr>
                         </thead>
@@ -2424,26 +2437,40 @@ const BillingDetails = () => {
                         className="terms"
                         style={{ marginTop: "10px", textAlign: "center" }}
                       >
-                        <h6 className="BillPrintFontPrint">
+                        <h6 className="BillPrintFontPrintterms">
                           TERMS AND CONDITIONS
                         </h6>
-                        <p className="BillPrintFontPrint">
+                        <p className="BillPrintFontPrintterms">
                           (1) BUFFET IS OPEN FROM 1:30PM TO 3:30PM AND FROM
                           8:00PM TO 1:30AM DURING WEEKDAYS.
                         </p>
-                        <p className="BillPrintFontPrint">
+                        <p className="BillPrintFontPrintterms">
                           (2) BUFFET IS OPEN FROM 1:30PM TO 4:00PM AND FROM
                           8:00PM TO 2:00AM DURING WEEKEND.
                         </p>
-                        <p className="BillPrintFontPrint">
+                        <p className="BillPrintFontPrintterms">
                           (3) ANY PERSON ABOVE 21 YEARS OLD INTEND TO PLAY MAY
                           ENTER GAMING AREA & PURCHASE CHIPS SEPARATELY.
                         </p>
-                        <p className="BillPrintFontPrint">
+                        <p className="BillPrintFontPrintterms">
                           (4) THIS INVOICE DOES NOT ENTITLE ANY LIQUOR, GAMING
                           CHIPS OR ANY OTHER SERVICES. HOWEVER, LIMITED COUPONS
                           APPLIED ON SELECTIVE LIQUOR PACKAGES.
                         </p>
+                      </div>
+
+                      <div className="col-12">
+                        <div className="d-flex justify-content-center qr-code">
+                          {qrCodeImage && (
+                            <div className="qr-code-image text-center">
+                              <img
+                                src={qrCodeImage}
+                                alt="QR Code"
+                                style={{ width: "100px", height: "100px" }}
+                              />
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

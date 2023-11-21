@@ -1298,7 +1298,7 @@ const TeensBilling = () => {
                 A unit of Goa Coastal Resorts & Recreation Pvt.Ltd
               </p>
               <h5 style={{ fontSize: "15px" }}>
-                Hotel Neo Majestic, Plot No. 104/14, Porvorim, Barder, Goa - 403
+                Hotel Neo Majestic, Plot No. 104/14, Porvorim, Bardez, Goa - 403
                 521 <br></br>Tel. + 91 9158885000
               </h5>
               <h5 style={{ fontSize: "15px" }}>
@@ -1557,7 +1557,7 @@ const TeensBilling = () => {
                     A unit of Goa Coastal Resorts & Recreation Pvt.Ltd
                   </p>
                   <h5 className="BillPrintFontPrint">
-                    Hotel Neo Majestic, Plot No. 104/14, Porvorim, Barder, Goa -
+                    Hotel Neo Majestic, Plot No. 104/14, Porvorim, Bardez, Goa -
                     403 521 <br></br>Tel. + 91 9158885000
                   </h5>
                   <h5 className="BillPrintFontPrint">
@@ -1566,7 +1566,7 @@ const TeensBilling = () => {
                   <h5 className="BillPrintFontPrint">
                     Website : www.casinoprideofficial.com
                   </h5>
-                  <h5 className="BillPrintFontPrint">Instagram :</h5>
+                  <h5 className="BillPrintFontPrint">Instagram : </h5>
                   <h5 className="BillPrintFontPrint">
                     CIN No: U55101GA2005PTC004274{" "}
                   </h5>
