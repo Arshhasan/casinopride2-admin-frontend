@@ -622,8 +622,9 @@ const NewBooking = () => {
 
   const onsubmit = () => {
     setLoader(true);
-    console.log("Package ID ------->", [teenpackageId]);
-    console.log("Package ID ------->", packageIds);
+
+    console.log("amountAfterDiscount--->", amountAfterDiscount);
+
     const teenpackageIdArray = [];
 
     teenpackageIdArray.push(teenpackageId);
@@ -743,7 +744,7 @@ const NewBooking = () => {
         paymentMode: paymentOption,
         cardAmount: cardAmount,
         amountAfterDiscount:
-          amountAfterDiscount !== ""
+          amountAfterDiscount !== 0
             ? amountAfterDiscount
             : couponDiscount !== ""
             ? couponDiscount

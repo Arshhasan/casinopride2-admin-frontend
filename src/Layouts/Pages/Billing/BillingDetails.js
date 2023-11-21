@@ -48,6 +48,8 @@ const BillingDetails = () => {
 
   const FinalAmount = BookingDetails[0]?.ActualAmount - DiscountedAmount;
 
+  console.log("DiscountedAmount---->", BookingDetails[0]?.ActualAmount);
+
   const [totalDiscount, setTotalDiscount] = useState(0);
 
   useEffect(() => {
@@ -839,7 +841,9 @@ const BillingDetails = () => {
                 <h5 style={{ fontSize: "15px" }}>
                   Website : www.casinoprideofficial.com
                 </h5>
-                <h5 style={{ fontSize: "15px" }}>Instagram :</h5>
+                <h5 style={{ fontSize: "15px" }}>
+                  Instagram : casinoprideofficial
+                </h5>
                 <h5 style={{ fontSize: "12px" }}>
                   CIN No: U55101GA2005PTC004274{" "}
                 </h5>
@@ -1867,7 +1871,7 @@ const BillingDetails = () => {
                         marginBottom: "5px",
                       }}
                     >
-                      Instagram :
+                      Instagram :casinoprideofficial
                     </h5>
                     <h5
                       className="BillPrintFontPrint"
