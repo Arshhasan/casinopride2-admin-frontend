@@ -22,6 +22,9 @@ import moment from "moment";
 import { AddBillingDetails } from "../../../Redux/actions/billing";
 import editpencil from "../../../assets/Images/editpencil.png";
 import { FaBeer } from "react-icons/fa";
+import { checkShiftForUser } from "../../../Redux/actions/users";
+import { recentShiftForOutlet } from "../../../Redux/actions/users";
+import { checkActiveOutlet } from "../../../Redux/actions/users";
 
 import { LiaFileInvoiceSolid } from "react-icons/lia";
 import { CiCircleMore } from "react-icons/ci";
@@ -33,6 +36,15 @@ const BookingList = () => {
 
   const loginDetails = useSelector(
     (state) => state.auth?.userDetailsAfterLogin.Details
+  );
+  const validateDetails = useSelector(
+    (state) => state.auth?.userDetailsAfterValidation
+  );
+
+  const outletOpenDetails = useSelector((state) => state.auth?.outeltDetails);
+
+  const activeDateOfOutlet = useSelector(
+    (state) => state.users?.saveOutletDate?.Details
   );
 
   const [packageDetails, setPackageDetails] = useState([]);
@@ -242,60 +254,12 @@ const BookingList = () => {
     }
   };
 
+  const [shiftStatus, setShiftStatus] = useState(false);
+
   const today = moment().format("YYYY-MM-DD");
   console.log("Today------>", today);
 
-  const GenerateBill = (item) => {
-    console.log("Generate Bill--------->", item);
-
-    const data = {
-      bookingId: item.Id,
-      packageId: item.PackageId,
-      packageGuestCount: item.PackageGuestCount,
-      totalGuestCount: item.TotalGuestCount,
-      bookingDate: item.CreatedOn?.slice(0, 10),
-      billingDate: today,
-      teensCount: item.NumOfTeens,
-      actualAmount: item.ActualAmount,
-      amountAfterDiscount: item.AmountAfterDiscount,
-      discount: item.PanelDiscount ? item.PanelDiscount : item.CouponDiscount,
-      packageWeekdayPrice: JSON.stringify(item.PackageWeekdayPrice),
-      packageWeekendPrice: JSON.stringify(item.PackageWeekendPrice),
-    };
-
-    dispatch(
-      AddBillingDetails(loginDetails?.logindata?.Token, data, (callback) => {
-        if (callback.status) {
-          console.log(
-            "Generate Bill --------------?",
-            callback?.response?.Details[0]?.NumOfTeens,
-            callback?.response?.Details[0]?.TotalGuestCount
-          );
-
-          if (
-            callback?.response?.Details[0]?.NumOfTeens -
-              callback?.response?.Details[0]?.TotalGuestCount ==
-            0
-          ) {
-            navigate("/TeensBilling", {
-              state: { BookingDetails: callback?.response?.Details },
-            });
-            setLoader(false);
-          } else {
-            navigate("/BillingDetails", {
-              state: { BookingDetails: callback?.response?.Details },
-            });
-            setLoader(false);
-          }
-
-          toast.error(callback.error);
-        } else {
-          toast.error(callback.error);
-          setLoader(false);
-        }
-      })
-    );
-  };
+  console.log("shiftStatus--->", shiftStatus);
 
   console.log(
     "filteredUserBookings--------------------->",
@@ -314,6 +278,235 @@ const BookingList = () => {
           item?.Phone?.includes(value)
       );
       setFilteredUserBookings(filtered);
+    }
+  };
+
+  //shift code
+
+  const [shiftDetailsForUser, setSHiftDetaislForUser] = useState();
+  const [recentShiftOpen, setRecentShiftOpen] = useState([]);
+
+  const [shiftForUserOne, setShiftForUserOne] = useState(false);
+  const [shiftDetails, setShiftDetails] = useState("");
+  const [checkActiveOtlet, setCheckActiveOutlet] = useState();
+
+  const [shiftDisable, setShiftDisable] = useState(true);
+
+  const [outletStatus, setOutletStatus] = useState();
+
+  useEffect(() => {
+    dispatch(
+      checkActiveOutlet(loginDetails?.logindata?.Token, (callback) => {
+        if (callback.status) {
+          console.log("check active outlet--->", callback?.response?.Details);
+          setOutletStatus(callback?.response?.Details);
+
+          if (callback?.response?.Details == null) {
+            setCheckActiveOutlet(false);
+            setLoader(false);
+          } else {
+            setCheckActiveOutlet(
+              callback?.response?.Details?.OutletDate == today ? true : false
+            );
+          }
+        } else {
+          toast.error(callback.error);
+        }
+      })
+    );
+
+    dispatch(
+      recentShiftForOutlet(
+        !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
+        loginDetails?.logindata?.Token,
+        (callback) => {
+          if (callback) {
+            console.log(
+              "Recent shift for outlet----------------------------------*********************************----- ->",
+              callback?.response?.Details
+            );
+
+            if (callback?.response?.Details?.length == 0) {
+              setShiftDetails(callback?.response?.Details);
+              setLoader(false);
+            } else {
+              console.log(
+                "Else condition for recent shift open",
+                callback?.response?.Details
+              );
+
+              setShiftDetails(callback?.response?.Details[0]);
+
+              setLoader(false);
+            }
+          } else {
+            console.log("Nothing");
+          }
+        }
+      )
+    );
+  }, [validateDetails]);
+  const checkShiftFn = () => {
+    dispatch(
+      checkShiftForUser(
+        checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
+        validateDetails?.Details?.Id,
+        validateDetails?.Details?.UserType,
+        loginDetails?.logindata?.Token,
+        (callback) => {
+          if (callback) {
+            console.log(
+              "Callback from shifts for user -----------***********************8--->",
+              callback?.response?.Details
+            );
+            if (
+              callback?.response?.Details == null ||
+              callback?.response?.Details.length == 0
+            ) {
+              setShiftForUserOne(true);
+              dispatch(
+                recentShiftForOutlet(
+                  !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
+                  loginDetails?.logindata?.Token,
+                  (callback) => {
+                    if (callback) {
+                      console.log(
+                        "Recent shift for outlet----------------------------------*********************************----- ->",
+                        callback?.response?.Details
+                      );
+
+                      if (callback?.response?.Details?.length == 0) {
+                        setSHiftDetaislForUser(callback?.response?.Details);
+                        setLoader(false);
+                      } else {
+                        console.log(
+                          "Else condition for recent shift open",
+                          callback?.response?.Details
+                        );
+                        setRecentShiftOpen(callback?.response?.Details);
+
+                        setLoader(false);
+                      }
+                    } else {
+                      toast.error(callback.error);
+                    }
+                  }
+                )
+              );
+            } else {
+              console.log(
+                "Else for check shift for user",
+                callback?.response?.Details
+              );
+              setSHiftDetaislForUser(callback?.response?.Details);
+
+              setLoader(false);
+            }
+
+            toast.error(callback.error);
+          } else {
+            toast.error(callback.error);
+          }
+        }
+      )
+    );
+  };
+
+  useEffect(() => {
+    checkShiftFn();
+  }, []);
+
+  const shifts = {};
+  if (shiftDetailsForUser) {
+    shiftDetailsForUser.forEach((item) => {
+      const { ShiftTypeId, OpenTime, CloseTime, ShiftOpen } = item;
+      if (!shifts[ShiftTypeId]) {
+        shifts[ShiftTypeId] = [];
+      }
+      shifts[ShiftTypeId].push({ ShiftTypeId, OpenTime, CloseTime, ShiftOpen });
+    });
+  }
+
+  const GenerateBill = (item) => {
+    console.log("Generate Bill--------->", shiftStatus);
+
+    if (
+      (shifts && shifts[1] && !shifts[1][0]?.ShiftOpen === 1) ||
+      (shifts && shifts[3] && !shifts[3][0]?.ShiftOpen === 1) ||
+      (shifts && shifts[2] && !shifts[2][0]?.ShiftOpen === 1) ||
+      (recentShiftOpen &&
+        recentShiftOpen[0]?.ShiftTypeId === 2 &&
+        recentShiftOpen &&
+        recentShiftOpen[0]?.ShiftOpen === 0) ||
+      (recentShiftOpen &&
+        recentShiftOpen[0]?.ShiftTypeId === 2 &&
+        recentShiftOpen &&
+        recentShiftOpen[0]?.ShiftOpen === 1) ||
+      (recentShiftOpen &&
+        recentShiftOpen[0]?.ShiftTypeId === 3 &&
+        recentShiftOpen &&
+        recentShiftOpen[0]?.ShiftOpen === 1) ||
+      (recentShiftOpen &&
+        recentShiftOpen[0]?.ShiftTypeId === 1 &&
+        recentShiftOpen &&
+        recentShiftOpen[0]?.ShiftOpen === 0) ||
+      (recentShiftOpen &&
+        recentShiftOpen[0]?.ShiftTypeId === 1 &&
+        recentShiftOpen &&
+        recentShiftOpen[0]?.ShiftOpen === 1) ||
+      (shifts && shifts[2] && shifts[2][0]?.ShiftOpen === 0 && !shifts[3]) ||
+      (shifts && shifts[1] && shifts[1][0]?.ShiftOpen === 0 && !shifts[2]) ||
+      shiftForUserOne
+    ) {
+      toast.error("Open the  shift to generate a bill");
+    } else {
+      const data = {
+        bookingId: item.Id,
+        packageId: item.PackageId,
+        packageGuestCount: item.PackageGuestCount,
+        totalGuestCount: item.TotalGuestCount,
+        bookingDate: item.CreatedOn?.slice(0, 10),
+        billingDate: today,
+        teensCount: item.NumOfTeens,
+        actualAmount: item.ActualAmount,
+        amountAfterDiscount: item.AmountAfterDiscount,
+        discount: item.PanelDiscount ? item.PanelDiscount : item.CouponDiscount,
+        packageWeekdayPrice: JSON.stringify(item.PackageWeekdayPrice),
+        packageWeekendPrice: JSON.stringify(item.PackageWeekendPrice),
+      };
+
+      dispatch(
+        AddBillingDetails(loginDetails?.logindata?.Token, data, (callback) => {
+          if (callback.status) {
+            console.log(
+              "Generate Bill --------------?",
+              callback?.response?.Details[0]?.NumOfTeens,
+              callback?.response?.Details[0]?.TotalGuestCount
+            );
+
+            if (
+              callback?.response?.Details[0]?.NumOfTeens -
+                callback?.response?.Details[0]?.TotalGuestCount ==
+              0
+            ) {
+              navigate("/TeensBilling", {
+                state: { BookingDetails: callback?.response?.Details },
+              });
+              setLoader(false);
+            } else {
+              navigate("/BillingDetails", {
+                state: { BookingDetails: callback?.response?.Details },
+              });
+              setLoader(false);
+            }
+
+            toast.error(callback.error);
+          } else {
+            toast.error(callback.error);
+            setLoader(false);
+          }
+        })
+      );
     }
   };
 
