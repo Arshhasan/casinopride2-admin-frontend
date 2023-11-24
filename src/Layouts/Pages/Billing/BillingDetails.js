@@ -2970,7 +2970,17 @@ const BillingDetails = () => {
         (acc, value) => acc + value,
         0
       );
-      console.log("taxDiffSum", taxDiffSum);
+
+      const multipliedTaxDiff = item?.ItemDetails?.TaxDiff.map(
+        (tax, index) => tax * packageGuestCountArray[index]
+      );
+
+      const finalTaxDiffSum = multipliedTaxDiff.reduce(
+        (acc, value) => acc + value,
+        0
+      );
+
+      console.log("taxDiffSum", finalTaxDiffSum);
 
       const itemTaxName = item?.ItemDetails?.ItemTaxName;
       const adjustedTaxDiffSum =
@@ -2984,7 +2994,7 @@ const BillingDetails = () => {
 
       const KidsCount = item?.NumOfTeens;
       console.log("Kids count==>", KidsCount);
-      const KidsRate = item?.TeensRate * item?.NumOfTeens;
+      const KidsRate = item?.TeensRate;
       console.log("Kids rate", KidsRate);
 
       const KidsPrice = item?.TeensPrice;
@@ -2993,12 +3003,12 @@ const BillingDetails = () => {
       const KidsCgstProperty = `CGST ${item?.TeensTax / 2} %`;
       console.log("Kids cgst", KidsCgstProperty);
 
-      const KidsSgstProperty = `CGST ${item?.TeensTax / 2} %`;
+      const KidsSgstProperty = `SGST ${item?.TeensTax / 2} %`;
       console.log("Kids sgst", KidsSgstProperty);
 
-      const KidsTax = item?.TeensTaxBifurcation;
+      const KidsTax = item?.TeensTaxBifurcation / KidsCount;
 
-      const TotalKidsplusAdults = DiscountedFigure + KidsPrice;
+      const TotalKidsplusAdults = TotalBillAmount + KidsPrice;
 
       console.log("TotalKidsplusAdults", TotalKidsplusAdults);
 
@@ -3013,9 +3023,9 @@ const BillingDetails = () => {
         ItemId: item?.ItemDetails?.ItemId,
         ItemName: item?.ItemDetails?.ItemName,
         Price: finalResultPrice,
-        Rate: FinalRateResult,
+        // Rate: FinalRateResult,
         ItemTaxName: itemTaxName[0],
-        TaxDiff: item?.ItemDetails?.TaxDiff,
+        TaxDiff: finalTaxDiffSum,
         IsDeductable: item?.ItemDetails?.IsDeductable,
         PackageId: item?.PackageId,
         packageGuestCount: packageGuestCount,
@@ -3032,14 +3042,17 @@ const BillingDetails = () => {
           properties[cgstProperty] = adjustedTaxDiffSum / 2;
           properties[sgstProperty] = adjustedTaxDiffSum / 2;
           properties["TotalBillAmount"] = TotalKidsplusAdults;
+          properties["Rate"] = FinalRateResult;
         } else {
           properties[cgstProperty] = adjustedTaxDiffSum / 2;
           properties[sgstProperty] = adjustedTaxDiffSum / 2;
-          properties["TotalBillAmount"] = DiscountedFigure;
+          properties["TotalBillAmount"] = TotalBillAmount;
+          properties["Rate"] = FinalRateResult;
         }
       } else if (itemTaxName[0] === "VAT") {
-        properties[vatProperty] = adjustedTaxDiffSum;
+        properties[vatProperty] = finalTaxDiffSum;
         properties["TotalBillAmount"] = TotalBillAmount;
+        properties["Rate"] = FinalRateResult;
       }
 
       return properties;
@@ -3051,6 +3064,8 @@ const BillingDetails = () => {
       return item?.BillingId; // You can directly access and return the BillingId
     }),
   };
+
+  console.log("updatededBillDetails----->", updatededBillDetails);
 
   const updateReportsItemDetails = () => {
     const itemDetailsData = {
