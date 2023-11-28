@@ -2290,6 +2290,8 @@
 
 // export default BillingDetails;
 
+
+//not to fixed
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import html2pdf from "html2pdf.js";
 import "../../../assets/Billing.css";
@@ -3195,7 +3197,7 @@ const BillingDetails = () => {
                   A unit of Goa Coastal Resorts & Recreation Pvt.Ltd
                 </p>
                 <h5 style={{ fontSize: "15px" }}>
-                  Hotel Neo Majestic, Plot No. 104/14, Porvorim, Bardez, Goa -
+                  Hotel Neo Majestic, Plot No. 104/1A, Porvorim, Bardez, Goa -
                   403 521 <br></br>Tel. + 91 9158885000
                 </h5>
                 <h5 style={{ fontSize: "15px" }}>
@@ -3405,7 +3407,7 @@ const BillingDetails = () => {
                           </td> */}
 
                         <td
-                          style={{ textAlign: "right" }}
+                          style={{ textAlign: "right" ,marginRight : "5px"}}
                           className="BillPrintFont"
                         >
                           {item?.ItemDetails &&
@@ -3495,10 +3497,10 @@ const BillingDetails = () => {
                               style={{ textAlign: "right" }}
                               className="BillPrintFont"
                             >
-                              {item?.TeensRate.toFixed(2)}
-                              {/* {item?.TeensRate &&
+                              {/* {item?.TeensRate.toFixed(2)} */}
+                              {item?.TeensRate &&
                                 item?.NumOfTeens &&
-                                Math.floor(item.TeensRate * 100) / 100} */}
+                                Math.floor(item.TeensRate * 100) / 100}
                             </td>
                           </tr>
                         )}
@@ -4232,7 +4234,7 @@ const BillingDetails = () => {
                         marginBottom: "5px",
                       }}
                     >
-                      Hotel Neo Majestic, Plot No. 104/14, Porvorim, Bardez, Goa
+                      Hotel Neo Majestic, Plot No. 104/1A, Porvorim, Bardez, Goa
                       - 403 521 <br></br>Tel. + 91 9158885000
                     </h5>
                     <h5
@@ -4463,10 +4465,12 @@ const BillingDetails = () => {
                               )}
                             </td>
 
-                            <td style={{ textAlign: "right" }}>
+                            <td style={{ textAlign: "right",paddingRight:"5px"}}>
                               {item?.ItemDetails &&
                                 item?.ItemDetails?.Rate.map((item) => (
-                                  <p className="BillPrintFontPrint">
+                                  <p className="BillPrintFontPrint"
+                                  
+                                  >
                                     {parseFloat(item).toFixed(2)}
                                   </p>
                                 ))}
