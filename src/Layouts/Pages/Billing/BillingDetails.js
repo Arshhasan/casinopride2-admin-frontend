@@ -3498,9 +3498,12 @@ const BillingDetails = () => {
                               className="BillPrintFont"
                             >
                               {/* {item?.TeensRate.toFixed(2)} */}
-                              {item?.TeensRate &&
+                              {/* {item?.TeensRate &&
                                 item?.NumOfTeens &&
-                                Math.floor(item.TeensRate * 100) / 100}
+                                Math.floor(item.TeensRate * 100) / 100} */}
+                                 {item?.TeensRate &&
+                                item?.NumOfTeens &&
+                                (item.TeensRate / item.NumOfTeens).toFixed(2) * item.NumOfTeens}
                             </td>
                           </tr>
                         )}
@@ -3663,7 +3666,7 @@ const BillingDetails = () => {
                     {item?.ItemDetails?.ItemTaxName[0] === "GST" &&
                     item?.TeensPrice > 0 ? (
                       <>
-                        {item?.ItemDetails?.TaxDiff ? (
+                        {item?.ItemDetails?.TaxBifurcation ? (
                           <>
                             <h6 className="BillPrintFont">
                               CGST {item?.ItemDetails.ItemTax / 2} %:{" "}
@@ -3675,11 +3678,12 @@ const BillingDetails = () => {
                               ).toFixed(2)} */}
                               {(
                                 (item?.ItemDetails?.packageGuestCount &&
-                                item?.ItemDetails?.TaxDiff
+                                item?.ItemDetails?.TaxBifurcation
                                   ? item.ItemDetails.packageGuestCount.reduce(
                                       (total, count, index) =>
                                         total +
-                                        count * item.ItemDetails.TaxDiff[index],
+                                        // count * item.ItemDetails.TaxDiff[index],
+                                        count * item.ItemDetails.TaxBifurcation[index],
                                       0
                                     )
                                   : 0) / 2
@@ -3689,11 +3693,12 @@ const BillingDetails = () => {
                               SGST {item?.ItemDetails.ItemTax / 2} %:{" "}
                               {(
                                 (item?.ItemDetails?.packageGuestCount &&
-                                item?.ItemDetails?.TaxDiff
+                                item?.ItemDetails?.TaxBifurcation
                                   ? item.ItemDetails.packageGuestCount.reduce(
                                       (total, count, index) =>
                                         total +
-                                        count * item.ItemDetails.TaxDiff[index],
+                                        // count * item.ItemDetails.TaxDiff[index],
+                                        count * item.ItemDetails.TaxBifurcation[index],
                                       0
                                     )
                                   : 0) / 2
@@ -3701,7 +3706,44 @@ const BillingDetails = () => {
                             </h6>{" "}
                           </>
                         ) : (
-                          <></>
+                          <>
+                          <h6 className="BillPrintFont">
+                            CGST {item?.ItemDetails.ItemTax / 2} %:{" "}
+                            {/* {(
+                              item?.ItemDetails?.TaxDiff.reduce(
+                                (acc, value) => acc + value,
+                                0
+                              ) / 2
+                            ).toFixed(2)} */}
+                            {(
+                              (item?.ItemDetails?.packageGuestCount &&
+                              item?.ItemDetails?.TaxDiff
+                                ? item.ItemDetails.packageGuestCount.reduce(
+                                    (total, count, index) =>
+                                      total +
+                                      count * item.ItemDetails.TaxDiff[index],
+                                      // count * item.ItemDetails.TaxBifurcation[index],
+                                    0
+                                  )
+                                : 0) / 2
+                            ).toFixed(2)}
+                          </h6>
+                          <h6 className="BillPrintFont">
+                            SGST {item?.ItemDetails.ItemTax / 2} %:{" "}
+                            {(
+                              (item?.ItemDetails?.packageGuestCount &&
+                              item?.ItemDetails?.TaxDiff
+                                ? item.ItemDetails.packageGuestCount.reduce(
+                                    (total, count, index) =>
+                                      total +
+                                      count * item.ItemDetails.TaxDiff[index],
+                                      // count * item.ItemDetails.TaxBifurcation[index],
+                                    0
+                                  )
+                                : 0) / 2
+                            ).toFixed(2)}
+                          </h6>{" "}
+                        </>
                         )}
                         <h6 className="BillPrintFont">
                           CGST {item?.TeensTax / 2} %:{" "}
@@ -4106,37 +4148,73 @@ const BillingDetails = () => {
                         <></>
                       )} */}
                   </div>
-                  <div
-                    className="terms"
-                    style={{ marginTop: "10px", textAlign: "center" }}
-                  >
-                    <h6
-                      style={{
-                        textAlign: "center",
-                        fontSize: "12px",
-                        fontWeight: "bold",
-                      }}
+
+                  {/*tERMS AND conditions */}
+                  {
+                    item?.ItemDetails?.ItemTaxName[0] === "GST" ? 
+                    (
+                      <div
+                      className="terms"
+                      style={{ marginTop: "10px", textAlign: "center" }}
                     >
-                      TERMS AND CONDITIONS
-                    </h6>
-                    <p style={{ fontSize: "10px", fontWeight: "bold" }}>
-                      (1) BUFFET IS OPEN FROM 1:30PM TO 3:30PM AND FROM 8:00PM
-                      TO 1:30AM DURING WEEKDAYS.
-                    </p>
-                    <p style={{ fontSize: "10px", fontWeight: "bold" }}>
-                      (2) BUFFET IS OPEN FROM 1:30PM TO 4:00PM AND FROM 8:00PM
-                      TO 2:00AM DURING WEEKEND.
-                    </p>
-                    <p style={{ fontSize: "10px", fontWeight: "bold" }}>
-                      (3) ANY PERSON ABOVE 21 YEARS OLD INTEND TO PLAY MAY ENTER
-                      GAMING AREA & PURCHASE CHIPS SEPARATELY.
-                    </p>
-                    <p style={{ fontSize: "10px", fontWeight: "bold" }}>
-                      (4) THIS INVOICE DOES NOT ENTITLE ANY LIQUOR, GAMING CHIPS
-                      OR ANY OTHER SERVICES. HOWEVER, LIMITED COUPONS APPLIED ON
-                      SELECTIVE LIQUOR PACKAGES.
-                    </p>
-                  </div>
+                      <h6
+                        style={{
+                          textAlign: "center",
+                          fontSize: "12px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        TERMS AND CONDITIONS 
+                      </h6>
+                      <p style={{ fontSize: "10px", fontWeight: "bold" }}>
+                        (1) BUFFET IS OPEN FROM 1:30PM TO 3:30PM AND FROM 8:30PM
+                        TO 1:30AM DURING THE WEEKDAYS.BUFFET IS OPEN FROM 1:30PM TO 4:00PM AND FROM 8:30PM
+                        TO 2:00AM DURING THE WEEKENDS.
+                      </p>
+                      {/* <p style={{ fontSize: "10px", fontWeight: "bold" }}>
+                        BUFFET IS OPEN FROM 1:30PM TO 4:00PM AND FROM 8:30PM
+                        TO 2:00AM DURING THE WEEKENDS.
+                      </p> */}
+                      <p style={{ fontSize: "10px", fontWeight: "bold" }}>
+                        (2) OTP (ONE TIME PLAY COUPON) CAN BE PLAYED ONLY BY 21 YEARS AND ABOVE.
+                      </p>
+                      <p style={{ fontSize: "10px", fontWeight: "bold" }}>
+                        (3) THIS INVOICE DOES NOT ENTITLE ANY LIQUOR.
+                      </p>
+                      <p style={{ fontSize: "10px", fontWeight: "bold" }}>
+                        (4) RIGHT TO ADMISSION IS RESERVED.
+                      </p>
+                    </div>
+                    ) 
+                    :
+                    (
+                      <div
+                      className="terms"
+                      style={{ marginTop: "10px", textAlign: "center" }}
+                    >
+                      <h6
+                        style={{
+                          textAlign: "center",
+                          fontSize: "12px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        TERMS AND CONDITIONS 
+                      </h6>
+                      <p style={{ fontSize: "10px", fontWeight: "bold" }}>
+                        (1) LIST OF LIQUOR BRAND AVAILABLE ON BROCHURE / WEBSITE.
+                      </p>
+                      <p style={{ fontSize: "10px", fontWeight: "bold" }}>
+                        (2) LIQUOR COUPONS ARE STRICTLY NON TRANSFERABLE.
+                      </p>
+                      <p style={{ fontSize: "10px", fontWeight: "bold" }}>
+                        (3) RIGHT TO ADMISSION IS RESERVED.
+                      </p>
+                    </div>
+                    )
+                  }
+ 
+
                 </div>
               </div>
             ))}
@@ -4523,7 +4601,10 @@ const BillingDetails = () => {
                                 <td style={{ textAlign: "right" }}>
                                   <p className="BillPrintFontPrint">
                                     {" "}
-                                    {item?.TeensRate.toFixed(2)}
+                                    {/* {item?.TeensRate.toFixed(2)} */}
+                                    {item?.TeensRate &&
+                                item?.NumOfTeens &&
+                                (item.TeensRate / item.NumOfTeens).toFixed(2) * item.NumOfTeens}
                                   </p>
                                 </td>
                               </tr>
@@ -4598,7 +4679,40 @@ const BillingDetails = () => {
                         {item?.ItemDetails?.ItemTaxName[0] === "GST" &&
                         item?.TeensPrice > 0 ? (
                           <>
-                            {item?.ItemDetails?.TaxDiff ? (
+                            {item?.ItemDetails?.TaxBifurcation ? (
+                              <>
+                                <h6 className="BillPrintFontPrint">
+                                  CGST {item?.ItemDetails.ItemTax / 2} %:{" "}
+                                  {(
+                                    (item?.ItemDetails?.packageGuestCount &&
+                                    item?.ItemDetails?.TaxBifurcation
+                                      ? item.ItemDetails.packageGuestCount.reduce(
+                                          (total, count, index) =>
+                                            total +
+                                            count *
+                                              item.ItemDetails.TaxBifurcation[index],
+                                          0
+                                        )
+                                      : 0) / 2
+                                  ).toFixed(2)}
+                                </h6>
+                                <h6 className="BillPrintFontPrint">
+                                  SGST {item?.ItemDetails.ItemTax / 2} %:{" "}
+                                  {(
+                                    (item?.ItemDetails?.packageGuestCount &&
+                                    item?.ItemDetails?.TaxBifurcation
+                                      ? item.ItemDetails.packageGuestCount.reduce(
+                                          (total, count, index) =>
+                                            total +
+                                            count *
+                                              item.ItemDetails.TaxBifurcation[index],
+                                          0
+                                        )
+                                      : 0) / 2
+                                  ).toFixed(2)}
+                                </h6>{" "}
+                              </>
+                            ) : (
                               <>
                                 <h6 className="BillPrintFontPrint">
                                   CGST {item?.ItemDetails.ItemTax / 2} %:{" "}
@@ -4631,8 +4745,6 @@ const BillingDetails = () => {
                                   ).toFixed(2)}
                                 </h6>{" "}
                               </>
-                            ) : (
-                              <></>
                             )}
                             <h6 className="BillPrintFontPrint">
                               CGST {item?.TeensTax / 2} %:{" "}
@@ -4834,31 +4946,59 @@ const BillingDetails = () => {
                         )}
                       </div>
 
-                      <div
-                        className="terms"
-                        style={{ marginTop: "10px", textAlign: "center" }}
-                      >
-                        <h6 className="BillPrintFontPrintterms">
-                          TERMS AND CONDITIONS
-                        </h6>
-                        <p className="BillPrintFontPrintterms">
-                          (1) BUFFET IS OPEN FROM 1:30PM TO 3:30PM AND FROM
-                          8:00PM TO 1:30AM DURING WEEKDAYS.
-                        </p>
-                        <p className="BillPrintFontPrintterms">
-                          (2) BUFFET IS OPEN FROM 1:30PM TO 4:00PM AND FROM
-                          8:00PM TO 2:00AM DURING WEEKEND.
-                        </p>
-                        <p className="BillPrintFontPrintterms">
-                          (3) ANY PERSON ABOVE 21 YEARS OLD INTEND TO PLAY MAY
-                          ENTER GAMING AREA & PURCHASE CHIPS SEPARATELY.
-                        </p>
-                        <p className="BillPrintFontPrintterms">
-                          (4) THIS INVOICE DOES NOT ENTITLE ANY LIQUOR, GAMING
-                          CHIPS OR ANY OTHER SERVICES. HOWEVER, LIMITED COUPONS
-                          APPLIED ON SELECTIVE LIQUOR PACKAGES.
-                        </p>
-                      </div>
+                      {/*TERMS AND CONDITIONS*/}
+                      {
+                        item?.ItemDetails?.ItemTaxName[0] === "GST" ? 
+                        (
+                          <div
+                          className="terms"
+                          style={{ marginTop: "10px", textAlign: "center" }}
+                        >
+                          <h6 className="BillPrintFontPrintterms">
+                            TERMS AND CONDITIONS
+                          </h6>
+                          <p className="BillPrintFontPrintterms">
+                            (1) BUFFET IS OPEN FROM 1:30PM TO 3:30PM AND FROM 8:30PM
+                        TO 1:30AM DURING THE WEEKDAYS.BUFFET IS OPEN FROM 1:30PM TO 4:00PM AND FROM 8:30PM
+                        TO 2:00AM DURING THE WEEKENDS.
+                          </p>
+                          {/* <p className="BillPrintFontPrintterms">
+                          BUFFET IS OPEN FROM 1:30PM TO 4:00PM AND FROM 8:30PM
+                        TO 2:00AM DURING THE WEEKENDS.
+                          </p> */}
+                          <p className="BillPrintFontPrintterms">
+                            (2) OTP (ONE TIME PLAY COUPON) CAN BE PLAYED ONLY BY 21 YEARS AND ABOVE.
+                          </p>
+                          <p className="BillPrintFontPrintterms">
+                            (3) THIS INVOICE DOES NOT ENTITLE ANY LIQUOR.
+                          </p>
+                          <p className="BillPrintFontPrintterms">
+                            (4) RIGHT TO ADMISSION IS RESERVED.
+                          </p>
+                        </div>
+                        )
+                        :
+                        (
+                          <div
+                          className="terms"
+                          style={{ marginTop: "10px", textAlign: "center" }}
+                        >
+                          <h6 className="BillPrintFontPrintterms">
+                            TERMS AND CONDITIONS
+                          </h6>
+                          <p className="BillPrintFontPrintterms">
+                            (1) LIST OF LIQUOR BRAND AVAILABLE ON BROCHURE / WEBSITE.
+                          </p>
+                          <p className="BillPrintFontPrintterms">
+                            (2) LIQUOR COUPONS ARE STRICTLY NON TRANSFERABLE.
+                          </p>
+                          <p className="BillPrintFontPrintterms">
+                            (3) RIGHT TO ADMISSION IS RESERVED.
+                          </p>
+                        </div>
+                        )
+                      }
+
 
                       <div className="col-12">
                         <div className="d-flex justify-content-center qr-code">

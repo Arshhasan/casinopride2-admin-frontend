@@ -1432,14 +1432,16 @@ const TeensBilling = () => {
                           fontSize: "18px",
                         }}
                       >
-                        {item?.TeensRate.toFixed(2)}
+                        {(item?.TeensRate/item?.TotalGuestCount).toFixed(2) * item?.TotalGuestCount}
+                        {/* {item?.TeensRate.toFixed(2)} */}
                       </td>
                     </tr>
                   </tbody>
                 </table>
 
                 <div className="totals" style={{ textAlign: "right" }}>
-                  <h6>Total Amount: {item?.TeensRate.toFixed(2)}</h6>
+                  {/* <h6>Total Amount: {item?.TeensRate.toFixed(2)}</h6> */}
+                  <h6>Total Amount: {(item?.TeensRate/item?.TotalGuestCount).toFixed(2) * item?.TotalGuestCount}</h6>
 
                   <h6>
                     {" "}
@@ -1453,10 +1455,10 @@ const TeensBilling = () => {
                   </h6>
 
                   {item?.AmountAfterDiscount == 0 ? (
-                    <h6>Bill Amountt: {item?.TeensPrice}</h6>
+                    <h6>Bill Amount: {item?.TeensPrice}</h6>
                   ) : (
                     <h6>
-                      Bill Amountt:{" "}
+                      Bill Amount:{" "}
                       {item?.TeensPrice -
                         (item?.ActualAmount - item?.AmountAfterDiscount)}
                     </h6>
@@ -1477,21 +1479,18 @@ const TeensBilling = () => {
                     TERMS AND CONDITIONS
                   </h6>
                   <p style={{ fontSize: "12px", fontWeight: "bold" }}>
-                    (1) BUFFET IS OPEN FROM 1:30PM TO 3:30PM AND FROM 8:00PM TO
-                    1:30AM DURING WEEKDAYS.
+                    (1) BUFFET IS OPEN FROM 1:30PM TO 3:30PM AND FROM 8:30PM
+                        TO 1:30AM DURING THE WEEKDAYS.BUFFET IS OPEN FROM 1:30PM TO 4:00PM AND FROM 8:30PM
+                        TO 2:00AM DURING THE WEEKENDS.
                   </p>
                   <p style={{ fontSize: "12px", fontWeight: "bold" }}>
-                    (2) BUFFET IS OPEN FROM 1:30PM TO 4:00PM AND FROM 8:00PM TO
-                    2:00AM DURING WEEKEND.
+                    (2) OTP (ONE TIME PLAY COUPON) CAN BE PLAYED ONLY BY 21 YEARS AND ABOVE.
                   </p>
                   <p style={{ fontSize: "12px", fontWeight: "bold" }}>
-                    (3) ANY PERSON ABOVE 21 YEARS OLD INTEND TO PLAY MAY ENTER
-                    GAMING AREA & PURCHASE CHIPS SEPARATELY.
+                    (3) THIS INVOICE DOES NOT ENTITLE ANY LIQUOR.
                   </p>
                   <p style={{ fontSize: "12px", fontWeight: "bold" }}>
-                    (4) THIS INVOICE DOES NOT ENTITLE ANY LIQUOR, GAMING CHIPS
-                    OR ANY OTHER SERVICES. HOWEVER, LIMITED COUPONS APPLIED ON
-                    SELECTIVE LIQUOR PACKAGES.
+                    (4) RIGHT TO ADMISSION IS RESERVED.
                   </p>
                 </div>
               </div>
@@ -1700,11 +1699,12 @@ const TeensBilling = () => {
                           </td>
 
                           <td className="BillPrintFontPrint">
-                            {item?.TeensRate.toFixed(2)}
+                          {(item?.TeensRate/item?.TotalGuestCount).toFixed(2)}
                           </td>
 
                           <td className="BillPrintFontPrint">
-                            {item?.TeensRate.toFixed(2)}
+                            {/* {item?.TeensRate.toFixed(2)} */}
+                            {(item?.TeensRate/item?.TotalGuestCount).toFixed(2) * item?.TotalGuestCount}
                           </td>
                         </tr>
                       </tbody>
@@ -1712,7 +1712,8 @@ const TeensBilling = () => {
 
                     <div className="totals" style={{ textAlign: "right" }}>
                       <h6 className="BillPrintFontPrint">
-                        Total Amount: {item?.TeensRate.toFixed(2)}
+                        {/* Total Amount: {item?.TeensRate.toFixed(2)} */}
+                        Total Amount: {(item?.TeensRate/item?.TotalGuestCount).toFixed(2) * item?.TotalGuestCount}
                       </h6>
 
                       <h6 className="BillPrintFontPrint">
@@ -1747,21 +1748,18 @@ const TeensBilling = () => {
                         TERMS AND CONDITIONS
                       </h6>
                       <p className="BillPrintFontPrintterms">
-                        (1) BUFFET IS OPEN FROM 1:30PM TO 3:30PM AND FROM 8:00PM
-                        TO 1:30AM DURING WEEKDAYS.
+                        (1) BUFFET IS OPEN FROM 1:30PM TO 3:30PM AND FROM 8:30PM
+                        TO 1:30AM DURING THE WEEKDAYS.BUFFET IS OPEN FROM 1:30PM TO 4:00PM AND FROM 8:30PM
+                        TO 2:00AM DURING THE WEEKENDS.
                       </p>
                       <p className="BillPrintFontPrintterms">
-                        (2) BUFFET IS OPEN FROM 1:30PM TO 4:00PM AND FROM 8:00PM
-                        TO 2:00AM DURING WEEKEND.
+                        (2) OTP (ONE TIME PLAY COUPON) CAN BE PLAYED ONLY BY 21 YEARS AND ABOVE.
                       </p>
                       <p className="BillPrintFontPrintterms">
-                        (3) ANY PERSON ABOVE 21 YEARS OLD INTEND TO PLAY MAY
-                        ENTER GAMING AREA & PURCHASE CHIPS SEPARATELY.
+                        (3) THIS INVOICE DOES NOT ENTITLE ANY LIQUOR.
                       </p>
                       <p className="BillPrintFontPrintterms">
-                        (4) THIS INVOICE DOES NOT ENTITLE ANY LIQUOR, GAMING
-                        CHIPS OR ANY OTHER SERVICES. HOWEVER, LIMITED COUPONS
-                        APPLIED ON SELECTIVE LIQUOR PACKAGES.
+                        (4) RIGHT TO ADMISSION IS RESERVED.
                       </p>
                     </div>
                   </div>
