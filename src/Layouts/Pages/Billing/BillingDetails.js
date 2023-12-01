@@ -3558,6 +3558,7 @@ const BillingDetails = () => {
                         </h6>
                       )} */}
 
+                      {/*Displaying Bill Amount */}
                     {item?.ItemDetails?.ItemTaxName[0] === "GST" ? (
                       <h6 className="BillPrintFont ">
                         Total Amount :
@@ -3662,7 +3663,7 @@ const BillingDetails = () => {
         )}
       </h6>
     )} */}
-
+                    {/*Displaying CGST SGST and VAT on conditions */}
                     {item?.ItemDetails?.ItemTaxName[0] === "GST" &&
                     item?.TeensPrice > 0 ? (
                       <>
@@ -3949,7 +3950,9 @@ const BillingDetails = () => {
                                 item?.ItemDetails?.TaxDiffWeekday *
                                 item?.ItemDetails?.packageGuestCount
                               ).toFixed(2)} */}
-                            {(item?.ItemDetails?.packageGuestCount &&
+
+                              {/*commented by manasi */}
+                            {/* {(item?.ItemDetails?.packageGuestCount &&
                             item?.ItemDetails?.TaxDiff
                               ? item.ItemDetails.packageGuestCount.reduce(
                                   (total, count, index) =>
@@ -3958,7 +3961,29 @@ const BillingDetails = () => {
                                   0
                                 )
                               : 0
-                            ).toFixed(2)}
+                            ).toFixed(2)} */}
+
+                             {/*addition by manasi */}
+                              {(parseFloat(
+                              item?.ItemDetails?.packageGuestCount
+                                .reduce((acc, count, index) => {
+                                  const rate =
+                                    item?.ItemDetails?.Rate[index].toFixed(2);
+
+                                  if (rate !== undefined) {
+                                    return (
+                                      acc +
+                                      parseFloat((count * rate).toFixed(2))
+                                    );
+                                  }
+
+                                  return acc;
+                                }, 0)
+                                .toFixed(2) * (item?.ItemDetails?.ItemTax / 100)
+                            )* 100 /100).toFixed(2)}
+
+                           
+                           
                             {/* {item?.ItemDetails?.TaxDiffWeekday?.reduce(
                                 (acc, value) => acc + value,
                                 0
@@ -3975,6 +4000,7 @@ const BillingDetails = () => {
                           </h6>
                         )}
 
+                        {/*Displaying Bill amount */}
                         {item?.ItemDetails?.IsDeductable[0] === 1 &&
                         BookingDetails[0]?.AmountAfterDiscount > 0 ? (
                           <>
@@ -4860,7 +4886,8 @@ const BillingDetails = () => {
                             ) : item?.ItemDetails?.ItemTaxName[0] === "VAT" ? (
                               <h6 className="BillPrintFontPrint">
                                 VAT {item?.ItemDetails.ItemTax}%:
-                                {(item?.ItemDetails?.packageGuestCount &&
+                                {/*Commented by manasi */}
+                                {/* {(item?.ItemDetails?.packageGuestCount &&
                                 item?.ItemDetails?.TaxDiff
                                   ? item.ItemDetails.packageGuestCount.reduce(
                                       (total, count, index) =>
@@ -4869,7 +4896,25 @@ const BillingDetails = () => {
                                       0
                                     )
                                   : 0
-                                ).toFixed(2)}
+                                ).toFixed(2)} */}
+                                                             {/*addition by manasi */}
+                              {(parseFloat(
+                              item?.ItemDetails?.packageGuestCount
+                                .reduce((acc, count, index) => {
+                                  const rate =
+                                    item?.ItemDetails?.Rate[index].toFixed(2);
+
+                                  if (rate !== undefined) {
+                                    return (
+                                      acc +
+                                      parseFloat((count * rate).toFixed(2))
+                                    );
+                                  }
+
+                                  return acc;
+                                }, 0)
+                                .toFixed(2) * (item?.ItemDetails?.ItemTax / 100)
+                            )* 100 /100).toFixed(2)}
                               </h6>
                             ) : (
                               <h6 className="BillPrintFontPrint"></h6>
