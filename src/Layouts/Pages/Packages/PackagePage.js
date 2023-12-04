@@ -29,6 +29,7 @@ const PackagesPage = ({
   setTeensWeekendPrice,
   setTeensWeekdayPrice,
   setTeensPackageName,
+  Discountpercent,
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
@@ -589,6 +590,29 @@ const PackagesPage = ({
                                     Amount After Discount :
                                   </span>
                                   {amountAfterDiscount}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+
+                          {Discountpercent == "" ? (
+                            <></>
+                          ) : (
+                            <div className="row package-item">
+                              <div className="col-4 "></div>
+                              <div className="col-4 "></div>
+                              <div className="col-4 ">
+                                <p
+                                  className="mb-0 detail"
+                                  style={{ textAlign: "right" }}
+                                >
+                                  <span className="detail">
+                                    Amount After Discount :
+                                  </span>
+                                  {totalAmountOfAllPackages -
+                                    (totalAmountOfAllPackages *
+                                      Discountpercent) /
+                                      100}
                                 </p>
                               </div>
                             </div>

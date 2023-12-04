@@ -176,3 +176,30 @@ export const updateBooking = (token, data, callback) => async (dispatch) => {
       }
     });
 };
+
+export const updateBookingForPayAtCounterFn =
+  (token, data, callback) => async (dispatch) => {
+    api.BOOKING_PORT.put("/booking/updateBookingForPayAtCounter", data, {
+      headers: { AuthToken: token },
+    })
+      .then((response) => {
+        console.log("Updated Booking ->", response.data);
+        if (response.data?.Details) {
+          console.log(response.data?.Details);
+          callback({
+            status: true,
+            response: response?.data,
+          });
+        } else if (response.data?.Error) {
+          callback({
+            status: false,
+            error: response.data?.Error?.ErrorMessage,
+          });
+        }
+      })
+      .catch((err) => {
+        {
+          console.log("error", err);
+        }
+      });
+  };

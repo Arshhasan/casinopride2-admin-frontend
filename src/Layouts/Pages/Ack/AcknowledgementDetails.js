@@ -3,7 +3,10 @@ import { connect, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { fetchBookingDetailsById } from "../../../Redux/actions/booking";
+import {
+  fetchBookingDetailsById,
+  updateBookingForPayAtCounterFn,
+} from "../../../Redux/actions/booking";
 import { AddBillingDetails } from "../../../Redux/actions/billing";
 import moment from "moment";
 import { toast } from "react-toastify";
@@ -16,8 +19,53 @@ const AcknowledgementDetails = () => {
   const loginDetails = useSelector(
     (state) => state.auth?.userDetailsAfterLogin.Details
   );
+  const [selectedState, setSelectedState] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [partCash, setPartCash] = useState("");
+  const [partCard, setPartCard] = useState("");
+  const [upiId, setUpiId] = useState("");
+  const [amount, setamount] = useState("");
+  const [packageIds, setPackageIds] = useState([]);
+  const [packageGuestCount, setPackageGuestCount] = useState([]);
+  const [amountAfterDiscount, setamountAfterDiscount] = useState(0);
+  const [selectedOption, setSelectedOption] = useState("");
+  const [cashAmount, setCashAmount] = useState("");
+  const [upiAmount, setUpiAmount] = useState("");
+  const [cardAmount, setCardAmount] = useState("");
+  const [cardHoldersName, setcardHoldersName] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardType, setCardType] = useState("");
 
+  const [paymentOption, setPaymentOption] = useState("");
+  const handlePaymentSelection = (event) => {
+    // Update the selected option when the user makes a selection
+    setPaymentOption(event.target.value);
+
+    console.log("payment selection----->", event.target.value);
+
+    const DiscountedAmount = bookingData?.amountAfterDiscount;
+    setcardHoldersName("");
+    setCardNumber("");
+    setCardType("");
+
+    if (event.target.value == "Cash") {
+      setCashAmount(DiscountedAmount);
+      setUpiAmount("");
+      setCardAmount("");
+    } else if (event.target.value == "UPI") {
+      setUpiAmount(DiscountedAmount);
+      setCashAmount("");
+      setCardAmount("");
+    } else if (event.target.value == "Card") {
+      setCardAmount(DiscountedAmount);
+      setCashAmount("");
+      setUpiAmount("");
+    }
+  };
   const [show, setShow] = useState(false);
+
+  const [payAT, setPay] = useState(false);
+
   const [futureDate, setFutureDate] = useState();
 
   const [dateFromBackend, setDateFromBackend] = useState();
@@ -79,8 +127,8 @@ const AcknowledgementDetails = () => {
     if (!loginDetails) {
       navigate("/");
     } else {
-      console.log("Hi");
-      setShow(true);
+      //.log("Hi");
+      //setShow(true);
     }
   }, []);
 
@@ -125,8 +173,14 @@ const AcknowledgementDetails = () => {
                 callback?.response?.Details.PackageWeekdayPrice,
               packageWeekendPrice:
                 callback?.response?.Details.PackageWeekendPrice,
+              payAtCounter: callback?.response?.Details?.PayAtCounter,
             };
 
+            if (callback?.response?.Details?.PayAtCounter != 1) {
+              setShow(true);
+            } else {
+              setPay(true);
+            }
             console.log("Data-----from ack booking>", data);
             setBookingData(data);
 
@@ -216,6 +270,168 @@ const AcknowledgementDetails = () => {
     );
   };
 
+  const handleShowR = () => {
+    // setShow(true)
+
+    if (paymentOption == "") {
+      toast.warning("Please select the payment option");
+      setLoader(false);
+    } else if (
+      paymentOption == "Card" &&
+      cardType == "" &&
+      cardNumber == "" &&
+      cardHoldersName == "" &&
+      cardAmount == ""
+    ) {
+      toast.warning("Please enter all card details");
+      setLoader(false);
+    } else if (paymentOption == "UPI" && upiAmount == "") {
+      toast.warning("Please enter upi details");
+      setLoader(false);
+    } else if (
+      paymentOption == "Part Card / Part Cash" &&
+      cardType == "" &&
+      cardNumber == "" &&
+      cardHoldersName == "" &&
+      cardAmount == "" &&
+      cashAmount == ""
+    ) {
+      toast.warning("Please enter all the details");
+      setLoader(false);
+    } else if (
+      paymentOption == "Part Card / Part UPI" &&
+      cardType == "" &&
+      cardNumber == "" &&
+      cardHoldersName == "" &&
+      cardAmount == "" &&
+      upiAmount == ""
+    ) {
+      toast.warning("Please enter all the details");
+      setLoader(false);
+    } else if (
+      paymentOption == "Part Cash / Part UPI" &&
+      cashAmount == "" &&
+      upiAmount == ""
+    ) {
+      toast.warning("Please enter all the details");
+      setLoader(false);
+    } else if (paymentOption == "Cash" && cashAmount == "") {
+      toast.warning("Please enter the cash amount");
+      setLoader(false);
+    } else {
+      onsubmit();
+    }
+  };
+
+  const onsubmit = () => {
+    setLoader(true);
+
+    const data = {
+      paymentMode: paymentOption,
+      cardAmount: cardAmount,
+
+      partCash: partCash,
+      partCard: partCard,
+
+      cashAmount: cashAmount,
+      cardAmount: cardAmount,
+      UPIAmount: upiAmount,
+      cardHoldersName: cardHoldersName,
+      cardNumber: cardNumber,
+      cardType: cardType,
+      UPIId: upiId,
+
+      bookingId: bookingData?.bookingId,
+    };
+
+    console.log("Data from booking ------->", data);
+
+    dispatch(
+      updateBookingForPayAtCounterFn(
+        loginDetails?.logindata?.Token,
+        data,
+        (callback) => {
+          if (callback.status) {
+            console.log(
+              "booking details --------------?",
+              callback?.response?.Details
+            );
+
+            setBookingData(callback?.response?.Details);
+
+            toast.success("Booking details success");
+
+            const data = {
+              bookingId: callback?.response?.Details?.Id,
+              packageId: callback?.response?.Details?.PackageId,
+              packageGuestCount: callback?.response?.Details?.PackageGuestCount,
+              totalGuestCount: callback?.response?.Details?.TotalGuestCount,
+              bookingDate: callback?.response?.Details?.CreatedOn?.slice(0, 10),
+              billingDate: today,
+              teensCount: callback?.response?.Details?.NumOfTeens,
+              actualAmount: callback?.response?.Details?.ActualAmount,
+              amountAfterDiscount:
+                callback?.response?.Details?.AmountAfterDiscount,
+              discount: callback?.response?.Details?.PanelDiscount
+                ? callback?.response?.Details?.PanelDiscount
+                : callback?.response?.Details?.CouponDiscount,
+              packageWeekdayPrice:
+                callback?.response?.Details?.PackageWeekdayPrice,
+              packageWeekendPrice:
+                callback?.response?.Details?.PackageWeekendPrice,
+            };
+
+            console.log("data------------>", data);
+
+            dispatch(
+              AddBillingDetails(
+                loginDetails?.logindata?.Token,
+                data,
+                (callback) => {
+                  if (callback.status) {
+                    console.log(
+                      "Generate Bill --------------?",
+                      callback?.response?.Details[0]?.NumOfTeens,
+                      callback?.response?.Details[0]?.TotalGuestCount
+                    );
+
+                    if (
+                      callback?.response?.Details[0]?.NumOfTeens -
+                        callback?.response?.Details[0]?.TotalGuestCount ==
+                      0
+                    ) {
+                      navigate("/TeensBilling", {
+                        state: { BookingDetails: callback?.response?.Details },
+                      });
+                      setLoader(false);
+                    } else {
+                      navigate("/BillingDetails", {
+                        state: { BookingDetails: callback?.response?.Details },
+                      });
+                      setLoader(false);
+                    }
+
+                    toast.error(callback.error);
+                  } else {
+                    toast.error(callback.error);
+                    setLoader(false);
+                  }
+                }
+              )
+            );
+
+            // navigate("/GenerateBill", {
+            //   state: { userData: callback?.response?.Details },
+            // });
+            // navigate(-1);
+            toast.error(callback.error);
+          } else {
+            toast.error(callback.error);
+          }
+        }
+      )
+    );
+  };
   return (
     <div>
       <Modal show={show} onHide={handleClose}>
@@ -259,6 +475,357 @@ const AcknowledgementDetails = () => {
           )}
         </Modal.Footer>
       </Modal>
+
+      {payAT && (
+        <div>
+          <h2>Pay At Counter</h2>
+          <div style={{ flexDirection: "row" }} className=" mt-5 col-lg-12">
+            <h4 className=" ">
+              {"         "}Amount Payable
+              <span style={{ color: "red" }}>
+                {" "}
+                Rs. {bookingData?.amountAfterDiscount}{" "}
+              </span>
+            </h4>
+          </div>
+          <div className="col-lg-6">
+            <br />
+            <br />
+            <label for="formGroupExampleInput " className="form_text">
+              Payment Option <span style={{ color: "red" }}>*</span>
+            </label>
+            <select
+              id="dropdown"
+              class="form-control mt-2"
+              value={paymentOption} // Set the selected option based on the state
+              onChange={handlePaymentSelection} // Handle changes to the dropdown
+            >
+              <option value="">Select...</option>
+              <option value="Cash">Cash </option>
+              <option value="Card">Card </option>
+              <option value="UPI">UPI </option>
+              <option value="Part Card / Part Cash">
+                Part Card / Part Cash
+              </option>
+              <option value="Part Card / Part UPI">Part Card / Part UPI</option>
+              <option value="Part Cash / Part UPI">Part Cash / Part UPI</option>
+
+              <option value="Company Settlement">Company Settlement </option>
+            </select>
+          </div>
+
+          {paymentOption == "Cash" ? (
+            <div className="row">
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  Cash Amount <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  class="form-control mt-2"
+                  type="text"
+                  placeholder="Enter the amount"
+                  // onChange={(e) => setCashAmount(e.target.value)}
+
+                  defaultValue={cashAmount}
+                  value={cashAmount}
+                />
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+
+          {paymentOption == "Card" ? (
+            <>
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  Card Amount <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  class="form-control mt-2"
+                  type="number"
+                  placeholder="Enter the amount"
+                  onChange={(e) => setCardAmount(e.target.value)}
+                  value={cardAmount}
+                />
+              </div>
+              <div className="col-lg-6 mt-3">
+                <label htmlFor="formGroupExampleInput" className="form_text">
+                  Card Holder's Name <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  className="form-control mt-2"
+                  type="text"
+                  placeholder="Enter the card holder's name"
+                  onChange={(e) => setcardHoldersName(e.target.value)}
+                />
+              </div>
+
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  Card Type <span style={{ color: "red" }}>*</span>
+                </label>
+                <select
+                  id="dropdown"
+                  class="form-control mt-2"
+                  value={cardType}
+                  onChange={(e) => setCardType(e.target.value)}
+                >
+                  <option value="">Select...</option>
+                  <option value="VISA">Visa card </option>
+                  <option value="MAST">MasterCard </option>
+                  <option value="Rupay">Rupay Card </option>
+                  <option value="Others">Others </option>
+                </select>
+              </div>
+              <div className="col-lg-6 mt-3">
+                <label htmlFor="formGroupExampleInput" className="form_text">
+                  Card Number <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  className="form-control mt-2"
+                  type="number"
+                  placeholder="Enter the card number"
+                  onChange={(e) => setCardNumber(e.target.value)}
+                />
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
+
+          {paymentOption == "UPI" ? (
+            <div className="row">
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  UPI Amount
+                </label>
+                <input
+                  class="form-control mt-2"
+                  type="text"
+                  placeholder="Enter the amount"
+                  onChange={(e) => setUpiAmount(e.target.value)}
+                  value={upiAmount}
+                  defaultValue={upiAmount}
+                />
+              </div>
+
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  UPI Id
+                </label>
+                <input
+                  class="form-control mt-2"
+                  type="text"
+                  placeholder="Enter the UPI Id"
+                  onChange={(e) => setUpiId(e.target.value)}
+                />
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+
+          {paymentOption == "Part Card / Part Cash" ? (
+            <>
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  Part Card Amount <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  class="form-control mt-2"
+                  type="text"
+                  placeholder="Enter the amount"
+                  onChange={(e) => setCardAmount(e.target.value)}
+                />
+              </div>
+
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  Part Cash Amount <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  class="form-control mt-2"
+                  type="number"
+                  placeholder="Enter the amount"
+                  onChange={(e) => setCashAmount(e.target.value)}
+                />
+              </div>
+              <div className="col-lg-6 mt-3">
+                <label htmlFor="formGroupExampleInput" className="form_text">
+                  Card Holder's Name <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  className="form-control mt-2"
+                  type="text"
+                  placeholder="Enter the card holder's name"
+                  onChange={(e) => setcardHoldersName(e.target.value)}
+                />
+              </div>
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  Card Type <span style={{ color: "red" }}>*</span>
+                </label>
+                <select
+                  id="dropdown"
+                  class="form-control mt-2"
+                  value={cardType}
+                  onChange={(e) => setCardType(e.target.value)}
+                >
+                  <option value="">Select...</option>
+                  <option value="VISA">Visa card </option>
+                  <option value="MAST">MasterCard </option>
+                  <option value="Rupay">Rupay Card </option>
+                  <option value="Others">Others </option>
+                </select>
+              </div>
+              <div className="col-lg-6 mt-3">
+                <label htmlFor="formGroupExampleInput" className="form_text">
+                  Card Number <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  className="form-control mt-2"
+                  type="number"
+                  placeholder="Enter the card number"
+                  onChange={(e) => setCardNumber(e.target.value)}
+                />
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
+
+          {paymentOption == "Part Card / Part UPI" ? (
+            <>
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  Part Card Amount <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  class="form-control mt-2"
+                  type="text"
+                  placeholder="Enter the amount"
+                  onChange={(e) => setCardAmount(e.target.value)}
+                />
+              </div>
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  Part Online(UPI) Amount{" "}
+                  <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  class="form-control mt-2"
+                  type="text"
+                  placeholder="Enter the amount"
+                  onChange={(e) => setUpiAmount(e.target.value)}
+                />
+              </div>
+
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  UPI Id
+                </label>
+                <input
+                  class="form-control mt-2"
+                  type="text"
+                  placeholder="Enter the UPI Id"
+                  onChange={(e) => setUpiId(e.target.value)}
+                />
+              </div>
+
+              <div className="col-lg-6 mt-3">
+                <label htmlFor="formGroupExampleInput" className="form_text">
+                  Card Holder's Name <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  className="form-control mt-2"
+                  type="text"
+                  placeholder="Enter the card holder's name"
+                  onChange={(e) => setcardHoldersName(e.target.value)}
+                />
+              </div>
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  Card Type <span style={{ color: "red" }}>*</span>
+                </label>
+                <select
+                  id="dropdown"
+                  class="form-control mt-2"
+                  value={cardType}
+                  onChange={(e) => setCardType(e.target.value)}
+                >
+                  <option value="">Select...</option>
+                  <option value="VISA">Visa card </option>
+                  <option value="MAST">MasterCard </option>
+                  <option value="Rupay">Rupay Card </option>
+                  <option value="Others">Others </option>
+                </select>
+              </div>
+              <div className="col-lg-6 mt-3">
+                <label htmlFor="formGroupExampleInput" className="form_text">
+                  Card Number <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  className="form-control mt-2"
+                  type="number"
+                  placeholder="Enter the card number"
+                  onChange={(e) => setCardNumber(e.target.value)}
+                />
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
+
+          {paymentOption == "Part Cash / Part UPI" ? (
+            <>
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  Part Cash <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  class="form-control mt-2"
+                  type="text"
+                  placeholder="Enter the amount"
+                  onChange={(e) => setCashAmount(e.target.value)}
+                />
+              </div>
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  Part Online(UPI) <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  class="form-control mt-2"
+                  type="text"
+                  placeholder="Enter the amount"
+                  onChange={(e) => setUpiAmount(e.target.value)}
+                />
+              </div>
+              <div className="col-lg-6 mt-3">
+                <label for="formGroupExampleInput " className="form_text">
+                  UPI Id
+                </label>
+                <input
+                  class="form-control mt-2"
+                  type="text"
+                  placeholder="Enter the UPI Id"
+                  onChange={(e) => setUpiId(e.target.value)}
+                />
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
+        </div>
+      )}
+      <button
+        onClick={handleShowR}
+        style={{ paddingLeft: "100px", paddingRight: "100px" }}
+        className="btn btn_colour mt-5 btn-lg"
+      >
+        {" "}
+        Pay
+      </button>
     </div>
   );
 };

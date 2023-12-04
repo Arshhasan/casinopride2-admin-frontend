@@ -194,6 +194,11 @@ const NewBooking = () => {
   const [localAgentDetails, setLocalAgentDetails] = useState("");
   const [localAgentId, setLocalAgentId] = useState();
 
+  const [TravelAgentId, setTravelAgentId] = useState("");
+  const [TravelDetails, setTravelDetails] = useState();
+
+  const [Discountpercent, setDiscountpercent] = useState("");
+
   useEffect(() => {
     const url = new URL(window.location.href);
     const userId = url.searchParams.get("UserId");
@@ -208,14 +213,24 @@ const NewBooking = () => {
               "callabck.response.details>>",
               callback?.response?.Details
             );
-            setLocalAgentId(callback?.response?.Details?.Id);
-            setLocalAgentDetails(callback?.response?.Details);
+            if (callback?.response?.Details?.UserType == 8) {
+              setLocalAgentId(callback?.response?.Details?.Id);
+              setLocalAgentDetails(callback?.response?.Details);
+            }
+
+            if (callback?.response?.Details?.UserType == 5) {
+              setTravelAgentId(callback?.response?.Details?.Id);
+              setTravelDetails(callback?.response?.Details);
+            }
           } else {
             toast.error(callback.error);
           }
         })
       );
     }
+
+    const Discount = url.searchParams.get("Discountpercent");
+    setDiscountpercent(Discount);
   }, []);
 
   const [guestName, setGuestName] = useState("");
@@ -943,8 +958,11 @@ const NewBooking = () => {
 
     console.log("payment selection----->", event.target.value);
 
-    const DiscountedAmount =
-      amount - amountAfterDiscount == amount ? amount : amountAfterDiscount;
+    const DiscountedAmount = Discountpercent
+      ? amount - (amount * Discountpercent) / 100
+      : amount - amountAfterDiscount == amount
+      ? amount
+      : amountAfterDiscount;
 
     setcardHoldersName("");
     setCardNumber("");
@@ -1382,6 +1400,7 @@ const NewBooking = () => {
         <PackagesPage
           setamount={setamount}
           setPackageIds={setPackageIds}
+          Discountpercent={Discountpercent}
           setPackageGuestCount={setPackageGuestCount}
           setNumberofteens={setNumberofteens}
           settoalGuestCount={settoalGuestCount}
@@ -1588,58 +1607,93 @@ const NewBooking = () => {
           <></>
         )}
 
-        <div className="row mt-3">
+        {TravelDetails ? (
           <div className="col-lg-6 mt-3">
-            <div className="row">
-              <div className="col-4">
-                <label for="formGroupExampleInput " className="form_text">
-                  Dicount
-                </label>
+            <label for="formGroupExampleInput " className="form_text">
+              Travel Agent Details
+            </label>
+            <input
+              class="form-control mt-2"
+              type="text"
+              placeholder="Enter Start Date"
+              value={TravelDetails?.Name}
+              disabled={true}
+            />
+          </div>
+        ) : (
+          <></>
+        )}
+        {Discountpercent ? (
+          <div className="col-lg-6 mt-3">
+            <label for="formGroupExampleInput " className="form_text">
+              Agent Discount Percent
+            </label>
+            <input
+              class="form-control mt-2"
+              type="text"
+              placeholder="Enter Start Date"
+              value={Discountpercent}
+              disabled={true}
+            />
+          </div>
+        ) : (
+          <></>
+        )}
 
-                <div className="form-check form-switch">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id="discountSwitch"
-                    checked={discountToggle}
-                    onChange={() => handleToggle("discount")}
-                  />
+        <div className="row mt-3">
+          {!Discountpercent && (
+            <div className="col-lg-6 mt-3">
+              <div className="row">
+                <div className="col-4">
+                  <label for="formGroupExampleInput " className="form_text">
+                    Dicount
+                  </label>
+
+                  <div className="form-check form-switch">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="discountSwitch"
+                      checked={discountToggle}
+                      onChange={() => handleToggle("discount")}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="col-4">
-                <label for="formGroupExampleInput " className="form_text">
-                  Coupon
-                </label>
+                <div className="col-4">
+                  <label for="formGroupExampleInput " className="form_text">
+                    Coupon
+                  </label>
 
-                <div className="form-check form-switch">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id="couponSwitch"
-                    checked={couponToggle}
-                    onChange={() => handleToggle("coupon")}
-                  />
+                  <div className="form-check form-switch">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="couponSwitch"
+                      checked={couponToggle}
+                      onChange={() => handleToggle("coupon")}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="col-4">
-                <label for="formGroupExampleInput " className="form_text">
-                  Settled by company
-                </label>
+                <div className="col-4">
+                  <label for="formGroupExampleInput " className="form_text">
+                    Settled by company
+                  </label>
 
-                <div className="form-check form-switch">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id="referredBySwitch"
-                    checked={referredByToggle}
-                    onChange={() => handleToggle("referredBy")}
-                  />
+                  <div className="form-check form-switch">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="referredBySwitch"
+                      checked={referredByToggle}
+                      onChange={() => handleToggle("referredBy")}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="col-lg-6 mt-3">
             <label for="formGroupExampleInput " className="form_text">
