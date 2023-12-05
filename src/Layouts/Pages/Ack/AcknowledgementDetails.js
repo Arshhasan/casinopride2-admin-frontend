@@ -77,6 +77,8 @@ const AcknowledgementDetails = () => {
   const [isPresentDate, setIsPresentDate] = useState(false);
   const [bookingData, setBookingData] = useState(null);
 
+  const outletOpenDetails = useSelector((state) => state.auth?.outeltDetails);
+
   const handleShow = () => setShow(true);
   const handleClose = () => {
     // navigate("/NewBooking");
@@ -86,6 +88,9 @@ const AcknowledgementDetails = () => {
 
   const [loader, setLoader] = useState(false);
   const today = moment().format("YYYY-MM-DD");
+  const todayOutletDate = moment(    outletOpenDetails &&
+    outletOpenDetails?.Details &&
+    outletOpenDetails?.Details[0]?.Date).format("YYYY-MM-DD");
 
   console.log("today----------->", dateFromBackend);
 
@@ -159,7 +164,8 @@ const AcknowledgementDetails = () => {
               packageGuestCount: callback?.response?.Details.PackageGuestCount,
               totalGuestCount: callback?.response?.Details.TotalGuestCount,
               bookingDate: callback?.response?.Details?.FutureDate,
-              billingDate: today,
+              // billingDate: today,
+              billingDate: todayOutletDate,
               teensCount: callback?.response?.Details.NumOfTeens,
               actualAmount: callback?.response?.Details.ActualAmount,
               amountAfterDiscount:
@@ -168,7 +174,12 @@ const AcknowledgementDetails = () => {
                 ? callback?.response?.Details.PanelDiscount
                 : callback?.response?.Details.WebsiteDiscount
                 ? callback?.response?.Details.WebsiteDiscount
-                : callback?.response?.Details.CouponDiscount,
+                : callback?.response?.Details.CouponDiscount
+                ? callback?.response?.Details.CouponDiscount
+                : callback?.response?.Details.AgentPanelDiscount 
+                ? callback?.response?.Details.AgentPanelDiscount
+                : 0,
+                
               packageWeekdayPrice:
                 callback?.response?.Details.PackageWeekdayPrice,
               packageWeekendPrice:
@@ -367,14 +378,24 @@ const AcknowledgementDetails = () => {
               packageGuestCount: callback?.response?.Details?.PackageGuestCount,
               totalGuestCount: callback?.response?.Details?.TotalGuestCount,
               bookingDate: callback?.response?.Details?.CreatedOn?.slice(0, 10),
-              billingDate: today,
+              // billingDate: today,
+              billingDate: todayOutletDate,
               teensCount: callback?.response?.Details?.NumOfTeens,
               actualAmount: callback?.response?.Details?.ActualAmount,
               amountAfterDiscount:
                 callback?.response?.Details?.AmountAfterDiscount,
-              discount: callback?.response?.Details?.PanelDiscount
-                ? callback?.response?.Details?.PanelDiscount
-                : callback?.response?.Details?.CouponDiscount,
+              // discount: callback?.response?.Details?.PanelDiscount
+              //   ? callback?.response?.Details?.PanelDiscount
+              //   : callback?.response?.Details?.CouponDiscount,
+              discount: callback?.response?.Details.PanelDiscount
+                ? callback?.response?.Details.PanelDiscount
+                : callback?.response?.Details.WebsiteDiscount
+                ? callback?.response?.Details.WebsiteDiscount
+                : callback?.response?.Details.CouponDiscount
+                ? callback?.response?.Details.CouponDiscount
+                : callback?.response?.Details.AgentPanelDiscount 
+                ? callback?.response?.Details.AgentPanelDiscount
+                : 0,
               packageWeekdayPrice:
                 callback?.response?.Details?.PackageWeekdayPrice,
               packageWeekendPrice:
@@ -386,8 +407,7 @@ const AcknowledgementDetails = () => {
             dispatch(
               AddBillingDetails(
                 loginDetails?.logindata?.Token,
-                // data,
-                bookingData,
+                data,
                 (callback) => {
                   if (callback.status) {
                     console.log(
