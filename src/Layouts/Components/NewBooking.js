@@ -931,21 +931,21 @@ const NewBooking = () => {
                     );
                   }
 
-                  // if (
-                  //   callback?.response?.Details[0]?.NumOfTeens -
-                  //     callback?.response?.Details[0]?.TotalGuestCount ==
-                  //   0
-                  // ) {
-                  //   navigate("/TeensBilling", {
-                  //     state: { BookingDetails: callback?.response?.Details },
-                  //   });
-                  //   setLoader(false);
-                  // } else {
-                  //   navigate("/BillingDetails", {
-                  //     state: { BookingDetails: callback?.response?.Details },
-                  //   });
-                  //   setLoader(false);
-                  // }
+                  if (
+                    callback?.response?.Details[0]?.NumOfTeens -
+                      callback?.response?.Details[0]?.TotalGuestCount ==
+                    0
+                  ) {
+                    navigate("/TeensBilling", {
+                      state: { BookingDetails: callback?.response?.Details },
+                    });
+                    setLoader(false);
+                  } else {
+                    navigate("/BillingDetails", {
+                      state: { BookingDetails: callback?.response?.Details },
+                    });
+                    setLoader(false);
+                  }
 
                   toast.error(callback.error);
                 } else {
