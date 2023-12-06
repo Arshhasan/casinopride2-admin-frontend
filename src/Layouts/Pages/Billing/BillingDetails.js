@@ -3052,7 +3052,7 @@ const BillingDetails = () => {
           properties[cgstProperty] = total / 2;
           // properties[sgstProperty] = adjustedTaxDiffSum / 2;
           properties[sgstProperty] = total / 2;
-          properties["TotalBillAmount"] = TotalKidsplusAdults;
+          properties["TotalBillAmount"] = TotalKidsplusAdults - Discount;
           properties["Rate"] = FinalRateResult;
         }
         else if (item?.ActualAmount - item?.AmountAfterDiscount > 0) {
@@ -3066,14 +3066,14 @@ const BillingDetails = () => {
           properties[cgstProperty] = sumWhenDiscount;
           // properties[sgstProperty] = adjustedTaxDiffSum / 2;
           properties[sgstProperty] = sumWhenDiscount;
-          properties["TotalBillAmount"] = TotalKidsplusAdults;
+          properties["TotalBillAmount"] = TotalKidsplusAdults - Discount;
           properties["Rate"] = FinalRateResult;
         } else {
           // properties[cgstProperty] = adjustedTaxDiffSum / 2;
           properties[cgstProperty] = total / 2;
           // properties[sgstProperty] = adjustedTaxDiffSum / 2;
           properties[sgstProperty] = total / 2;
-          properties["TotalBillAmount"] = TotalBillAmount;
+          properties["TotalBillAmount"] = TotalBillAmount - Discount;
           properties["Rate"] = FinalRateResult;
         }
       } else if (itemTaxName[0] === "VAT") {

@@ -1201,6 +1201,8 @@ const TeensBilling = () => {
     packageGuestCount: BookingDetails[0]?.NumOfTeens,
     [KidsCgstProperty]: BookingDetails[0]?.TeensTaxBifurcation / 2,
     [KidsSgstProperty]: BookingDetails[0]?.TeensTaxBifurcation / 2,
+    TotalBillAmount: (BookingDetails[0]?.TeensPrice -
+      (BookingDetails[0]?.ActualAmount - BookingDetails[0]?.AmountAfterDiscount))
   };
 
   console.log("updatededBillDetails---->", updatededBillDetails);
@@ -1454,11 +1456,12 @@ const TeensBilling = () => {
                     {(item?.TeensTaxBifurcation / 2).toFixed(2)}
                   </h6>
 
-                  {item?.AmountAfterDiscount == 0 ? (
+                  {/* {item?.AmountAfterDiscount == 0 ? ( */}
+                  {item?.ActualAmount - item?.AmountAfterDiscount == 0 ? (
                     <h6>Bill Amount: {item?.TeensPrice}</h6>
                   ) : (
                     <h6>
-                      Bill Amount:{" "}
+                     Bill Amount:{" "}
                       {item?.TeensPrice -
                         (item?.ActualAmount - item?.AmountAfterDiscount)}
                     </h6>
@@ -1727,13 +1730,14 @@ const TeensBilling = () => {
                         {(item?.TeensTaxBifurcation / 2).toFixed(2)}
                       </h6>
 
-                      {item?.AmountAfterDiscount == 0 ? (
+                      {/* {item?.AmountAfterDiscount == 0 ? ( */}
+                      {item?.ActualAmount - item?.AmountAfterDiscount == 0 ? (
                         <h4 className="BillPrintFontPrint">
-                          Bill Amountt: {item?.TeensPrice}
+                          Bill Amount: {item?.TeensPrice}
                         </h4>
                       ) : (
                         <h4 className="BillPrintFontPrint">
-                          Bill Amountt:{" "}
+                          Bill Amount:{" "}
                           {item?.TeensPrice -
                             (item?.ActualAmount - item?.AmountAfterDiscount)}
                         </h4>
