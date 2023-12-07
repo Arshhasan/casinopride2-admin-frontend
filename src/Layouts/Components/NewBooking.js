@@ -1705,7 +1705,7 @@ const NewBooking = () => {
               <div className="row">
                 <div className="col-4">
                   <label for="formGroupExampleInput " className="form_text">
-                    Dicount
+                    Discount
                   </label>
 
                   <div className="form-check form-switch">
