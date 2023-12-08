@@ -4228,7 +4228,7 @@ const BillingDetails = () => {
                         TERMS AND CONDITIONS 
                       </h6>
                       <p style={{ fontSize: "10px", fontWeight: "bold" }}>
-                        (1) LIST OF LIQUOR BRAND AVAILABLE ON BROCHURE / WEBSITE.
+                        (1) LIST OF LIQUOR BRANDS AVAILABLE ON BROCHURE / WEBSITE.
                       </p>
                       <p style={{ fontSize: "10px", fontWeight: "bold" }}>
                         (2) LIQUOR COUPONS ARE STRICTLY NON TRANSFERABLE.
@@ -4448,7 +4448,7 @@ const BillingDetails = () => {
                             {item.Phone}
                           </span>
                         </p>
-                        {item.State ? (
+                        {item.State || item?.Address || item?.Country ? (
                           <p className="BillPrintFontPrint">
                             Guest Address:
                             <span className="BillPrintFontPrint">
@@ -5032,7 +5032,7 @@ const BillingDetails = () => {
                             TERMS AND CONDITIONS
                           </h6>
                           <p className="BillPrintFontPrintterms">
-                            (1) LIST OF LIQUOR BRAND AVAILABLE ON BROCHURE / WEBSITE.
+                            (1) LIST OF LIQUOR BRANDS AVAILABLE ON BROCHURE / WEBSITE.
                           </p>
                           <p className="BillPrintFontPrintterms">
                             (2) LIQUOR COUPONS ARE STRICTLY NON TRANSFERABLE.
