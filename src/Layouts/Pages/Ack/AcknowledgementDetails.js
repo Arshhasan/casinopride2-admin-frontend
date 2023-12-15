@@ -73,6 +73,8 @@ const AcknowledgementDetails = () => {
   const [futureDate, setFutureDate] = useState();
 
   const [dateFromBackend, setDateFromBackend] = useState();
+  const [isBillGenerated, setIsBilllGenerated] = useState();
+  const [billGenerated, setBillGenerated] = useState(false);
 
   const [comparisonResult, setComparisonResult] = useState("");
   const [disabledBtn, setDisableBtn] = useState(false);
@@ -104,7 +106,9 @@ const AcknowledgementDetails = () => {
   function compareDates() {
     const backendDate = moment(dateFromBackend).startOf("day");
     const today = moment().startOf("day");
-
+    if (isBillGenerated == 1) {
+      setBillGenerated(true)
+    }
     if (backendDate.isBefore(today)) {
       // Condition 1: If the backendDate is before today
       setComparisonResult("Past date.");
@@ -161,6 +165,7 @@ const AcknowledgementDetails = () => {
               callback?.response?.Details?.FutureDate
             );
             setDateFromBackend(callback?.response?.Details?.FutureDate);
+            setIsBilllGenerated(callback?.response?.Details?.IsBillGenerated);
 
             const data = {
               bookingId: callback?.response?.Details.Id,
@@ -582,17 +587,17 @@ const AcknowledgementDetails = () => {
       inputValue = "";
     }
 
-    if (inputValue > parseFloat(bookingData?.AmountAfterDiscount)) {
+    if (inputValue > parseFloat(bookingData?.amountAfterDiscount)) {
       //checking if the discount that is added is more than the discount percent of the agent
-      inputValue = bookingData?.AmountAfterDiscount;
+      inputValue = bookingData?.amountAfterDiscount;
     }
 
     if (paymentOption === "Part Card / Part Cash") {
-      setCashAmount(parseFloat(bookingData?.AmountAfterDiscount) - inputValue);
+      setCashAmount(parseFloat(bookingData?.amountAfterDiscount) - inputValue);
     }
 
     if (paymentOption === "Part Card / Part UPI") {
-      setUpiAmount(parseFloat(bookingData?.AmountAfterDiscount) - inputValue);
+      setUpiAmount(parseFloat(bookingData?.amountAfterDiscount) - inputValue);
     }
 
     setCardAmount(inputValue);
@@ -603,17 +608,17 @@ const AcknowledgementDetails = () => {
 
     if (isNaN(inputValue) || inputValue < 0) {
       inputValue = "";
-    } else if (inputValue > parseFloat(bookingData?.AmountAfterDiscount)) {
+    } else if (inputValue > parseFloat(bookingData?.amountAfterDiscount)) {
       //checking if the discount that is added is more than the discount percent of the agent
-      inputValue = bookingData?.AmountAfterDiscount;
+      inputValue = bookingData?.amountAfterDiscount;
     }
 
     if (paymentOption === "Part Card / Part Cash") {
-      setCardAmount(parseFloat(bookingData?.AmountAfterDiscount) - inputValue);
+      setCardAmount(parseFloat(bookingData?.amountAfterDiscount) - inputValue);
     }
 
     if (paymentOption === "Part Cash / Part UPI") {
-      setUpiAmount(parseFloat(bookingData?.AmountAfterDiscount) - inputValue);
+      setUpiAmount(parseFloat(bookingData?.amountAfterDiscount) - inputValue);
     }
 
     setCashAmount(inputValue);
@@ -624,17 +629,17 @@ const AcknowledgementDetails = () => {
 
     if (isNaN(inputValue) || inputValue < 0) {
       inputValue = "";
-    } else if (inputValue > parseFloat(bookingData?.AmountAfterDiscount)) {
+    } else if (inputValue > parseFloat(bookingData?.amountAfterDiscount)) {
       //checking if the discount that is added is more than the discount percent of the agent
-      inputValue = bookingData?.AmountAfterDiscount;
+      inputValue = bookingData?.amountAfterDiscount;
     }
 
     if (paymentOption === "Part Card / Part UPI") {
-      setCardAmount(parseFloat(bookingData?.AmountAfterDiscount) - inputValue);
+      setCardAmount(parseFloat(bookingData?.amountAfterDiscount) - inputValue);
     }
 
     if (paymentOption === "Part Cash / Part UPI") {
-      setCashAmount(parseFloat(bookingData?.AmountAfterDiscount) - inputValue);
+      setCashAmount(parseFloat(bookingData?.amountAfterDiscount) - inputValue);
     }
 
     setUpiAmount(inputValue);
@@ -650,6 +655,7 @@ const AcknowledgementDetails = () => {
             <Modal.Title>Error</Modal.Title>
           )}
         </Modal.Header>
+
         <Modal.Body>
           {isPresentDate ? (
             <p>Do you want to continue with the booking?</p>
@@ -664,6 +670,8 @@ const AcknowledgementDetails = () => {
           ) : (
             <p></p>
           )}
+
+
           {isDateInPast ? (
             <p style={{ color: "red", fontWeight: "bold" }}>
               Sorry, this booking cannot be processed as it was scheduled for a
@@ -673,8 +681,18 @@ const AcknowledgementDetails = () => {
             <p></p>
           )}
         </Modal.Body>
+
+        <Modal.Body>
+           {billGenerated==true ? (
+            <p style={{ color: "red", fontWeight: "bold" }}>
+              This Bill is already generated
+            </p>
+          ) : (
+            <p></p>
+          )}
+           </Modal.Body>
         <Modal.Footer>
-          {isPresentDate ? (
+          {isPresentDate && billGenerated == false ? (
             <Button variant="primary" onClick={confirmBilling}>
               Confirm
             </Button>

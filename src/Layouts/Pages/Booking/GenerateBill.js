@@ -105,7 +105,7 @@ const GenerateBill = () => {
                   className="card-text"
                   style={{ color: "green", textAlign: "center" }}
                 >
-                  Payment was successful! Your booking has been confirmed.
+                  Booking Updated.
                 </h5>
                 <div
                   className="text-center d-flex justify-content-center align-items-center mt-5 mb-5"

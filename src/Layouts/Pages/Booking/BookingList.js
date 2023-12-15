@@ -402,7 +402,13 @@ const BookingList = () => {
               "Update Payment booking Response --------------?",
               callback?.response?.Details
             );
-
+              if (callback?.response?.Details?.IsBillGenerated != 1) {
+                navigate("/GenerateBill", {
+                  state: { userData: callback?.response?.Details },
+                });
+              }
+              else
+           { 
             dispatch(
               updateBillingDetails(
                 loginDetails?.logindata?.Token,
@@ -444,7 +450,7 @@ const BookingList = () => {
                   }
                 }
               )
-            );
+            );}
 
             toast.success("Payment details update success");
             setEnableUpdatepayment(false);
@@ -566,10 +572,56 @@ const BookingList = () => {
             );
 
             toast.success("Updated Booking details success");
+              if (callback?.response?.Details?.IsBillGenerated == 1) {
+                dispatch(
+                  updateBillingDetails(
+                    loginDetails?.logindata?.Token,
+                    {
+                      bookingId: callback?.response?.Details?.Id,
+                    },
+                    (callback) => {
+                      if (callback.status) {
+                        console.log(
+                          "Callback------update---billing--payment--update",
+                          callback?.response.Details[0]
+                        );
+    
+                        if (
+                          callback?.response?.Details[0]?.NumOfTeens -
+                            callback?.response?.Details[0]?.TotalGuestCount ==
+                          0
+                        ) {
+                          navigate("/TeensBilling", {
+                            state: {
+                              BookingDetails: callback?.response?.Details,
+                            },
+                          });
+                          setLoader(false);
+                        } else {
+                          navigate("/BillingDetails", {
+                            state: {
+                              BookingDetails: callback?.response?.Details,
+                            },
+                          });
+                          setLoader(false);
+                        }
+                      } else {
+                        console.log(
+                          "Callback------update --voidt>>error",
+                          callback.error
+                        );
+                        toast.error(callback.error);
+                      }
+                    }
+                  )
+                );
+              }
+              else{
+                navigate("/GenerateBill", {
+                  state: { userData: callback?.response?.Details },
+                });
+              }
 
-            navigate("/GenerateBill", {
-              state: { userData: callback?.response?.Details },
-            });
             // navigate(-1);
             toast.error(callback.error);
           } else {
@@ -837,7 +889,7 @@ const BookingList = () => {
   };
 
   return (
-    console.log(UpdatePaymentDetails),
+    console.log("activeDateOfOutlet>>>>>>>>>>>",activeDateOfOutlet),
     (
       <div>
         <ToastContainer />
@@ -1022,8 +1074,9 @@ const BookingList = () => {
                   </td>
                   <td className="manager-list">{item.TotalGuestCount}</td>
 
+                    {/*Generate Bill column */}
                   <td className="manager-list">
-                    {item?.FutureDate == today ? (
+                    {/* {(item?.FutureDate == today && item?.IsBillGenerated != 1) ? (
                       <LiaFileInvoiceSolid
                         onClick={() => {
                           if (
@@ -1046,9 +1099,46 @@ const BookingList = () => {
                       />
                     ) : (
                       <p>-</p>
-                    )}
+                    )} */}
+
+                    {
+                      (item?.FutureDate == today) ?
+                      (item?.IsBillGenerated != 1) ? 
+                      <LiaFileInvoiceSolid
+                        onClick={() => {
+                          if (
+                            item?.PayAtCounter == 1 &&
+                            item?.PaymentMode == null
+                          ) {
+                            window.open(
+                              `/acknowledgementDetails?BookingId=${item.Id}`,
+                              "_self"
+                            );
+                          } else {
+                            GenerateBill(item);
+                          }
+                        }}
+                        style={{
+                          height: "22px",
+                          width: "22px",
+                          backgroundColor: "white",
+                        }}
+                      />
+                      : 
+                      <p>Bill Generated</p>
+                      : (
+                        <p>-</p>
+                      )
+                    }
                   </td>
+
+                    {/*Update booking column */}
                   <td className="manager-list">
+                  {
+                    (moment(item?.FutureDate).format("YYYY-MM-DD") === today) ||
+                    // moment(item?.BookingDate).format("YYYY-MM-DD") === today ? (
+                    moment(item?.BookingDate).format("YYYY-MM-DD") == activeDateOfOutlet?.OutletDate
+                    ? (
                     <AiFillEdit
                       onClick={() => startEditing(item)}
                       style={{
@@ -1057,11 +1147,17 @@ const BookingList = () => {
                         backgroundColor: "white",
                       }}
                     />
+                    )
+                    :(<p>-</p>)}
                   </td>
+                   
 
                   <td className="manager-list">
-                    {moment(item?.FutureDate).format("YYYY-MM-DD") === today ||
-                    moment(item?.BookingDate).format("YYYY-MM-DD") === today ? (
+                    {
+                    (moment(item?.FutureDate).format("YYYY-MM-DD") === today && item?.PayAtCounter == 1) ||
+                    // moment(item?.BookingDate).format("YYYY-MM-DD") === today ? (
+                    moment(item?.BookingDate).format("YYYY-MM-DD") == activeDateOfOutlet?.OutletDate
+                    ? (
                       <LiaMoneyBillSolid
                         onClick={() => StartUpdatingPayment(item)}
                         style={{
@@ -1442,7 +1538,7 @@ const BookingList = () => {
           <Modal.Body>
             {payAT && (
               <div>
-                <h2>Pay At Counter</h2>
+                {/* <h2>Pay At Counter</h2> */}
                 <div
                   style={{ flexDirection: "row" }}
                   className=" mt-5 col-lg-12"

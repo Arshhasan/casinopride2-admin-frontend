@@ -4562,7 +4562,7 @@ const BillingDetails = () => {
                         </thead>
                         <tbody
                         >
-                          <tr>
+                          {/* <tr>
                             <td style={{ textAlign: "center",}}>
                               {item?.ItemDetails &&
                                 item?.ItemDetails?.ItemName.map((item) => (
@@ -4621,7 +4621,38 @@ const BillingDetails = () => {
                                 </p>
                               ))}
                             </td>
-                          </tr>
+                          </tr> */}
+
+{
+                            item?.ItemDetails &&
+                            item?.ItemDetails?.ItemName.map((name,index) => (
+                              <tr>
+                                <td style={{ textAlign: "center",}}>
+                                <p className="BillPrintFontPrint" >{item?.ItemDetails?.ItemName[index]}</p>
+                                </td>
+                                <td style={{ textAlign: "center",}}>
+                                <p className="BillPrintFontPrint" >{item?.ItemDetails?.packageGuestCount[index]}</p>
+                                </td>
+                                <td style={{ textAlign: "center",}}>
+                                <p className="BillPrintFontPrint" >{parseFloat(item?.ItemDetails?.Rate[index]).toFixed(2)}</p>
+                                </td>
+                                <td style={{ textAlign: "center",paddingLeft:'5px'}}>
+                                <p key={index} className="BillPrintFontPrint">
+                                  {
+                                  item?.ItemDetails?.Rate[index]
+                                    ? (
+                                        parseFloat(item?.ItemDetails?.Rate[index]).toFixed(2) *
+                                        item?.ItemDetails?.packageGuestCount[
+                                          index
+                                        ]
+                                      ).toFixed(2)
+                                    : "N/A"}
+                                </p>
+                                </td>
+                              </tr>
+
+                            ))
+                          }
 
                           {item?.ItemDetails?.ItemTaxName[0] === "GST" &&
                             item?.TeensPrice > 0 && (
