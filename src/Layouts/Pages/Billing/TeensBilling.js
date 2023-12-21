@@ -1202,7 +1202,15 @@ const TeensBilling = () => {
     [KidsCgstProperty]: BookingDetails[0]?.TeensTaxBifurcation / 2,
     [KidsSgstProperty]: BookingDetails[0]?.TeensTaxBifurcation / 2,
     TotalBillAmount: (BookingDetails[0]?.TeensPrice -
-      (BookingDetails[0]?.ActualAmount - BookingDetails[0]?.AmountAfterDiscount))
+      (BookingDetails[0]?.ActualAmount - BookingDetails[0]?.AmountAfterDiscount)),
+    //adding cash, card, UPI details
+    cashAmount : BookingDetails[0]?.CashAmount,
+    cardAmount : BookingDetails[0]?.CardAmount,
+    upiAmount : BookingDetails[0]?.UPIAmount,
+    upiId : BookingDetails[0]?.UPIId,
+    cardHoldersName : BookingDetails[0]?.CardHoldersName,
+    cardNumber : BookingDetails[0]?.CardNumber,
+    cardType : BookingDetails[0]?.CardType,
   };
 
   console.log("updatededBillDetails---->", updatededBillDetails);

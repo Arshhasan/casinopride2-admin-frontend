@@ -94,7 +94,6 @@ const AddUser = () => {
       (userType == 4 && password == "") ||
       (userType == 5 && userName == "") ||
       (userType == 5 && password == "") ||
-      (userType == 6 && userName == "") ||
       (userType == 6 && discountPercent == "") ||
       (userType == 7 && userName == "") ||
       (userType == 7 && password == "")

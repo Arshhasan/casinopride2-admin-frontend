@@ -2907,6 +2907,15 @@ const BillingDetails = () => {
     updatedItemDetails: BookingDetails.map((item) => {
       const Rate = item?.ItemDetails?.Rate;
       const packageGuestCount = item?.ItemDetails?.packageGuestCount;
+      //adding cash, card, UPI details
+      const CashAmount = item?.CashAmount;
+      const CardAmount = item?.CardAmount;
+      const UPIAmount = item?.UPIAmount;
+      const UPIId = item?.UPIId;
+      const CardHoldersName = item?.CardHoldersName;
+      const CardNumber = item?.CardNumber;
+      const CardType = item?.CardType;
+
       const resultRate = Rate.map(
         (value, index) => value * packageGuestCount[index]
       );
@@ -3053,6 +3062,13 @@ const BillingDetails = () => {
           properties[sgstProperty] = total / 2;
           properties["TotalBillAmount"] = TotalKidsplusAdults - Discount;
           properties["Rate"] = FinalRateResult;
+          properties["cashAmount"] = CashAmount;
+          properties["cardAmount"] = CardAmount;
+          properties["upiAmount"] = UPIAmount;
+          properties["upiId"] = UPIId;
+          properties["cardHoldersName"] = CardHoldersName;
+          properties["cardNumber"] = CardNumber;
+          properties["cardType"] = CardType;
         } else if (item?.ActualAmount - item?.AmountAfterDiscount > 0) {
           properties["KidsItemName"] = KidsItemName;
           properties["KidsCount"] = KidsCount;
@@ -3066,6 +3082,13 @@ const BillingDetails = () => {
           properties[sgstProperty] = sumWhenDiscount;
           properties["TotalBillAmount"] = TotalKidsplusAdults - Discount;
           properties["Rate"] = FinalRateResult;
+          properties["cashAmount"] = CashAmount;
+          properties["cardAmount"] = CardAmount;
+          properties["upiAmount"] = UPIAmount;
+          properties["upiId"] = UPIId;
+          properties["cardHoldersName"] = CardHoldersName;
+          properties["cardNumber"] = CardNumber;
+          properties["cardType"] = CardType;
         } else {
           // properties[cgstProperty] = adjustedTaxDiffSum / 2;
           properties[cgstProperty] = total / 2;
@@ -3073,6 +3096,13 @@ const BillingDetails = () => {
           properties[sgstProperty] = total / 2;
           properties["TotalBillAmount"] = TotalBillAmount - Discount;
           properties["Rate"] = FinalRateResult;
+          properties["cashAmount"] = CashAmount;
+          properties["cardAmount"] = CardAmount;
+          properties["upiAmount"] = UPIAmount;
+          properties["upiId"] = UPIId;
+          properties["cardHoldersName"] = CardHoldersName;
+          properties["cardNumber"] = CardNumber;
+          properties["cardType"] = CardType;
         }
       } else if (itemTaxName[0] === "VAT") {
         properties[vatProperty] = finalTaxDiffSum;

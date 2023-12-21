@@ -969,9 +969,19 @@ const BookingList = () => {
               <th scope="col" className="text-center table_heading">
                 Update Booking
               </th>
-              <th scope="col" className="text-center table_heading">
-                Update Payment
-              </th>
+              {
+               loginDetails?.logindata?.UserType === 1 ||
+                loginDetails?.logindata?.UserType === 2  ? (
+                  <th scope="col" className="text-center table_heading">
+                  Update Payment
+                </th>
+                )
+                :
+                (
+                  <></>
+                )
+              }
+
               <th scope="col" className="text-center table_heading">
                 View more
               </th>
@@ -1151,25 +1161,34 @@ const BookingList = () => {
                     :(<p>-</p>)}
                   </td>
                    
-
+                {/*Update Payment */}
+                {
+                loginDetails?.logindata?.UserType === 1 ||
+                loginDetails?.logindata?.UserType === 2  ? (
                   <td className="manager-list">
-                    {
-                    (moment(item?.FutureDate).format("YYYY-MM-DD") === today && item?.PayAtCounter == 1) ||
-                    // moment(item?.BookingDate).format("YYYY-MM-DD") === today ? (
-                    moment(item?.BookingDate).format("YYYY-MM-DD") == activeDateOfOutlet?.OutletDate
-                    ? (
-                      <LiaMoneyBillSolid
-                        onClick={() => StartUpdatingPayment(item)}
-                        style={{
-                          height: "22px",
-                          width: "22px",
-                          backgroundColor: "white",
-                        }}
-                      />
-                    ) : (
-                      <p>-</p>
-                    )}
-                  </td>
+                  {
+                  (moment(item?.FutureDate).format("YYYY-MM-DD") === today && item?.PayAtCounter == 1) ||
+                  // moment(item?.BookingDate).format("YYYY-MM-DD") === today ? (
+                  moment(item?.BookingDate).format("YYYY-MM-DD") == activeDateOfOutlet?.OutletDate
+                  ? (
+                    <LiaMoneyBillSolid
+                      onClick={() => StartUpdatingPayment(item)}
+                      style={{
+                        height: "22px",
+                        width: "22px",
+                        backgroundColor: "white",
+                      }}
+                    />
+                  ) : (
+                    <p>-</p>
+                  )}
+                </td>
+                )
+                :
+                (
+                <></>
+                )}
+
 
                   {/* <td className="manager-list">
                   <Link

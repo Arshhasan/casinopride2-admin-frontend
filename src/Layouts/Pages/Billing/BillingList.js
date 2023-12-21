@@ -893,6 +893,8 @@ const BillingList = () => {
                           <td className="manager-list ">
                             {item?.Items[0]?.GuestName}
                           </td>
+
+                          {/*Package name */}
                           <td className="manager-list">
                             {item &&
                             item?.Items[0] &&
@@ -911,6 +913,7 @@ const BillingList = () => {
                               <span>No package name available</span>
                             )}
                           </td>
+
                           {/* <td className="manager-list">
                             {item?.Items[0]?.FinalPrice?.map((price, index) => (
                               <li key={index} style={{ listStyleType: "none" }}>
@@ -918,6 +921,7 @@ const BillingList = () => {
                               </li>
                             ))}
                           </td> */}
+                          {/*Billing Amount */}
                           <td className="manager-list">
                             {/* {item?.Items[0]?.FinalPrice?.map((price, index) => (
                               <li key={index} style={{ listStyleType: "none" }}>
