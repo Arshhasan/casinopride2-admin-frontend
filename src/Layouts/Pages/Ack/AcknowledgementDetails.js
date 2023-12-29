@@ -350,7 +350,28 @@ const AcknowledgementDetails = () => {
 
   const confirmBilling = () => {
     console.log("bookingData?.data--->", bookingData);
+    const shiftData = {
+      bookingId: bookingData?.bookingId,
+      shiftTypeId : shiftDetails?.ShiftTypeId === 1 && shiftDetails?.ShiftOpen === 1
+      ? 1
+      : shiftDetails?.ShiftTypeId === 2 && shiftDetails?.ShiftOpen === 1
+      ? 2
+      : shiftDetails?.ShiftTypeId === 3 && shiftDetails?.ShiftOpen === 1
+      ? 3
+      : 0,
+    };
+
     dispatch(
+      updateShiftForBooking(
+        loginDetails?.logindata?.Token,
+        shiftData,
+        (callback) => {
+          if (callback.status) {
+            console.log(
+              "booking details updateShiftForBooking--------------?",
+              callback?.response?.Details
+            );
+                dispatch(
       AddBillingDetails(
         loginDetails?.logindata?.Token,
         bookingData,
@@ -385,6 +406,14 @@ const AcknowledgementDetails = () => {
         }
       )
     );
+
+          } else {
+            toast.error(callback.error);
+          }
+        }
+      )
+    );
+
   };
 
   const handleShowR = () => {
@@ -962,7 +991,10 @@ const AcknowledgementDetails = () => {
 
         <Modal.Body>
           {isPresentDate ? (
+            <div>
+               <p>{handleOpenShift()}</p>
             <p>Do you want to continue with the booking?</p>
+            </div>
           ) : (
             <p></p>
           )}
@@ -997,7 +1029,42 @@ const AcknowledgementDetails = () => {
            </Modal.Body>
         <Modal.Footer>
           {isPresentDate && billGenerated == false ? (
-            <Button variant="primary" onClick={confirmBilling}>
+            <Button variant="primary" 
+            disabled={
+              (shifts && shifts[1] && !shifts[1][0]?.ShiftOpen === 1) ||
+              (shifts && shifts[3] && !shifts[3][0]?.ShiftOpen === 1) ||
+              (shifts && shifts[2] && !shifts[2][0]?.ShiftOpen === 1) ||
+              (recentShiftOpen &&
+                recentShiftOpen[0]?.ShiftTypeId === 2 &&
+                recentShiftOpen &&
+                recentShiftOpen[0]?.ShiftOpen === 0) ||
+              (recentShiftOpen &&
+                recentShiftOpen[0]?.ShiftTypeId === 2 &&
+                recentShiftOpen &&
+                recentShiftOpen[0]?.ShiftOpen === 1) ||
+              (recentShiftOpen &&
+                recentShiftOpen[0]?.ShiftTypeId === 3 &&
+                recentShiftOpen &&
+                recentShiftOpen[0]?.ShiftOpen === 1) ||
+              (recentShiftOpen &&
+                recentShiftOpen[0]?.ShiftTypeId === 1 &&
+                recentShiftOpen &&
+                recentShiftOpen[0]?.ShiftOpen === 0) ||
+              (recentShiftOpen &&
+                recentShiftOpen[0]?.ShiftTypeId === 1 &&
+                recentShiftOpen &&
+                recentShiftOpen[0]?.ShiftOpen === 1) ||
+              (shifts &&
+                shifts[2] &&
+                shifts[2][0]?.ShiftOpen === 0 &&
+                !shifts[3]) ||
+              (shifts &&
+                shifts[1] &&
+                shifts[1][0]?.ShiftOpen === 0 &&
+                !shifts[2]) ||
+              shiftForUserOne
+            }
+            onClick={confirmBilling}>
               Confirm
             </Button>
           ) : (

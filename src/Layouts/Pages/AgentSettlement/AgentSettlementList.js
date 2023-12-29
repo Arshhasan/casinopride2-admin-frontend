@@ -17,8 +17,12 @@ import "react-toastify/dist/ReactToastify.css";
 import { Button, Modal } from "react-bootstrap";
 import more from "../../../assets/Images/more.png";
 import deal from "../../../assets/Images/deal.png";
+import generatereport from "../../../assets/Images/generatereport.png";
+import Select from "react-select";
 
 import moment from "moment";
+
+import { generateCSVReport } from "../../../Redux/actions/billing";
 
 const AgentSettlementList = () => {
   const dispatch = useDispatch();
@@ -41,8 +45,19 @@ const AgentSettlementList = () => {
   const [loading, setLoading] = useState(true);
 
   const [userId, setUserId] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [showModal, setShowModal] = useState(false);
 
   const handleClose = () => setShowModal(false);
+  
+  const [showViewMoreModal, setShowViewMoreModal] = useState(false);
+  const [selectedUserDetails, setSelectedUserDetails] = useState({});
+  const [showDownloadReportModal, setShowDownloadReportModal] = useState(false);
+  const [userTypeId, setUserTypeId] = useState(0);
+  const [isToggled, setIsToggled] = useState(false);
+  const [referenceNumber, setReferenceNumber] = useState("");
+
   const handleShow = (Id) => {
     setShowModal(true);
     console.log("id to be deleted", Id);
@@ -52,11 +67,11 @@ const AgentSettlementList = () => {
   const currentDate = moment().format("YYYY-MM-DD");
 
   const fetchAgentSettlementDetails = () => {
-    console.log("filterDate", filterDate);
     dispatch(
       fetchAgentSettlement(
         loginDetails?.logindata?.Token,
         filterDate,
+        userTypeId,
         (callback) => {
           if (callback.status) {
             setLoading(false);
@@ -75,11 +90,9 @@ const AgentSettlementList = () => {
 
   useEffect(() => {
     fetchAgentSettlementDetails();
-  }, [dispatch, filterDate]);
+  }, [dispatch, filterDate,userTypeId]);
 
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const [showModal, setShowModal] = useState(false);
 
   const filterCouponListDetails = () => {
     if (searchQuery.trim() === "") {
@@ -106,8 +119,6 @@ const AgentSettlementList = () => {
     }
   };
 
-  const [showViewMoreModal, setShowViewMoreModal] = useState(false);
-  const [selectedUserDetails, setSelectedUserDetails] = useState({});
 
   const handleViewMore = (userDetails) => {
     setSelectedUserDetails(userDetails);
@@ -117,9 +128,15 @@ const AgentSettlementList = () => {
   const handleCloseViewMore = () => {
     setShowViewMoreModal(false);
     setSelectedUserDetails({});
+    setShowDownloadReportModal(true)
+  };
+  const handleCloseDownloadReport = () => {
+    // setShowViewMoreModal(false);
+    // setSelectedUserDetails({});
+    setShowDownloadReportModal(false)
   };
 
-  const [isToggled, setIsToggled] = useState(false);
+
 
   const handleToggle = (PackageId) => {
     console.log("PackageId", PackageId);
@@ -144,7 +161,7 @@ const AgentSettlementList = () => {
     return newDate.format("YYYY-MM-DD");
   };
 
-  const [referenceNumber, setReferenceNumber] = useState("");
+  
 
   const updateAgentSettlementFn = () => {
     if (referenceNumber == "") {
@@ -166,7 +183,8 @@ const AgentSettlementList = () => {
               toast.success("Settlement Done");
               fetchAgentSettlementDetails();
               handleCloseViewMore();
-              toast.error(callback.error);
+              setShowDownloadReportModal(true)
+              // toast.error(callback.error);
             } else {
               toast.error(callback.error);
             }
@@ -175,55 +193,121 @@ const AgentSettlementList = () => {
       );
     }
   };
+  const downloadReportFn = () => {
+  
+      const data = {
+        userId: selectedUserDetails?.UserId,
+        reportTypeId:1
+      };
 
+      dispatch(
+        generateCSVReport(
+          data,
+          loginDetails?.logindata?.Token,
+          (callback) => {
+            if (callback.status) {
+              // toast.success("Settlement Done");
+              // fetchAgentSettlementDetails();
+              // handleCloseViewMore();
+              toast.error(callback.error);
+            } else {
+              toast.error(callback.error);
+            }
+          }
+        )
+      );
+    
+  };
+
+  const userTypeOptions = [
+    { value: 0, label: "Select a user type" },
+    { value: 5, label: "Travel Agent" },
+    { value: 6, label: "Taxi Agent" },
+  ];
+
+  const handleUserTypeChange = (selectedOption) => {
+    console.log('selectedOption>>',selectedOption);
+    setUserTypeId(selectedOption?.value);
+    fetchAgentSettlementDetails()
+  };
+
+  const generateAgentSettlementReportFn = (item) => {
+    console.log('inside generateAgentSettlementReportFn>>item>>',item);
+    console.log('inside generateAgentSettlementReportFn>>item>>settlementUpdateDate-->',moment(item?.Date).format("YYYY-MM-DD"));
+    console.log('inside generateAgentSettlementReportFn>>item>>settlementDate-->',moment(item?.SettlementDate).format("YYYY-MM-DD"));
+
+      const data = {
+        userId: item?.UserId,
+        isSettlementReport: 1,
+        settlementDate: moment(item?.SettlementDate).format("YYYY-MM-DD"),
+        settlementUpdateDate: moment(item?.Date).format("YYYY-MM-DD"),
+        reportTypeId: 1,
+      };
+
+      dispatch(
+        generateCSVReport(
+          loginDetails?.logindata?.Token,
+          data,
+          (callback) => {
+            if (callback.status) {
+              setLoading(false);
+              console.log(
+                "Callback------generate report",
+                callback?.response?.Details?.ReportFile
+              );
+              window.open(callback?.response?.Details?.ReportFile, "_blank");
+            } else {
+              console.log("Callback------generate report error", callback.error);
+              toast.error(callback.error);
+            }
+          }
+        )
+      );
+    
+  };
   return (
     <div>
-      <h3 className="mb-4">Travel Agent settlement List</h3>
+      <h3 className="mb-4">Agent settlement List</h3>
       <div className="container">
-        <div className="row">
-          <div className="col-md-8 col-lg-6 mb-2">
-            <p style={{ fontWeight: "bold" }}>Search</p>
-            <div className="input-group">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Search name"
-                onChange={(e) => {
-                  // setSearchQuery(e.target.value);
-                  // filterCouponListDetails();
-                  filterAgentSettlementDetails(e.target.value);
-                }}
-              />
-            </div>
-          </div>
-          <div className="col-md-2 col-lg-2 mb-2">
-            <p style={{ fontWeight: "bold" }}>Date</p>
-            <div className="input-group">
-              <input
-                type="date"
-                className="form-control"
-                placeholder="Search name"
-                // onChange={(e) => {
-                //   setSearchQuery(e.target.value);
-                //   filterPackageDetailsFn();
-                // }}
-                max={filterDate}
-                onChange={(e) => setFilterDate(e.target.value)}
-              />
-            </div>
-          </div>
-          {/* <div className="col-md-4 col-lg-6 d-flex justify-content-end mb-3">
-            <button className="btn btn-primary">
-              <Link
-                to="/AddCoupon"
-                state={{ userType: "4" }}
-                className="addLinks"
-              >
-                Add Coupon
-              </Link>
-            </button>
-          </div> */}
-        </div>
+      <div className="row">
+  <div className="col-md-8 col-lg-6 mb-2">
+    <p style={{ fontWeight: "bold" }}>Search</p>
+    <div className="input-group">
+      <input
+        type="text"
+        className="form-control"
+        placeholder="Search name"
+        onChange={(e) => {
+          filterAgentSettlementDetails(e.target.value);
+        }}
+      />
+    </div>
+  </div>
+  <div className="col-md-2 col-lg-2 mb-2">
+    <p style={{ fontWeight: "bold" }}>Date</p>
+    <div className="input-group">
+      <input
+        type="date"
+        className="form-control"
+        placeholder="Search name"
+        max={filterDate}
+        onChange={(e) => setFilterDate(e.target.value)}
+      />
+    </div>
+  </div>
+  <div className="col-lg-2 col-md-4 col-sm-6 mb-2">
+    <p style={{ fontWeight: "bold" }}>Search By Agent</p>
+    <div className="input-group">
+      <Select
+        className="custom-select"
+        options={userTypeOptions}
+        onChange={handleUserTypeChange}
+      />
+    </div>
+  </div>
+
+</div>
+
       </div>
       <table class="table">
         <thead>
@@ -237,6 +321,10 @@ const AgentSettlementList = () => {
 
             <th scope="col" className="text-center table_heading">
               Settle Payment
+            </th>
+            
+            <th scope="col" className="text-center table_heading">
+              Generate Report
             </th>
           </tr>
         </thead>
@@ -289,6 +377,18 @@ const AgentSettlementList = () => {
                     Amount Settled
                   </td>
                 )}
+                {item.IsSettled == 0 ? (
+                  <td
+                    className="manager-list"
+                    onClick={() => generateAgentSettlementReportFn(item)}
+                  >
+                    <img src={generatereport} style={{ height: "30px", width: "30px" }} />
+                  </td>
+                ) : (
+                  <td className="manager-list" style={{ color: "green" }}>
+                    -
+                  </td>
+                )}
               </tr>
             ))
           )}
@@ -320,6 +420,22 @@ const AgentSettlementList = () => {
 
         <Modal.Footer></Modal.Footer>
       </Modal>
+      {/* <Modal show={showViewMoreModal} onHide={handleCloseViewMore}>
+        <Modal.Header closeButton>
+          <Modal.Title>Generate Report</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <buttom
+            className="btn btn-primary text-center mt-3"
+            onClick={generateAgentSettlementReportFn}
+          >
+            Generate
+          </buttom>
+        </Modal.Body>
+
+        <Modal.Footer></Modal.Footer>
+      </Modal> */}
+
     </div>
   );
 };

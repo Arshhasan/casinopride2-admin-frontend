@@ -1213,6 +1213,7 @@ const TeensBilling = () => {
     cardHoldersName : BookingDetails[0]?.CardHoldersName,
     cardNumber : BookingDetails[0]?.CardNumber,
     cardType : BookingDetails[0]?.CardType,
+    bookingCommission:BookingDetails[0]?.BookingCommision
   };
 
   console.log("updatededBillDetails---->", updatededBillDetails);

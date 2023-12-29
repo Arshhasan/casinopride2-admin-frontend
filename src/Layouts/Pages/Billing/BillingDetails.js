@@ -2915,6 +2915,7 @@ const BillingDetails = () => {
       const CardHoldersName = item?.CardHoldersName;
       const CardNumber = item?.CardNumber;
       const CardType = item?.CardType;
+      const BookingCommision=item?.BookingCommision
 
       const resultRate = Rate.map(
         (value, index) => value * packageGuestCount[index]
@@ -3105,6 +3106,7 @@ const BillingDetails = () => {
           properties["cardHoldersName"] = CardHoldersName;
           properties["cardNumber"] = CardNumber;
           properties["cardType"] = CardType;
+          properties["bookingCommission"] = BookingCommision;
           }
           else if (KidsCount > 1 && item?.ActualAmount - item?.AmountAfterDiscount > 0 && JSON.parse(item?.PackageGuestCount).length == 1) {
             console.log('pkpk');
@@ -3127,6 +3129,7 @@ const BillingDetails = () => {
           properties["cardHoldersName"] = CardHoldersName;
           properties["cardNumber"] = CardNumber;
           properties["cardType"] = CardType;
+          properties["bookingCommission"] = BookingCommision;
           }
           else if (KidsCount > 1 && item?.ActualAmount - item?.AmountAfterDiscount > 0 && JSON.parse(item?.PackageGuestCount).length > 1) {
             console.log('nknk');
@@ -3149,6 +3152,7 @@ const BillingDetails = () => {
           properties["cardHoldersName"] = CardHoldersName;
           properties["cardNumber"] = CardNumber;
           properties["cardType"] = CardType;
+          properties["bookingCommission"] = BookingCommision;
           }
           else if (KidsCount == 1 && item?.ActualAmount - item?.AmountAfterDiscount > 0 && JSON.parse(item?.PackageGuestCount).length > 1) {
             console.log('fkfk');
@@ -3171,6 +3175,7 @@ const BillingDetails = () => {
             properties["cardHoldersName"] = CardHoldersName;
             properties["cardNumber"] = CardNumber;
             properties["cardType"] = CardType;
+            properties["bookingCommission"] = BookingCommision;
           }
           else if (KidsCount == 1 && item?.ActualAmount - item?.AmountAfterDiscount == 0 && JSON.parse(item?.PackageGuestCount).length == 1) {
             console.log('gkgk');
@@ -3193,6 +3198,7 @@ const BillingDetails = () => {
             properties["cardHoldersName"] = CardHoldersName;
             properties["cardNumber"] = CardNumber;
             properties["cardType"] = CardType;
+            properties["bookingCommission"] = BookingCommision;
           }
           else if (KidsCount == 1 && item?.ActualAmount - item?.AmountAfterDiscount == 0 && JSON.parse(item?.PackageGuestCount).length > 1) {
             console.log('zkzk');
@@ -3215,6 +3221,7 @@ const BillingDetails = () => {
             properties["cardHoldersName"] = CardHoldersName;
             properties["cardNumber"] = CardNumber;
             properties["cardType"] = CardType;
+            properties["bookingCommission"] = BookingCommision;
           }
           else if (KidsCount > 1 && item?.ActualAmount - item?.AmountAfterDiscount == 0 && JSON.parse(item?.PackageGuestCount).length == 1) {
             console.log('gkgk');
@@ -3237,6 +3244,7 @@ const BillingDetails = () => {
             properties["cardHoldersName"] = CardHoldersName;
             properties["cardNumber"] = CardNumber;
             properties["cardType"] = CardType;
+            properties["bookingCommission"] = BookingCommision;
           }
           else if (KidsCount > 1 && item?.ActualAmount - item?.AmountAfterDiscount == 0 && JSON.parse(item?.PackageGuestCount).length > 1) {
             console.log('gkgk');
@@ -3259,6 +3267,7 @@ const BillingDetails = () => {
             properties["cardHoldersName"] = CardHoldersName;
             properties["cardNumber"] = CardNumber;
             properties["cardType"] = CardType;
+            properties["bookingCommission"] = BookingCommision;
           }
           else{
             console.log('sksk');
@@ -3281,6 +3290,7 @@ const BillingDetails = () => {
             properties["cardHoldersName"] = CardHoldersName;
             properties["cardNumber"] = CardNumber;
             properties["cardType"] = CardType;
+            properties["bookingCommission"] = BookingCommision;
           }
 
         } 
@@ -3305,6 +3315,7 @@ const BillingDetails = () => {
           properties["cardHoldersName"] = CardHoldersName;
           properties["cardNumber"] = CardNumber;
           properties["cardType"] = CardType;
+          properties["bookingCommission"] = BookingCommision;
         } 
         else if (item?.ActualAmount - item?.AmountAfterDiscount > 0 && JSON.parse(item?.PackageGuestCount).length > 1) {
 console.log('item?.packageGuestCount>>',JSON.parse(item?.PackageGuestCount).length);
@@ -3328,30 +3339,33 @@ console.log('item?.packageGuestCount>>',JSON.parse(item?.PackageGuestCount).leng
           properties["cardHoldersName"] = CardHoldersName;
           properties["cardNumber"] = CardNumber;
           properties["cardType"] = CardType;
+          properties["bookingCommission"] = BookingCommision;
         } 
-        else if (item?.ActualAmount - item?.AmountAfterDiscount > 0 && JSON.parse(item?.PackageGuestCount).length == 1) {
-          console.log('<<packageguestcount>>',JSON.parse(item?.PackageGuestCount).length);
-          properties["KidsItemName"] = KidsItemName;
-          properties["KidsCount"] = KidsCount;
-          properties["KidsRate"] = KidsRate;
-          properties["KidsPrice"] = KidsPrice;
-          properties[KidsCgstProperty] = KidsTax;
-          properties[KidsSgstProperty] = KidsTax;
-          // properties[cgstProperty] = adjustedTaxDiffSum / 2;
-          properties[cgstProperty] = sumWhenDiscount;
-          // properties[sgstProperty] = adjustedTaxDiffSum / 2;
-          properties[sgstProperty] = sumWhenDiscount;
-          properties["TotalBillAmount"] = TotalKidsplusAdults - Discount;
-          properties["Rate"] = FinalRateResult;
-          properties["cashAmount"] = CashAmount;
-          properties["cardAmount"] = CardAmount;
-          properties["upiAmount"] = UPIAmount;
-          properties["upiId"] = UPIId;
-          properties["cardHoldersName"] = CardHoldersName;
-          properties["cardNumber"] = CardNumber;
-          properties["cardType"] = CardType;
-        } 
+        // else if (item?.ActualAmount - item?.AmountAfterDiscount > 0 && JSON.parse(item?.PackageGuestCount).length == 1) {
+        //   console.log('<<packageguestcount>>',JSON.parse(item?.PackageGuestCount).length);
+        //   properties["KidsItemName"] = KidsItemName;
+        //   properties["KidsCount"] = KidsCount;
+        //   properties["KidsRate"] = KidsRate;
+        //   properties["KidsPrice"] = KidsPrice;
+        //   properties[KidsCgstProperty] = KidsTax;
+        //   properties[KidsSgstProperty] = KidsTax;
+        //   // properties[cgstProperty] = adjustedTaxDiffSum / 2;
+        //   properties[cgstProperty] = sumWhenDiscount;
+        //   // properties[sgstProperty] = adjustedTaxDiffSum / 2;
+        //   properties[sgstProperty] = sumWhenDiscount;
+        //   properties["TotalBillAmount"] = TotalKidsplusAdults - Discount;
+        //   properties["Rate"] = FinalRateResult;
+        //   properties["cashAmount"] = CashAmount;
+        //   properties["cardAmount"] = CardAmount;
+        //   properties["upiAmount"] = UPIAmount;
+        //   properties["upiId"] = UPIId;
+        //   properties["cardHoldersName"] = CardHoldersName;
+        //   properties["cardNumber"] = CardNumber;
+        //   properties["cardType"] = CardType;
+        //          properties["bookingCommission"] = BookingCommision;
+        // } 
         else {
+          console.log('no discountt');
           // properties[cgstProperty] = adjustedTaxDiffSum / 2;
           properties[cgstProperty] = total / 2;
           // properties[sgstProperty] = adjustedTaxDiffSum / 2;
@@ -3365,6 +3379,7 @@ console.log('item?.packageGuestCount>>',JSON.parse(item?.PackageGuestCount).leng
           properties["cardHoldersName"] = CardHoldersName;
           properties["cardNumber"] = CardNumber;
           properties["cardType"] = CardType;
+          properties["bookingCommission"] = BookingCommision;
         }
       } else if (itemTaxName[0] === "VAT") {
         properties[vatProperty] = finalTaxDiffSum;

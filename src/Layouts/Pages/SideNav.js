@@ -267,7 +267,7 @@ const SideNav = () => {
                 onClick={() => navigate("/AgentSettlementList")}
               >
                 <Link to="/AgentSettlementList" className="links">
-                  Travel Agent Settlement
+                  Agent Settlement
                 </Link>
               </Nav.Item>
             ) : (

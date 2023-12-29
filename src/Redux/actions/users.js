@@ -268,11 +268,8 @@ export const getCouponDetails =
   };
 
 export const fetchAgentSettlement =
-  (token, date, callback) => async (dispatch) => {
-    console.log(token);
-    console.log(date);
-
-    api.CORE_PORT.get(`/core/getAgentSettlements?bookingDate=${date}`, {
+  (token, date,userTypeId, callback) => async (dispatch) => {
+    api.CORE_PORT.get(`/core/getAgentSettlements?bookingDate=${date}&userTypeId=${userTypeId}`, {
       headers: { AuthToken: token },
     })
       .then((response) => {

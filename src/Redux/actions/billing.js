@@ -97,6 +97,8 @@ export const GetBillingDetails =
     shiftId,
     billId,
     searchBillId,
+    fromDate,
+    toDate,
     online,
     callback
   ) =>
@@ -115,7 +117,7 @@ export const GetBillingDetails =
         userId ? parseInt(userId) : 0
       }&billingDate=${futureDate}&shiftId=${
         shiftId ? parseInt(shiftId) : 0
-      }&isBookingWebsite=${online}&futureDate=${billDate}`,
+      }&isBookingWebsite=${online}&futureDate=${billDate}&fromDate=${fromDate}&toDate=${toDate}`,
       {
         headers: { AuthToken: token },
       }

@@ -100,6 +100,8 @@ const BillingList = () => {
   const [online, setOnline] = useState(reportId == 4 ? 1 : 0);
   const [voidBillReason, setVoidBillReason] = useState();
   const [billDate, setBillDate] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
 
   const fetchBillingDetailsFn = () => {
@@ -116,6 +118,8 @@ const BillingList = () => {
         shiftId,
         billId,
         searchBillId,
+        fromDate,
+        toDate,
         reportId == 4 ? 1 : 0,
 
         (callback) => {
@@ -179,6 +183,8 @@ const BillingList = () => {
     setUserId(0);
     setBillId(0);
     setSearhBillId(0);
+    setFromDate("")
+    setToDate("")
     setReportId(selectedOption?.value);
   };
 
@@ -236,6 +242,7 @@ const BillingList = () => {
     { value: "2", label: "Day Wise" },
     { value: "3", label: "Shift Wise" },
     { value: "4", label: "Online" },
+    { value: "8", label: "DateRange" },
   ];
 
   const searchBtn = () => {
@@ -257,7 +264,7 @@ const BillingList = () => {
 
   useEffect(() => {
     searchBtn();
-  }, [searchBillId, futureDate, userId, shiftId,billDate]);
+  }, [searchBillId, futureDate, userId, shiftId,billDate,fromDate,toDate]);
 
   useEffect(() => {
     setDisableInput(true);
@@ -272,6 +279,8 @@ const BillingList = () => {
     setBillId(0);
     setOnline(0)
     setBillDate("")
+    setFromDate("")
+    setToDate("")
     fetchBillingDetailsFn();
   };
 
@@ -470,6 +479,8 @@ const BillingList = () => {
       billDate: futureDate,
       futureDate: billDate,
       shiftId: shiftId,
+      fromDate:fromDate,
+      toDate:toDate,
       reportTypeId: reportId,
     };
 
@@ -494,6 +505,8 @@ const BillingList = () => {
             setReportId(0);
             fetchVoidBillList();
             setBillDate("");
+            setFromDate("")
+            setToDate("")
           } else {
             console.log("Callback------generate report error", callback.error);
             toast.error(callback.error);
@@ -717,6 +730,38 @@ const BillingList = () => {
                         placeholder="Search name"
                         onChange={(e) => setFutureDate(e.target.value)}
                         value={futureDate}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
+                {reportId == 8 ? (
+                  <div className="col-md-3 col-lg-2 mb-2">
+                    <p style={{ fontWeight: "bold" }}>From</p>
+                    <div className="input-group">
+                      <input
+                        type="date"
+                        className="form-control"
+                        placeholder="Search name"
+                        onChange={(e) => setFromDate(e.target.value)}
+                        value={fromDate}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
+                {reportId == 8 ? (
+                  <div className="col-md-3 col-lg-2 mb-2">
+                    <p style={{ fontWeight: "bold" }}>To</p>
+                    <div className="input-group">
+                      <input
+                        type="date"
+                        className="form-control"
+                        placeholder="Search name"
+                        onChange={(e) => setToDate(e.target.value)}
+                        value={toDate}
                       />
                     </div>
                   </div>

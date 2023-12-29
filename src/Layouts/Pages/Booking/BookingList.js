@@ -10,6 +10,7 @@ import {
   fetchBookingDetailsById,
   fetchUserbookings,
   updateBookingForPayAtCounterFn,
+  updateShiftForBooking,
 } from "../../../Redux/actions/booking";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -45,7 +46,8 @@ const BookingList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-
+  const today = moment().format("YYYY-MM-DD");
+  console.log("Today------>", today);
   const [payAT, setPay] = useState(true);
 
   const loginDetails = useSelector(
@@ -79,7 +81,7 @@ const BookingList = () => {
   };
 
   const [itemDetails, setItemDetails] = useState([]);
-  const [futureDate, setFutureDate] = useState("");
+  const [futureDate, setFutureDate] = useState(today);
   console.log("futureDate---->", futureDate);
 
   const [filteredUserBookings, setFilteredUserBookings] = useState([]);
@@ -101,6 +103,8 @@ const BookingList = () => {
           } else {
             console.log(callback.error);
             toast.error(callback.error);
+            setUserBookings([])
+            setFilteredUserBookings([])
           }
         }
       )
@@ -634,8 +638,7 @@ const BookingList = () => {
 
   const [shiftStatus, setShiftStatus] = useState(false);
 
-  const today = moment().format("YYYY-MM-DD");
-  console.log("Today------>", today);
+ 
 
   console.log("shiftStatus--->", shiftStatus);
 
@@ -861,44 +864,72 @@ const BookingList = () => {
         packageWeekdayPrice: JSON.stringify(item.PackageWeekdayPrice),
         packageWeekendPrice: JSON.stringify(item.PackageWeekendPrice),
       };
-
+      const shiftData = {
+        bookingId: item.Id,
+        shiftTypeId : shiftDetails?.ShiftTypeId === 1 && shiftDetails?.ShiftOpen === 1
+        ? 1
+        : shiftDetails?.ShiftTypeId === 2 && shiftDetails?.ShiftOpen === 1
+        ? 2
+        : shiftDetails?.ShiftTypeId === 3 && shiftDetails?.ShiftOpen === 1
+        ? 3
+        : 0,
+      };
       dispatch(
-        AddBillingDetails(loginDetails?.logindata?.Token, data, (callback) => {
-          if (callback.status) {
-            console.log(
-              "Generate Bill --------------?",
-              callback?.response?.Details[0]?.NumOfTeens,
-              callback?.response?.Details[0]?.TotalGuestCount
-            );
-
-            if (
-              callback?.response?.Details[0]?.NumOfTeens -
-                callback?.response?.Details[0]?.TotalGuestCount ==
-              0
-            ) {
-              navigate("/TeensBilling", {
-                state: { BookingDetails: callback?.response?.Details },
-              });
-              setLoader(false);
+        updateShiftForBooking(
+          loginDetails?.logindata?.Token,
+          shiftData,
+          (callback) => {
+            if (callback.status) {
+              console.log(
+                "booking details updateShiftForBooking--------------?",
+                callback?.response?.Details
+              );
+                  dispatch(
+        AddBillingDetails(
+          loginDetails?.logindata?.Token,
+          data,
+          (callback) => {
+            if (callback.status) {
+              console.log(
+                "Generate Bill --------------",
+                callback?.response?.Details
+              );
+  
+              if (
+                callback?.response?.Details[0]?.NumOfTeens -
+                  callback?.response?.Details[0]?.TotalGuestCount ==
+                0
+              ) {
+                navigate("/TeensBilling", {
+                  state: { BookingDetails: callback?.response?.Details },
+                });
+                setLoader(false);
+              } else {
+                navigate("/BillingDetails", {
+                  state: { BookingDetails: callback?.response?.Details },
+                });
+                setLoader(false);
+              }
+  
+              toast.error(callback.error);
             } else {
-              navigate("/BillingDetails", {
-                state: { BookingDetails: callback?.response?.Details },
-              });
+              toast.error(callback.error);
               setLoader(false);
             }
-
-            toast.error(callback.error);
-          } else {
-            toast.error(callback.error);
-            setLoader(false);
           }
-        })
+        )
+      );
+  
+            } else {
+              toast.error(callback.error);
+            }
+          }
+        )
       );
     }
   };
 
   return (
-    console.log("activeDateOfOutlet>>>>>>>>>>>",activeDateOfOutlet),
     (
       <div>
         <ToastContainer />
@@ -932,6 +963,7 @@ const BookingList = () => {
                   //   setSearchQuery(e.target.value);
                   //   filterPackageDetailsFn();
                   // }}
+                  defaultValue={today}
                   onChange={(e) => setFutureDate(e.target.value)}
                 />
               </div>
@@ -1095,31 +1127,6 @@ const BookingList = () => {
 
                     {/*Generate Bill column */}
                   <td className="manager-list">
-                    {/* {(item?.FutureDate == today && item?.IsBillGenerated != 1) ? (
-                      <LiaFileInvoiceSolid
-                        onClick={() => {
-                          if (
-                            item?.PayAtCounter == 1 &&
-                            item?.PaymentMode == null
-                          ) {
-                            window.open(
-                              `/acknowledgementDetails?BookingId=${item.Id}`,
-                              "_self"
-                            );
-                          } else {
-                            GenerateBill(item);
-                          }
-                        }}
-                        style={{
-                          height: "22px",
-                          width: "22px",
-                          backgroundColor: "white",
-                        }}
-                      />
-                    ) : (
-                      <p>-</p>
-                    )} */}
-
                     {
                       (item?.FutureDate == today) ?
                       (item?.IsBillGenerated != 1) ? 
