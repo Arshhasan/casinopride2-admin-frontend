@@ -365,50 +365,108 @@ const AcknowledgementDetails = () => {
       updateShiftForBooking(
         loginDetails?.logindata?.Token,
         shiftData,
-        (callback) => {
-          if (callback.status) {
+        (callback1) => {
+          if (callback1.status) {
             console.log(
               "booking details updateShiftForBooking--------------?",
-              callback?.response?.Details
+              callback1?.response?.Details
             );
-                dispatch(
-      AddBillingDetails(
-        loginDetails?.logindata?.Token,
-        bookingData,
-        (callback) => {
-          if (callback.status) {
-            console.log(
-              "Generate Bill --------------",
-              callback?.response?.Details
-            );
+            const AgentSettlemetDiscount =
+            localAgentDetails?.DiscountPercent -
+            callback1?.response?.Details?.AgentPanelDiscount;
 
-            if (
-              callback?.response?.Details[0]?.NumOfTeens -
-                callback?.response?.Details[0]?.TotalGuestCount ==
-              0
-            ) {
-              navigate("/TeensBilling", {
-                state: { BookingDetails: callback?.response?.Details },
-              });
-              setLoader(false);
-            } else {
-              navigate("/BillingDetails", {
-                state: { BookingDetails: callback?.response?.Details },
-              });
-              setLoader(false);
-            }
+          console.log(
+            "AgentSettlemetDiscount-------->",
+            AgentSettlemetDiscount
+          );
 
-            toast.error(callback.error);
+            const calculateAmountAfterDiscount =
+            callback1?.response?.Details?.ActualAmount *
+            (1 -
+              callback1?.response?.Details?.AgentPanelDiscount / 100);
+
+          console.log(
+            "calculateAmountAfterDiscount",
+            calculateAmountAfterDiscount
+          );
+
+          const AgentSettlementAmount =
+            (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
+            100;
+
+          const agentData = {
+            userId: localAgentDetails?.Id,
+            agentName: localAgentDetails?.Name,
+            userTypeId: localAgentDetails?.UserType,
+            settlementAmount: AgentSettlementAmount,
+            bookingDate:
+              bookingData?.bookingDate
+              ?.slice(0, 10),
+            bookingId:bookingData?.bookingId,
+          };
+          dispatch(
+            AddupdateAgentSettlement(
+              agentData,
+              loginDetails?.logindata?.Token,
+              (callback4) => {
+                if (callback4.status) {
+     
+                  dispatch(
+                    AddBillingDetails(
+                      loginDetails?.logindata?.Token,
+                      bookingData,
+                      (callback) => {
+                        if (callback.status) {
+                          console.log(
+                            "Generate Bill --------------",
+                            callback?.response?.Details
+                          );
+               
+                          if (
+                            callback?.response?.Details[0]?.NumOfTeens -
+                              callback?.response?.Details[0]
+                                ?.TotalGuestCount ==
+                            0
+                          ) {
+                            navigate("/TeensBilling", {
+                              state: {
+                                BookingDetails: callback?.response?.Details,
+                              },
+                            });
+                            setLoader(false);
+                          } else {
+                            navigate("/BillingDetails", {
+                              state: {
+                                BookingDetails: callback?.response?.Details,
+                              },
+                            });
+                            setLoader(false);
+                          }
+                          toast.error(callback.error);
+                        } else {
+                          toast.error(callback.error);
+                          setLoader(false);
+                        }
+                      }
+                    )
+                  );
+                  console.log(
+                    "Callback add update details of agent discount seetlement amopunt---->",
+                    callback4?.response?.Details
+                  );
+
+                  setLoader(false);
+
+                  // resolve(callback);
+                } else {
+                  toast.error(callback4.error);
+                  // reject(callback);
+                }
+              }
+            )
+          );
           } else {
-            toast.error(callback.error);
-            setLoader(false);
-          }
-        }
-      )
-    );
-
-          } else {
-            toast.error(callback.error);
+            toast.error(callback1.error);
           }
         }
       )
@@ -564,101 +622,101 @@ const AcknowledgementDetails = () => {
 
             console.log("data------------>", data);
 
-            dispatch(
-              AddBillingDetails(
-                loginDetails?.logindata?.Token,
-                data,
-                (callback4) => {
-                  if (callback4.status) {
-                    console.log(
-                      "Generate Bill --------------?",
-                      callback4?.response?.Details[0]?.NumOfTeens,
-                      callback4?.response?.Details[0]?.TotalGuestCount
-                    );
+            const AgentSettlemetDiscount =
+            localAgentDetails?.DiscountPercent -
+            callback?.response?.Details?.AgentPanelDiscount;
 
-                    const AgentSettlemetDiscount =
-                      localAgentDetails?.DiscountPercent -
-                      callback?.response?.Details?.AgentPanelDiscount;
+          console.log(
+            "AgentSettlemetDiscount-------->",
+            AgentSettlemetDiscount
+          );
 
-                    console.log(
-                      "AgentSettlemetDiscount-------->",
-                      AgentSettlemetDiscount
-                    );
+          const calculateAmountAfterDiscount =
+            callback?.response?.Details?.ActualAmount *
+            (1 -
+              callback?.response?.Details?.AgentPanelDiscount / 100);
 
-                    const calculateAmountAfterDiscount =
-                      callback?.response?.Details?.ActualAmount *
-                      (1 -
-                        callback?.response?.Details?.AgentPanelDiscount / 100);
+          console.log(
+            "calculateAmountAfterDiscount",
+            calculateAmountAfterDiscount
+          );
 
-                    console.log(
-                      "calculateAmountAfterDiscount",
-                      calculateAmountAfterDiscount
-                    );
+          const AgentSettlementAmount =
+            (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
+            100;
 
-                    const AgentSettlementAmount =
-                      (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
-                      100;
+          const agentData = {
+            userId: localAgentDetails?.Id,
+            agentName: localAgentDetails?.Name,
+            userTypeId: localAgentDetails?.UserType,
+            settlementAmount: AgentSettlementAmount,
+            bookingDate:
+              callback?.response?.Details?.CreatedOn?.slice(0, 10),
+            bookingId: callback?.response?.Details?.Id,
+          };
+          dispatch(
+            AddupdateAgentSettlement(
+              agentData,
+              loginDetails?.logindata?.Token,
+              (callback2) => {
+                if (callback2.status) {
 
-                    const agentData = {
-                      userId: localAgentDetails?.Id,
-                      agentName: localAgentDetails?.Name,
-                      userTypeId: localAgentDetails?.UserType,
-                      settlementAmount: AgentSettlementAmount,
-                      bookingDate:
-                        callback?.response?.Details?.CreatedOn?.slice(0, 10),
-                      bookingId: callback?.response?.Details?.Id,
-                    };
-                    dispatch(
-                      AddupdateAgentSettlement(
-                        agentData,
-                        loginDetails?.logindata?.Token,
-                        (callback2) => {
-                          if (callback2.status) {
-                            if (
-                              callback4?.response?.Details[0]?.NumOfTeens -
-                                callback4?.response?.Details[0]
-                                  ?.TotalGuestCount ==
-                              0
-                            ) {
-                              navigate("/TeensBilling", {
-                                state: {
-                                  BookingDetails: callback4?.response?.Details,
-                                },
-                              });
-                              setLoader(false);
-                            } else {
-                              navigate("/BillingDetails", {
-                                state: {
-                                  BookingDetails: callback4?.response?.Details,
-                                },
-                              });
-                              setLoader(false);
-                            }
-
-                            console.log(
-                              "Callback add update details of agent discount seetlement amopunt---->",
-                              callback2?.response?.Details
-                            );
-
+                  console.log(
+                    "Callback add update details of agent discount seetlement amopunt---->",
+                    callback2?.response?.Details
+                  );
+                  dispatch(
+                    AddBillingDetails(
+                      loginDetails?.logindata?.Token,
+                      data,
+                      (callback4) => {
+                        if (callback4.status) {
+                          console.log(
+                            "Generate Bill --------------?",
+                            callback4?.response?.Details[0]?.NumOfTeens,
+                            callback4?.response?.Details[0]?.TotalGuestCount
+                          );
+                          if (
+                            callback4?.response?.Details[0]?.NumOfTeens -
+                              callback4?.response?.Details[0]
+                                ?.TotalGuestCount ==
+                            0
+                          ) {
+                            navigate("/TeensBilling", {
+                              state: {
+                                BookingDetails: callback4?.response?.Details,
+                              },
+                            });
                             setLoader(false);
-
-                            // resolve(callback);
                           } else {
-                            toast.error(callback2.error);
-                            // reject(callback);
+                            navigate("/BillingDetails", {
+                              state: {
+                                BookingDetails: callback4?.response?.Details,
+                              },
+                            });
+                            setLoader(false);
                           }
-                        }
-                      )
-                    );
 
-                    toast.error(callback.error);
-                  } else {
-                    toast.error(callback.error);
-                    setLoader(false);
-                  }
+      
+                          toast.error(callback.error);
+                        } else {
+                          toast.error(callback.error);
+                          setLoader(false);
+                        }
+                      }
+                    )
+                  );
+                  setLoader(false);
+
+                  // resolve(callback);
+                } else {
+                  toast.error(callback2.error);
+                  // reject(callback);
                 }
-              )
-            );
+              }
+            )
+          );
+   
 
 
             // navigate("/GenerateBill", {

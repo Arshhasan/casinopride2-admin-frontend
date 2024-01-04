@@ -57,7 +57,8 @@ const AgentSettlementList = () => {
   const [userTypeId, setUserTypeId] = useState(0);
   const [isToggled, setIsToggled] = useState(false);
   const [referenceNumber, setReferenceNumber] = useState("");
-
+  const today = moment().format("YYYY-MM-DD HH:mm:ss");
+console.log('today>>>>>>',today);
   const handleShow = (Id) => {
     setShowModal(true);
     console.log("id to be deleted", Id);
@@ -239,11 +240,12 @@ const AgentSettlementList = () => {
       const data = {
         userId: item?.UserId,
         isSettlementReport: 1,
-        settlementDate: moment(item?.SettlementDate).format("YYYY-MM-DD"),
-        settlementUpdateDate: moment(item?.Date).format("YYYY-MM-DD"),
+        // settlementDate: item?.SettlementDate == null ? today : moment.utc(item?.SettlementDate).format("YYYY-MM-DD HH:mm:ss"),
+        settlementDate:  moment.utc(item?.SettlementDate).format("YYYY-MM-DD HH:mm:ss"),
+        settlementUpdateDate: moment.utc(item?.Date).format("YYYY-MM-DD HH:mm:ss"),
         reportTypeId: 1,
       };
-
+      console.log('generateAgentSettlementReportFn>>data>>',data);
       dispatch(
         generateCSVReport(
           loginDetails?.logindata?.Token,
@@ -377,7 +379,7 @@ const AgentSettlementList = () => {
                     Amount Settled
                   </td>
                 )}
-                {item.IsSettled == 0 ? (
+                {(item.IsSettled == 0 && item?.SettlementDate != null) ? (
                   <td
                     className="manager-list"
                     onClick={() => generateAgentSettlementReportFn(item)}

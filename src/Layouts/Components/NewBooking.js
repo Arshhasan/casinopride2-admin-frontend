@@ -828,6 +828,7 @@ const NewBooking = () => {
           setBookingData(callback?.response?.Details);
 
           toast.success("Booking details success");
+          
 
           if (couponToggle) {
             couponCodeAppend();

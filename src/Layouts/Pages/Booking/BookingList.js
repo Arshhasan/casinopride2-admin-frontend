@@ -170,6 +170,7 @@ const BookingList = () => {
   const [cardType, setCardType] = useState("");
   const [upiId, setUpiId] = useState("");
   const [localAgentDetails, setLocalAgentDetails] = useState("");
+  const [travelAgentDetails, setTravelAgentDetails] = useState(null);
   const [partCash, setPartCash] = useState("");
   const [partCard, setPartCard] = useState("");
   const [enableUpdatePayment, setEnableUpdatepayment] = useState(false);
@@ -810,123 +811,318 @@ const BookingList = () => {
 
   const GenerateBill = (item) => {
     console.log("Generate Bill--------->", shiftStatus);
+    console.log('GenerateBill>>item>>',item);
+    //checking if its Travel Agent
+    if (item?.UserTypeId == 5) {
+      if (
+        (shifts && shifts[1] && !shifts[1][0]?.ShiftOpen === 1) ||
+        (shifts && shifts[3] && !shifts[3][0]?.ShiftOpen === 1) ||
+        (shifts && shifts[2] && !shifts[2][0]?.ShiftOpen === 1) ||
+        (recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftTypeId === 2 &&
+          recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftOpen === 0) ||
+        (recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftTypeId === 2 &&
+          recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftOpen === 1) ||
+        (recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftTypeId === 3 &&
+          recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftOpen === 1) ||
+        (recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftTypeId === 1 &&
+          recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftOpen === 0) ||
+        (recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftTypeId === 1 &&
+          recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftOpen === 1) ||
+        (shifts && shifts[2] && shifts[2][0]?.ShiftOpen === 0 && !shifts[3]) ||
+        (shifts && shifts[1] && shifts[1][0]?.ShiftOpen === 0 && !shifts[2]) ||
+        shiftForUserOne
+      ) {
+        toast.error("Open the  shift to generate a bill");
+      } else {
+        const data = {
+          bookingId: item.Id,
+          packageId: item.PackageId,
+          packageGuestCount: item.PackageGuestCount,
+          totalGuestCount: item.TotalGuestCount,
+          bookingDate: item.CreatedOn?.slice(0, 10),
+          billingDate: today,
+          teensCount: item.NumOfTeens,
+          actualAmount: item.ActualAmount,
+          amountAfterDiscount: item.AmountAfterDiscount,
+          // discount: item.PanelDiscount ? item.PanelDiscount : item.CouponDiscount,
+          discount: item.PanelDiscount
+          ? item.PanelDiscount
+          : item.WebsiteDiscount
+          ? item.WebsiteDiscount
+          : item.CouponDiscount
+          ? item.CouponDiscount
+          : item.AgentPanelDiscount
+          ? item.AgentPanelDiscount
+          : 0,
+          packageWeekdayPrice: JSON.stringify(item.PackageWeekdayPrice),
+          packageWeekendPrice: JSON.stringify(item.PackageWeekendPrice),
+        };
+        const shiftData = {
+          bookingId: item.Id,
+          shiftTypeId : shiftDetails?.ShiftTypeId === 1 && shiftDetails?.ShiftOpen === 1
+          ? 1
+          : shiftDetails?.ShiftTypeId === 2 && shiftDetails?.ShiftOpen === 1
+          ? 2
+          : shiftDetails?.ShiftTypeId === 3 && shiftDetails?.ShiftOpen === 1
+          ? 3
+          : 0,
+        };
+        dispatch(
+          updateShiftForBooking(
+            loginDetails?.logindata?.Token,
+            shiftData,
+            (callback1) => {
+              if (callback1.status) {
+                console.log(
+                  "booking details updateShiftForBooking--------------?",
+                  callback1?.response?.Details
+                );
 
-    if (
-      (shifts && shifts[1] && !shifts[1][0]?.ShiftOpen === 1) ||
-      (shifts && shifts[3] && !shifts[3][0]?.ShiftOpen === 1) ||
-      (shifts && shifts[2] && !shifts[2][0]?.ShiftOpen === 1) ||
-      (recentShiftOpen &&
-        recentShiftOpen[0]?.ShiftTypeId === 2 &&
-        recentShiftOpen &&
-        recentShiftOpen[0]?.ShiftOpen === 0) ||
-      (recentShiftOpen &&
-        recentShiftOpen[0]?.ShiftTypeId === 2 &&
-        recentShiftOpen &&
-        recentShiftOpen[0]?.ShiftOpen === 1) ||
-      (recentShiftOpen &&
-        recentShiftOpen[0]?.ShiftTypeId === 3 &&
-        recentShiftOpen &&
-        recentShiftOpen[0]?.ShiftOpen === 1) ||
-      (recentShiftOpen &&
-        recentShiftOpen[0]?.ShiftTypeId === 1 &&
-        recentShiftOpen &&
-        recentShiftOpen[0]?.ShiftOpen === 0) ||
-      (recentShiftOpen &&
-        recentShiftOpen[0]?.ShiftTypeId === 1 &&
-        recentShiftOpen &&
-        recentShiftOpen[0]?.ShiftOpen === 1) ||
-      (shifts && shifts[2] && shifts[2][0]?.ShiftOpen === 0 && !shifts[3]) ||
-      (shifts && shifts[1] && shifts[1][0]?.ShiftOpen === 0 && !shifts[2]) ||
-      shiftForUserOne
-    ) {
-      toast.error("Open the  shift to generate a bill");
-    } else {
-      const data = {
-        bookingId: item.Id,
-        packageId: item.PackageId,
-        packageGuestCount: item.PackageGuestCount,
-        totalGuestCount: item.TotalGuestCount,
-        bookingDate: item.CreatedOn?.slice(0, 10),
-        billingDate: today,
-        teensCount: item.NumOfTeens,
-        actualAmount: item.ActualAmount,
-        amountAfterDiscount: item.AmountAfterDiscount,
-        // discount: item.PanelDiscount ? item.PanelDiscount : item.CouponDiscount,
-        discount: item.PanelDiscount
-        ? item.PanelDiscount
-        : item.WebsiteDiscount
-        ? item.WebsiteDiscount
-        : item.CouponDiscount
-        ? item.CouponDiscount
-        : item.AgentPanelDiscount
-        ? item.AgentPanelDiscount
-        : 0,
-        packageWeekdayPrice: JSON.stringify(item.PackageWeekdayPrice),
-        packageWeekendPrice: JSON.stringify(item.PackageWeekendPrice),
-      };
-      const shiftData = {
-        bookingId: item.Id,
-        shiftTypeId : shiftDetails?.ShiftTypeId === 1 && shiftDetails?.ShiftOpen === 1
-        ? 1
-        : shiftDetails?.ShiftTypeId === 2 && shiftDetails?.ShiftOpen === 1
-        ? 2
-        : shiftDetails?.ShiftTypeId === 3 && shiftDetails?.ShiftOpen === 1
-        ? 3
-        : 0,
-      };
-      dispatch(
-        updateShiftForBooking(
-          loginDetails?.logindata?.Token,
-          shiftData,
-          (callback) => {
-            if (callback.status) {
-              console.log(
-                "booking details updateShiftForBooking--------------?",
-                callback?.response?.Details
-              );
-                  dispatch(
-        AddBillingDetails(
-          loginDetails?.logindata?.Token,
-          data,
-          (callback) => {
-            if (callback.status) {
-              console.log(
-                "Generate Bill --------------",
-                callback?.response?.Details
-              );
-  
-              if (
-                callback?.response?.Details[0]?.NumOfTeens -
-                  callback?.response?.Details[0]?.TotalGuestCount ==
-                0
-              ) {
-                navigate("/TeensBilling", {
-                  state: { BookingDetails: callback?.response?.Details },
-                });
-                setLoader(false);
+                dispatch(
+                  getUserById(item?.UserId, (callback3) => {
+                    console.log("getUserById>>callabck>>", callback3);
+                    if (callback3.status) {
+                      console.log(
+                        "callback3.response.details>>",
+                        callback3?.response?.Details
+                      );
+                      // setLocalAgentId(callback3?.response?.Details?.Id);
+                      setTravelAgentDetails(callback3?.response?.Details);
+                      const AgentSettlemetDiscount =
+                      callback3?.response?.Details?.DiscountPercent -
+                      item?.AgentPanelDiscount;
+
+                    console.log(
+                      "AgentSettlemetDiscount-------->",
+                      AgentSettlemetDiscount
+                    );
+
+                    const calculateAmountAfterDiscount =
+                      item?.ActualAmount *
+                      (1 -
+                        item?.AgentPanelDiscount / 100);
+
+                    console.log(
+                      "calculateAmountAfterDiscount",
+                      calculateAmountAfterDiscount
+                    );
+
+                    const AgentSettlementAmount =
+                      (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
+                      100;
+
+                    const agentData = {
+                      userId: callback3?.response?.Details?.Id,
+                      agentName: callback3?.response?.Details?.Name,
+                      userTypeId: callback3?.response?.Details?.UserType,
+                      settlementAmount: AgentSettlementAmount,
+                      bookingDate:
+                        item?.CreatedOn?.slice(0, 10),
+                      bookingId:item?.Id,
+                    };
+                    dispatch(
+                      AddupdateAgentSettlement(
+                        agentData,
+                        loginDetails?.logindata?.Token,
+                        (callback4) => {
+                          if (callback4.status) {
+
+                            dispatch(
+                              AddBillingDetails(
+                                loginDetails?.logindata?.Token,
+                                data,
+                                (callback2) => {
+                                  if (callback2.status) {
+                                    console.log(
+                                      "Generate Bill --------------",
+                                      callback2?.response?.Details
+                                    );
+                                    if (
+                                      callback2?.response?.Details[0]?.NumOfTeens -
+                                        callback2?.response?.Details[0]
+                                          ?.TotalGuestCount ==
+                                      0
+                                    ) {
+                                      navigate("/TeensBilling", {
+                                        state: {
+                                          BookingDetails: callback2?.response?.Details,
+                                        },
+                                      });
+                                      setLoader(false);
+                                    } else {
+                                      navigate("/BillingDetails", {
+                                        state: {
+                                          BookingDetails: callback2?.response?.Details,
+                                        },
+                                      });
+                                      setLoader(false);
+                                    }
+                                  } else {
+                                    toast.error(callback2.error);
+                                    setLoader(false);
+                                  }
+                                }
+                              )
+                            );
+                            console.log(
+                              "Callback add update details of agent discount seetlement amopunt---->",
+                              callback4?.response?.Details
+                            );
+
+                            setLoader(false);
+
+                            // resolve(callback);
+                          } else {
+                            toast.error(callback4.error);
+                            // reject(callback);
+                          }
+                        }
+                      )
+                    );
+                    } else {
+                      toast.error(callback3.error);
+                    }
+                  })
+                );
+
+    
               } else {
-                navigate("/BillingDetails", {
-                  state: { BookingDetails: callback?.response?.Details },
-                });
+                toast.error(callback1.error);
+              }
+            }
+          )
+        );
+      }
+    }
+    else{
+      if (
+        (shifts && shifts[1] && !shifts[1][0]?.ShiftOpen === 1) ||
+        (shifts && shifts[3] && !shifts[3][0]?.ShiftOpen === 1) ||
+        (shifts && shifts[2] && !shifts[2][0]?.ShiftOpen === 1) ||
+        (recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftTypeId === 2 &&
+          recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftOpen === 0) ||
+        (recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftTypeId === 2 &&
+          recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftOpen === 1) ||
+        (recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftTypeId === 3 &&
+          recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftOpen === 1) ||
+        (recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftTypeId === 1 &&
+          recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftOpen === 0) ||
+        (recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftTypeId === 1 &&
+          recentShiftOpen &&
+          recentShiftOpen[0]?.ShiftOpen === 1) ||
+        (shifts && shifts[2] && shifts[2][0]?.ShiftOpen === 0 && !shifts[3]) ||
+        (shifts && shifts[1] && shifts[1][0]?.ShiftOpen === 0 && !shifts[2]) ||
+        shiftForUserOne
+      ) {
+        toast.error("Open the  shift to generate a bill");
+      } else {
+        const data = {
+          bookingId: item.Id,
+          packageId: item.PackageId,
+          packageGuestCount: item.PackageGuestCount,
+          totalGuestCount: item.TotalGuestCount,
+          bookingDate: item.CreatedOn?.slice(0, 10),
+          billingDate: today,
+          teensCount: item.NumOfTeens,
+          actualAmount: item.ActualAmount,
+          amountAfterDiscount: item.AmountAfterDiscount,
+          // discount: item.PanelDiscount ? item.PanelDiscount : item.CouponDiscount,
+          discount: item.PanelDiscount
+          ? item.PanelDiscount
+          : item.WebsiteDiscount
+          ? item.WebsiteDiscount
+          : item.CouponDiscount
+          ? item.CouponDiscount
+          : item.AgentPanelDiscount
+          ? item.AgentPanelDiscount
+          : 0,
+          packageWeekdayPrice: JSON.stringify(item.PackageWeekdayPrice),
+          packageWeekendPrice: JSON.stringify(item.PackageWeekendPrice),
+        };
+        const shiftData = {
+          bookingId: item.Id,
+          shiftTypeId : shiftDetails?.ShiftTypeId === 1 && shiftDetails?.ShiftOpen === 1
+          ? 1
+          : shiftDetails?.ShiftTypeId === 2 && shiftDetails?.ShiftOpen === 1
+          ? 2
+          : shiftDetails?.ShiftTypeId === 3 && shiftDetails?.ShiftOpen === 1
+          ? 3
+          : 0,
+        };
+        dispatch(
+          updateShiftForBooking(
+            loginDetails?.logindata?.Token,
+            shiftData,
+            (callback) => {
+              if (callback.status) {
+                console.log(
+                  "booking details updateShiftForBooking--------------?",
+                  callback?.response?.Details
+                );
+                    dispatch(
+          AddBillingDetails(
+            loginDetails?.logindata?.Token,
+            data,
+            (callback) => {
+              if (callback.status) {
+                console.log(
+                  "Generate Bill --------------",
+                  callback?.response?.Details
+                );
+    
+                if (
+                  callback?.response?.Details[0]?.NumOfTeens -
+                    callback?.response?.Details[0]?.TotalGuestCount ==
+                  0
+                ) {
+                  navigate("/TeensBilling", {
+                    state: { BookingDetails: callback?.response?.Details },
+                  });
+                  setLoader(false);
+                } else {
+                  navigate("/BillingDetails", {
+                    state: { BookingDetails: callback?.response?.Details },
+                  });
+                  setLoader(false);
+                }
+    
+                toast.error(callback.error);
+              } else {
+                toast.error(callback.error);
                 setLoader(false);
               }
-  
-              toast.error(callback.error);
-            } else {
-              toast.error(callback.error);
-              setLoader(false);
             }
-          }
-        )
-      );
-  
-            } else {
-              toast.error(callback.error);
+          )
+        );
+    
+              } else {
+                toast.error(callback.error);
+              }
             }
-          }
-        )
-      );
+          )
+        );
+      }
     }
+
   };
 
   return (
