@@ -95,6 +95,8 @@ const NewBooking = () => {
   const [shiftDisable, setShiftDisable] = useState(true);
 
   const [outletStatus, setOutletStatus] = useState();
+  const [settledBy, setSettledBy] = useState(0);
+  const today = moment().format("YYYY-MM-DD");
 
   useEffect(() => {
     // dispatch(
@@ -314,7 +316,6 @@ const NewBooking = () => {
 
     if (field === "discount") {
       setDiscountToggle(!discountToggle);
-
       if (!discountToggle) {
         console.log("Called Here----12>");
         setCouponToggle(false);
@@ -323,7 +324,7 @@ const NewBooking = () => {
         setSelectedOption("");
         setamountAfterDiscount("");
         setCouponDiscout("");
-
+        setSettledBy(0)
         // if (paymentOption == "Cash") {
         //   setCashAmount(DiscountedAmount);
         // } else if (paymentOption == "UPI") {
@@ -339,7 +340,7 @@ const NewBooking = () => {
         setamountAfterDiscount("");
         setCouponDiscout("");
         setCouponCode("");
-
+        setSettledBy(0)
         // if (paymentOption == "Cash") {
         //   setCashAmount(DiscountedAmount);
         // } else if (paymentOption == "UPI") {
@@ -365,6 +366,7 @@ const NewBooking = () => {
         setCouponCode("");
         setSelectedOption("");
         setamountAfterDiscount("");
+      setSettledBy(0)
         // if (paymentOption == "Cash") {
         //   setCashAmount(amount);
         // } else if (paymentOption == "UPI") {
@@ -374,6 +376,7 @@ const NewBooking = () => {
         // }
       } else if (couponToggle) {
         setCouponDiscout("");
+        setSettledBy(0)
         if (paymentOption == "Cash") {
           setCashAmount(DiscountedAmount);
         } else if (paymentOption == "UPI") {
@@ -383,12 +386,15 @@ const NewBooking = () => {
         }
       }
     } else if (field === "referredBy") {
+      setSettledBy(1)
       setReferredByToggle(!referredByToggle);
       if (!referredByToggle) {
+        console.log('lesbien');
         setDiscountToggle(false);
         setCouponToggle(false);
         setCouponCode("");
         setCouponDiscout("");
+        setSettledBy(1)
         // if (paymentOption == "Cash") {
         //   setCashAmount(amount);
         // } else if (paymentOption == "UPI") {
@@ -397,10 +403,11 @@ const NewBooking = () => {
         //   setUpiAmount(amount);
         // }
       } else if (referredByToggle) {
+        console.log('gay');
         setSelectedOption("");
         setCouponDiscout("");
         setamountAfterDiscount("");
-
+        setSettledBy(0)
         // if (paymentOption == "Cash") {
         //   setCashAmount(DiscountedAmount);
         // } else if (paymentOption == "UPI") {
@@ -621,7 +628,6 @@ const NewBooking = () => {
 
   console.log("usedCouponArr-------------->", usedCouponArr);
 
-  const today = moment().format("YYYY-MM-DD");
 
   console.log(
     "activeDateOfOutlet?.OutletDate-------------->",
@@ -758,7 +764,8 @@ const NewBooking = () => {
       panelDiscountId: selectedOption,
       couponId: couponId,
       referredBy: referredBy,
-      settledByCompany: 0,
+      // settledByCompany: 0,
+      settledByCompany: (settledBy == 1 || paymentOption == "Company Settlement") ? 1 : 0,
       agentPanelDiscount: Discountpercent != "" ? Discountpercent : 0,
       packageId:
         packageIds.length == 0
@@ -814,8 +821,7 @@ const NewBooking = () => {
       localAgentName: localAgentDetails?.Name,
       UPIId: upiId,
     };
-
-    console.log("Data from booking ------->", data);
+    console.log("Data from booking------->",data);
 
     dispatch(
       AddBookingFn(loginDetails?.logindata?.Token, data, (callback) => {
@@ -839,7 +845,11 @@ const NewBooking = () => {
             packageId: callback?.response?.Details?.PackageId,
             packageGuestCount: callback?.response?.Details?.PackageGuestCount,
             totalGuestCount: callback?.response?.Details?.TotalGuestCount,
-            bookingDate: callback?.response?.Details?.CreatedOn?.slice(0, 10),
+            // bookingDate: callback?.response?.Details?.CreatedOn?.slice(0, 10),
+            bookingDate: callback?.response?.Details?.BookingDate != null ? 
+            moment(callback?.response?.Details?.BookingDate).format("YYYY-MM-DD") :
+            moment(callback?.response?.Details?.FutureDate
+              ),
             billingDate: activeDateOfOutlet?.OutletDate,
             teensCount: callback?.response?.Details?.NumOfTeens,
             actualAmount: callback?.response?.Details?.ActualAmount,
@@ -1588,6 +1598,7 @@ const NewBooking = () => {
           setTeensWeekdayPrice={setTeensWeekdayPrice}
           setTeensWeekendPrice={setTeensWeekendPrice}
           setTeensPackageName={setTeensPackageName}
+          outletDate={activeDateOfOutlet?.OutletDate}
         />
         <div className="col-lg-6 mt-3 mt-3">
           <label for="formGroupExampleInput " className="form_text">

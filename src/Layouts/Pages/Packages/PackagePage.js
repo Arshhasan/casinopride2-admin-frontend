@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import NewBooking from "../../Components/NewBooking";
 import { Oval } from "react-loader-spinner";
+import { toast } from "react-toastify";
 
 const PackagesPage = ({
   setamount,
@@ -30,6 +31,7 @@ const PackagesPage = ({
   setTeensWeekdayPrice,
   setTeensPackageName,
   Discountpercent,
+  outletDate
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
@@ -107,22 +109,27 @@ const PackagesPage = ({
         PackageWeekdayPrice,
         PackageWeekendPrice
       );
-
-      if (increment || currentCount > 0) {
-        updatedPackages[packageId] = {
-          ...updatedPackages[packageId],
-          [counterType]: currentCount + (increment ? 1 : -1),
-          PackageName,
-          PackageWeekdayPrice,
-          PackageWeekendPrice,
-        };
-
-        if (updatedPackages[packageId][counterType] <= 0) {
+      if (outletDate != undefined || outletDate != null) {
+        if (increment || currentCount > 0) {
+          updatedPackages[packageId] = {
+            ...updatedPackages[packageId],
+            [counterType]: currentCount + (increment ? 1 : -1),
+            PackageName,
+            PackageWeekdayPrice,
+            PackageWeekendPrice,
+          };
+  
+          if (updatedPackages[packageId][counterType] <= 0) {
+            delete updatedPackages[packageId];
+          }
+        } else {
           delete updatedPackages[packageId];
         }
-      } else {
-        delete updatedPackages[packageId];
       }
+      else{
+        toast.error("Please Check if outlet is open");
+      }
+
 
       return updatedPackages;
     });
@@ -144,8 +151,7 @@ const PackagesPage = ({
 
     return day >= 1 && day <= 4;
   }
-
-  const today = new Date();
+  const today = new Date(outletDate);
   const isTodayWeekday = isWeekday(today);
 
   console.log(isTodayWeekday);
@@ -203,7 +209,13 @@ const PackagesPage = ({
   const [teensPrice, setTeensPrice] = useState(0);
 
   const handleIncrement = () => {
+    if (outletDate != undefined || outletDate != null) {
     setTeensCount((prevCount) => prevCount + 1);
+      
+    }
+    else{
+      toast.error("Please Check if outlet is open");
+    }
   };
 
   const handleDecrement = () => {

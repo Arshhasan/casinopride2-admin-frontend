@@ -10,6 +10,7 @@ export const OTPpackage = ({
   setSelectedPackages,
   selectedPackages,
   handleBookNow,
+
 }) => {
   const [showModal, setShowModal] = useState(false);
 

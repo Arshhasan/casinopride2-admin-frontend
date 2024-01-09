@@ -1206,14 +1206,31 @@ const TeensBilling = () => {
     TotalBillAmount: (BookingDetails[0]?.TeensPrice -
       (BookingDetails[0]?.ActualAmount - BookingDetails[0]?.AmountAfterDiscount)),
     //adding cash, card, UPI details
-    cashAmount : BookingDetails[0]?.CashAmount,
-    cardAmount : BookingDetails[0]?.CardAmount,
-    upiAmount : BookingDetails[0]?.UPIAmount,
+    cashAmount : BookingDetails[0]?.SettledByCompany == 0 && 
+    ((BookingDetails[0]?.PayAtCounter == 1 && BookingDetails[0]?.UserTypeId == 5) || 
+    BookingDetails[0]?.PayAtCounter != 1 && (BookingDetails[0]?.UserTypeId != 0 && BookingDetails[0]?.UserTypeId != 5 && BookingDetails[0]?.UserTypeId != 6)) ? BookingDetails[0]?.CashAmount : 0,
+
+    cardAmount : BookingDetails[0]?.SettledByCompany == 0 && 
+    ((BookingDetails[0]?.PayAtCounter == 1 && BookingDetails[0]?.UserTypeId == 5) || 
+    BookingDetails[0]?.PayAtCounter != 1 && (BookingDetails[0]?.UserTypeId != 0 && BookingDetails[0]?.UserTypeId != 5 && BookingDetails[0]?.UserTypeId != 6)) ? BookingDetails[0]?.CardAmount : 0,
+
+    upiAmount : BookingDetails[0]?.SettledByCompany == 0 && 
+    ((BookingDetails[0]?.PayAtCounter == 1 && BookingDetails[0]?.UserTypeId == 5) || 
+    BookingDetails[0]?.PayAtCounter != 1 && (BookingDetails[0]?.UserTypeId != 0 && BookingDetails[0]?.UserTypeId != 5 && BookingDetails[0]?.UserTypeId != 6)) ? BookingDetails[0]?.UPIAmount : 0,
+    
     upiId : BookingDetails[0]?.UPIId,
     cardHoldersName : BookingDetails[0]?.CardHoldersName,
     cardNumber : BookingDetails[0]?.CardNumber,
     cardType : BookingDetails[0]?.CardType,
-    bookingCommission:BookingDetails[0]?.BookingCommision
+    bookingCommission:BookingDetails[0]?.BookingCommision,
+    settledByCompany:BookingDetails[0]?.SettledByCompany == 1 ? 
+    (BookingDetails[0]?.CashAmount + BookingDetails[0]?.CardAmount + BookingDetails[0]?.UPIAmount != 0 ?
+      BookingDetails[0]?.CashAmount + BookingDetails[0]?.CardAmount + BookingDetails[0]?.UPIAmount : 
+      BookingDetails[0]?.AmountAfterDiscount) : 0,
+
+      OnlinePayu :BookingDetails[0]?.SettledByCompany == 0 && 
+      (BookingDetails[0]?.PayAtCounter != 1 && (BookingDetails[0]?.UserTypeId == 0 || BookingDetails[0]?.UserTypeId == 5 || BookingDetails[0]?.UserTypeId == 6)) ? 
+        (BookingDetails[0]?.UPIAmount + BookingDetails[0]?.CardAmount) : 0,
   };
 
   console.log("updatededBillDetails---->", updatededBillDetails);
@@ -1310,7 +1327,7 @@ const TeensBilling = () => {
                 A unit of Goa Coastal Resorts & Recreation Pvt.Ltd
               </p>
               <h5 style={{ fontSize: "15px" }}>
-              H.No. 838/1(3), 2nd floor Edificio Da Silva E Menezes Near Holly Family church Porvorim Goa 403521 <br></br>Tel. + 91 9158885000
+              H.No. 838/1(3), 2nd floor Edificio Da Silva E Menezes Near Holy Family church Porvorim Goa 403521 <br></br>Tel. + 91 9158885000
               </h5>
               <h5 style={{ fontSize: "15px" }}>
                 Email : info@casinoprideofficial.com
@@ -1584,7 +1601,7 @@ const TeensBilling = () => {
                     A unit of Goa Coastal Resorts & Recreation Pvt.Ltd
                   </p>
                   <h5 className="BillPrintFontPrint">
-                  H.No. 838/1(3), 2nd floor Edificio Da Silva E Menezes Near Holly Family church Porvorim Goa 403521 <br></br>Tel. + 91 9158885000
+                  H.No. 838/1(3), 2nd floor Edificio Da Silva E Menezes Near Holy Family church Porvorim Goa 403521 <br></br>Tel. + 91 9158885000
                   </h5>
                   <h5 className="BillPrintFontPrint">
                     Email : info@casinoprideofficial.com

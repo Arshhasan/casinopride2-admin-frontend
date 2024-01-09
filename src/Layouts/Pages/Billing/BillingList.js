@@ -641,6 +641,47 @@ const BillingList = () => {
     activeDateOfOutlet?.OutletDate
   );
 
+  const searchByBillId = (value) =>{
+    setLoading(true)
+    console.log('sathiyaaaaaaa<<<',value);
+    console.log('ohhhh<<<',typeof value);
+    if (value != "") {
+      clearFilters()
+    setSearhBillId(value);
+      setLoading(false)
+    }
+    else if (value == "" || value == NaN) {
+      console.log('taqderrr');
+      setLoading(false)
+            // setLoading(true)
+      // fetchBillingDetailsFn()
+    setBillId(0)
+    clearFilters()
+
+    // fetchBillingDetailsFn()
+    }
+  }
+  // const searchByBillId = (value) => {
+  //   console.log('yuhi challa>>',value);
+  //   console.log('yuhi challa>>ojjkkk--->',typeof value);
+  //   console.log('bullaaa>>',billingDetails);
+  //   if (value?.trim() == "") {
+  //     fetchBillingDetailsFn();
+  //   } else {
+  //     const parsedValue = parseInt(value)
+  //     console.log('parsedValue...',typeof parsedValue);
+  //     const lowerCaseQuery = value?.toLowerCase();
+  //     const filtered = billingDetails?.filter(
+  //       (item) =>
+  //       // item?.BillNumber?.includes(parsedValue)
+  //       item?.BillNumber === parsedValue
+  //       // item?.BillNumber == parsedValue
+  //       // console.log('item?.BillNumber>>',typeof item?.BillNumber)
+  //       // String(item?.BillNumber).includes(parsedValue.toString())
+  //     );
+  //     setBillingDetails(filtered);
+  //   }
+  // };
   return (
     <div>
       <ToastContainer />
@@ -711,7 +752,9 @@ const BillingList = () => {
                         className="form-control"
                         placeholder="Search Bill No."
                         onChange={(e) => {
-                          setSearhBillId(e.target.value);
+                          searchByBillId(parseInt(e.target.value))
+                          // clearFilters()
+                          // setSearhBillId(e.target.value);
                         }}
                       />
                     </div>

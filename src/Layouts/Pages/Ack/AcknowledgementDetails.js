@@ -546,7 +546,9 @@ const AcknowledgementDetails = () => {
       UPIId: upiId,
 
       bookingId: bookingData?.bookingId,
+      settleByCompany : paymentOption == "Company Settlement" ? 1 : 0
     };
+    console.log('kolaverii>>>',data);
     const shiftData = {
       bookingId: bookingData?.bookingId,
       shiftTypeId : shiftDetails?.ShiftTypeId === 1 && shiftDetails?.ShiftOpen === 1
@@ -595,7 +597,11 @@ const AcknowledgementDetails = () => {
               packageId: callback?.response?.Details?.PackageId,
               packageGuestCount: callback?.response?.Details?.PackageGuestCount,
               totalGuestCount: callback?.response?.Details?.TotalGuestCount,
-              bookingDate: callback?.response?.Details?.CreatedOn?.slice(0, 10),
+              // bookingDate: callback?.response?.Details?.CreatedOn?.slice(0, 10),
+              bookingDate: callback?.response?.Details?.BookingDate != null ? 
+              moment(callback?.response?.Details?.BookingDate).format("YYYY-MM-DD") :
+              moment(callback?.response?.Details?.FutureDate
+                ),
               // billingDate: today,
               billingDate: todayOutletDate,
               teensCount: callback?.response?.Details?.NumOfTeens,

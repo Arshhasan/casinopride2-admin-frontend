@@ -109,11 +109,13 @@ export const GetBillingDetails =
     );
       console.log('okkkk',online);
     console.log("searchBillId--->", parseInt(searchBillId));
-
+      console.log('billDate>>',billDate);
     api.BILLING_PORT.get(
-      `/billing/getBillingDetails?billId=${parseInt(
-        searchBillId ? searchBillId : 0
-      )}&userId=${
+      // `/billing/getBillingDetails?billId=${parseInt(
+      //   searchBillId ? searchBillId : 0
+      `/billing/getBillingDetails?billId=${
+        searchBillId ? parseInt(searchBillId) : 0
+      }&userId=${
         userId ? parseInt(userId) : 0
       }&billingDate=${futureDate}&shiftId=${
         shiftId ? parseInt(shiftId) : 0

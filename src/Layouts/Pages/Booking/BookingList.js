@@ -393,6 +393,7 @@ const BookingList = () => {
       cardType: cardAmount === "" ? null : cardType,
       UPIId: upiAmount === "" ? null : upiId,
       bookingId: UpdatePaymentDetails?.Id,
+      settleByCompany : paymentOption == "Company Settlement" ? 1 : 0
     };
 
     console.log("Data from Update Payment booking ------->", data);
@@ -849,7 +850,11 @@ const BookingList = () => {
           packageId: item.PackageId,
           packageGuestCount: item.PackageGuestCount,
           totalGuestCount: item.TotalGuestCount,
-          bookingDate: item.CreatedOn?.slice(0, 10),
+          // bookingDate: item.CreatedOn?.slice(0, 10),
+          bookingDate: item?.BookingDate != null ? 
+          moment(item?.BookingDate).format("YYYY-MM-DD") :
+          moment(item?.FutureDate
+            ),
           billingDate: today,
           teensCount: item.NumOfTeens,
           actualAmount: item.ActualAmount,
@@ -1040,7 +1045,11 @@ const BookingList = () => {
           packageId: item.PackageId,
           packageGuestCount: item.PackageGuestCount,
           totalGuestCount: item.TotalGuestCount,
-          bookingDate: item.CreatedOn?.slice(0, 10),
+          // bookingDate: item.CreatedOn?.slice(0, 10),
+          bookingDate: item?.BookingDate != null ? 
+          moment(item?.BookingDate).format("YYYY-MM-DD") :
+          moment(item?.FutureDate
+            ),
           billingDate: today,
           teensCount: item.NumOfTeens,
           actualAmount: item.ActualAmount,

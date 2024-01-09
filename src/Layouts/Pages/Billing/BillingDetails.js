@@ -2905,18 +2905,34 @@ const BillingDetails = () => {
 
   const updatededBillDetails = {
     updatedItemDetails: BookingDetails.map((item) => {
+      console.log('okiiiii>>>',item);
       const Rate = item?.ItemDetails?.Rate;
       const packageGuestCount = item?.ItemDetails?.packageGuestCount;
       //adding cash, card, UPI details
-      const CashAmount = item?.CashAmount;
-      const CardAmount = item?.CardAmount;
-      const UPIAmount = item?.UPIAmount;
+      const CashAmount = item?.SettledByCompany == 0 && 
+      ((item?.PayAtCounter == 1 && item?.UserTypeId == 5) || 
+      item?.PayAtCounter != 1 && (item?.UserTypeId != 0 && item?.UserTypeId != 5 && item?.UserTypeId != 6)) ? item?.CashAmount : 0;
+
+      const CardAmount = item?.SettledByCompany == 0 && 
+      ((item?.PayAtCounter == 1 && item?.UserTypeId == 5) || 
+      item?.PayAtCounter != 1 && (item?.UserTypeId != 0 && item?.UserTypeId != 5 && item?.UserTypeId != 6)) ? item?.CardAmount : 0;
+
+      const UPIAmount = item?.SettledByCompany == 0 && 
+      ((item?.PayAtCounter == 1 && item?.UserTypeId == 5) || 
+      item?.PayAtCounter != 1 && (item?.UserTypeId != 0 && item?.UserTypeId != 5 && item?.UserTypeId != 6)) ? item?.UPIAmount : 0;
+
       const UPIId = item?.UPIId;
       const CardHoldersName = item?.CardHoldersName;
       const CardNumber = item?.CardNumber;
       const CardType = item?.CardType;
       const BookingCommision=item?.BookingCommision
+      const SettledByCompany = item?.SettledByCompany == 1 ? 
+      (item?.CashAmount+item?.CardAmount+item?.UPIAmount != 0 ? 
+        item?.CashAmount+item?.CardAmount+item?.UPIAmount : item?.AmountAfterDiscount) : 0
 
+      const OnlinePayu = item?.SettledByCompany == 0 && 
+      (item?.PayAtCounter != 1 && (item?.UserTypeId == 0 || item?.UserTypeId == 5 || item?.UserTypeId == 6)) ? 
+        (item?.UPIAmount + item?.CardAmount) : 0
       const resultRate = Rate.map(
         (value, index) => value * packageGuestCount[index]
       );
@@ -3107,6 +3123,8 @@ const BillingDetails = () => {
           properties["cardNumber"] = CardNumber;
           properties["cardType"] = CardType;
           properties["bookingCommission"] = BookingCommision;
+          properties["settledByCompany"]=SettledByCompany;
+          properties["onlinePayu"]=OnlinePayu;
           }
           else if (KidsCount > 1 && item?.ActualAmount - item?.AmountAfterDiscount > 0 && JSON.parse(item?.PackageGuestCount).length == 1) {
             console.log('pkpk');
@@ -3130,6 +3148,8 @@ const BillingDetails = () => {
           properties["cardNumber"] = CardNumber;
           properties["cardType"] = CardType;
           properties["bookingCommission"] = BookingCommision;
+          properties["settledByCompany"]=SettledByCompany;
+          properties["onlinePayu"]=OnlinePayu;
           }
           else if (KidsCount > 1 && item?.ActualAmount - item?.AmountAfterDiscount > 0 && JSON.parse(item?.PackageGuestCount).length > 1) {
             console.log('nknk');
@@ -3153,6 +3173,9 @@ const BillingDetails = () => {
           properties["cardNumber"] = CardNumber;
           properties["cardType"] = CardType;
           properties["bookingCommission"] = BookingCommision;
+          properties["settledByCompany"]=SettledByCompany;
+          properties["onlinePayu"]=OnlinePayu;
+
           }
           else if (KidsCount == 1 && item?.ActualAmount - item?.AmountAfterDiscount > 0 && JSON.parse(item?.PackageGuestCount).length > 1) {
             console.log('fkfk');
@@ -3176,6 +3199,9 @@ const BillingDetails = () => {
             properties["cardNumber"] = CardNumber;
             properties["cardType"] = CardType;
             properties["bookingCommission"] = BookingCommision;
+          properties["settledByCompany"]=SettledByCompany;
+          properties["onlinePayu"]=OnlinePayu;
+
           }
           else if (KidsCount == 1 && item?.ActualAmount - item?.AmountAfterDiscount == 0 && JSON.parse(item?.PackageGuestCount).length == 1) {
             console.log('gkgk');
@@ -3199,6 +3225,9 @@ const BillingDetails = () => {
             properties["cardNumber"] = CardNumber;
             properties["cardType"] = CardType;
             properties["bookingCommission"] = BookingCommision;
+            properties["settledByCompany"]=SettledByCompany;
+            properties["onlinePayu"]=OnlinePayu;
+
           }
           else if (KidsCount == 1 && item?.ActualAmount - item?.AmountAfterDiscount == 0 && JSON.parse(item?.PackageGuestCount).length > 1) {
             console.log('zkzk');
@@ -3222,6 +3251,9 @@ const BillingDetails = () => {
             properties["cardNumber"] = CardNumber;
             properties["cardType"] = CardType;
             properties["bookingCommission"] = BookingCommision;
+            properties["settledByCompany"]=SettledByCompany;
+            properties["onlinePayu"]=OnlinePayu;
+
           }
           else if (KidsCount > 1 && item?.ActualAmount - item?.AmountAfterDiscount == 0 && JSON.parse(item?.PackageGuestCount).length == 1) {
             console.log('gkgk');
@@ -3245,6 +3277,9 @@ const BillingDetails = () => {
             properties["cardNumber"] = CardNumber;
             properties["cardType"] = CardType;
             properties["bookingCommission"] = BookingCommision;
+          properties["settledByCompany"]=SettledByCompany;
+          properties["onlinePayu"]=OnlinePayu;
+
           }
           else if (KidsCount > 1 && item?.ActualAmount - item?.AmountAfterDiscount == 0 && JSON.parse(item?.PackageGuestCount).length > 1) {
             console.log('gkgk');
@@ -3268,6 +3303,9 @@ const BillingDetails = () => {
             properties["cardNumber"] = CardNumber;
             properties["cardType"] = CardType;
             properties["bookingCommission"] = BookingCommision;
+          properties["settledByCompany"]=SettledByCompany;
+          properties["onlinePayu"]=OnlinePayu;
+
           }
           else{
             console.log('sksk');
@@ -3291,6 +3329,9 @@ const BillingDetails = () => {
             properties["cardNumber"] = CardNumber;
             properties["cardType"] = CardType;
             properties["bookingCommission"] = BookingCommision;
+          properties["settledByCompany"]=SettledByCompany;
+          properties["onlinePayu"]=OnlinePayu;
+
           }
 
         } 
@@ -3316,6 +3357,9 @@ const BillingDetails = () => {
           properties["cardNumber"] = CardNumber;
           properties["cardType"] = CardType;
           properties["bookingCommission"] = BookingCommision;
+          properties["settledByCompany"]=SettledByCompany;
+          properties["onlinePayu"]=OnlinePayu;
+
         } 
         else if (item?.ActualAmount - item?.AmountAfterDiscount > 0 && JSON.parse(item?.PackageGuestCount).length > 1) {
 console.log('item?.packageGuestCount>>',JSON.parse(item?.PackageGuestCount).length);
@@ -3340,6 +3384,9 @@ console.log('item?.packageGuestCount>>',JSON.parse(item?.PackageGuestCount).leng
           properties["cardNumber"] = CardNumber;
           properties["cardType"] = CardType;
           properties["bookingCommission"] = BookingCommision;
+          properties["settledByCompany"]=SettledByCompany;
+          properties["onlinePayu"]=OnlinePayu;
+
         } 
         // else if (item?.ActualAmount - item?.AmountAfterDiscount > 0 && JSON.parse(item?.PackageGuestCount).length == 1) {
         //   console.log('<<packageguestcount>>',JSON.parse(item?.PackageGuestCount).length);
@@ -3380,6 +3427,9 @@ console.log('item?.packageGuestCount>>',JSON.parse(item?.PackageGuestCount).leng
           properties["cardNumber"] = CardNumber;
           properties["cardType"] = CardType;
           properties["bookingCommission"] = BookingCommision;
+          properties["settledByCompany"]=SettledByCompany;
+          properties["onlinePayu"]=OnlinePayu;
+
         }
       } else if (itemTaxName[0] === "VAT") {
         properties[vatProperty] = finalTaxDiffSum;
@@ -3502,7 +3552,7 @@ console.log('item?.packageGuestCount>>',JSON.parse(item?.PackageGuestCount).leng
                   A unit of Goa Coastal Resorts & Recreation Pvt.Ltd
                 </p>
                 <h5 style={{ fontSize: "15px" }}>
-                H.No. 838/1(3), 2nd floor Edificio Da Silva E Menezes Near Holly Family church Porvorim Goa 403521<br></br>Tel. + 91 9158885000
+                H.No. 838/1(3), 2nd floor Edificio Da Silva E Menezes Near Holy Family church Porvorim Goa 403521<br></br>Tel. + 91 9158885000
                 </h5>
                 <h5 style={{ fontSize: "15px" }}>
                   Email : info@casinoprideofficial.com
@@ -3818,10 +3868,14 @@ console.log('item?.packageGuestCount>>',JSON.parse(item?.PackageGuestCount).leng
                               {/* {item?.TeensRate &&
                                 item?.NumOfTeens &&
                                 Math.floor(item.TeensRate * 100) / 100} */}
-                              {item?.TeensRate &&
+                              {/* {item?.TeensRate &&
                                 item?.NumOfTeens &&
                                 (item.TeensRate / item.NumOfTeens).toFixed(2) *
-                                  item.NumOfTeens}
+                                  item.NumOfTeens} */}
+                              {item?.TeensRate &&
+                                item?.NumOfTeens &&
+                               ( (item.TeensRate / item.NumOfTeens) .toFixed(2)*
+                                  item.NumOfTeens).toFixed(2)}
                             </td>
                           </tr>
                         )}
@@ -4657,7 +4711,7 @@ console.log('item?.packageGuestCount>>',JSON.parse(item?.PackageGuestCount).leng
                         marginBottom: "5px",
                       }}
                     >
-                    H.No. 838/1(3), 2nd floor Edificio Da Silva E Menezes Near Holly Family church Porvorim Goa 403521 <br></br>Tel. + 91 9158885000
+                    H.No. 838/1(3), 2nd floor Edificio Da Silva E Menezes Near Holy Family church Porvorim Goa 403521 <br></br>Tel. + 91 9158885000
                     </h5>
                     <h5
                       className="BillPrintFontPrint"
@@ -4985,7 +5039,8 @@ console.log('item?.packageGuestCount>>',JSON.parse(item?.PackageGuestCount).leng
 
                                 <td
                                   style={{
-                                    textAlign: "right",
+                                    // textAlign: "right",
+                                    textAlign: "center",
                                     paddingRight: "5px",
                                   }}
                                 >
@@ -4999,15 +5054,23 @@ console.log('item?.packageGuestCount>>',JSON.parse(item?.PackageGuestCount).leng
                                   </p>
                                 </td>
 
-                                <td style={{ textAlign: "right" }}>
+                                <td 
+                                // style={{ textAlign: "right" }}
+                                style={{ textAlign: "center" }}
+                                >
                                   <p className="BillPrintFontPrint">
                                     {" "}
                                     {/* {item?.TeensRate.toFixed(2)} */}
-                                    {item?.TeensRate &&
+                                    {/* {item?.TeensRate &&
                                       item?.NumOfTeens &&
                                       (
                                         item.TeensRate / item.NumOfTeens
-                                      ).toFixed(2) * item.NumOfTeens}
+                                      ).toFixed(2) * item.NumOfTeens} */}
+                                    {item?.TeensRate &&
+                                      item?.NumOfTeens &&
+                                  (    (
+                                        item.TeensRate / item.NumOfTeens
+                                      ).toFixed(2) * item.NumOfTeens).toFixed(2)}
                                   </p>
                                 </td>
                               </tr>

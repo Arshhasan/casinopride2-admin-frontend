@@ -31,7 +31,8 @@ const GenerateBill = () => {
 
   console.log("FutureDate------->", userData?.FutureDate);
 
-  const bookingdate = userData?.CreatedOn.slice(0, 10);
+  // const bookingdate = userData?.CreatedOn.slice(0, 10);
+  const bookingdate = userData?.BookingDate != null ? moment(userData?.BookingDate).format("YYYY-MM-DD") : moment(userData?.FutureDate).format("YYYY-MM-DD")
 
   const today = moment().format("YYYY-MM-DD");
 
