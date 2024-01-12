@@ -94,7 +94,7 @@ const PackagesPage = ({
     PackageName,
     newValue // Add the new parameter for the value
   ) => {
-    console.log('check>>>',newValue);
+    // console.log('check>>>',newValue);
     setSelectedPackages((prevSelectedPackages) => {
       const updatedPackages = { ...prevSelectedPackages };
       const currentCount = updatedPackages[packageId]?.[counterType] || 0;
