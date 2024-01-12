@@ -95,9 +95,9 @@ const PackagesPage = ({
     newValue // Add the new parameter for the value
   ) => {
     console.log('check>>>',newValue);
-    console.log('increment-->>>',increment);
     setSelectedPackages((prevSelectedPackages) => {
       const updatedPackages = { ...prevSelectedPackages };
+      const currentCount = updatedPackages[packageId]?.[counterType] || 0;
   
       console.log(
         "PackageName------------------------------<<>>>>>>>>>>><<<<<<<<<<>>>>>>>>>>>>",
@@ -109,15 +109,26 @@ const PackagesPage = ({
         PackageWeekdayPrice,
         PackageWeekendPrice
       );
+      //commented by manasi
+      // if (increment || currentCount > 0) {
+      //   updatedPackages[packageId] = {
+      //     ...updatedPackages[packageId],
+      //     [counterType]: currentCount + (increment ? 1 : -1),
+      //     PackageName,
+      //     PackageWeekdayPrice,
+      //     PackageWeekendPrice,
+      //   };
+
+      //   if (updatedPackages[packageId][counterType] <= 0) {
+      //     delete updatedPackages[packageId];
+      //   }
+      // } else {
+      //   delete updatedPackages[packageId];
+      // }
   
-      if (outletDate != undefined || outletDate != null) {
-        // updatedPackages[packageId] = {
-        //   ...updatedPackages[packageId],
-        //   [counterType]: parseInt(newValue, 10) || 0,
-        //   PackageName,
-        //   PackageWeekdayPrice,
-        //   PackageWeekendPrice,
-        // };
+
+
+      if (outletDate != undefined || outletDate != null) {  //checking if outlet date is set or not
 
         if (newValue != undefined || newValue != null) {
           updatedPackages[packageId] = {
@@ -129,8 +140,10 @@ const PackagesPage = ({
           };
         }
         else{
-          const currentCount = updatedPackages[packageId]?.[counterType] || 0;
+          // const currentCount = updatedPackages[packageId]?.[counterType] || 0;
+          console.log('currentCount--->',currentCount);
           if (increment || currentCount > 0) {
+
             updatedPackages[packageId] = {
               ...updatedPackages[packageId],
               [counterType]: currentCount + (increment ? 1 : -1),
@@ -142,16 +155,9 @@ const PackagesPage = ({
             if (updatedPackages[packageId][counterType] <= 0) {
               delete updatedPackages[packageId];
             }
-          } else {
-            delete updatedPackages[packageId];
-          }
+          } 
         }
   
-        if (updatedPackages[packageId][counterType] <= 0) {
-          delete updatedPackages[packageId];
-        }
-
-
       } else {
         toast.error("Please Check if the outlet is open");
       }
@@ -248,6 +254,7 @@ const PackagesPage = ({
     );
 
     if (groupedData) {
+      console.log('packageData=====>',packageData)
       const packagePrice =
         (packageData.adults || 0) *
         (!isTodayWeekday
@@ -604,6 +611,7 @@ const PackagesPage = ({
                           <h5 className="card-title">Selected Packages</h5>
                           {Object.entries(selectedPackages).map(
                             ([index, item]) => (
+                              console.log('item--->',item),
                               <div className="row package-item" key={index}>
                                 <div className="col-4">
                                   <p className="mb-0 detail">
