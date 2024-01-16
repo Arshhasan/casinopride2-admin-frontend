@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.3fd2566f.css",
-    "main.js": "/static/js/main.08b95e9f.js",
-    "static/js/703.4bdcb43b.chunk.js": "/static/js/703.4bdcb43b.chunk.js",
-    "static/js/513.30812c95.chunk.js": "/static/js/513.30812c95.chunk.js",
-    "static/js/787.5ef133ae.chunk.js": "/static/js/787.5ef133ae.chunk.js",
+    "main.css": "/static/css/main.90bb6a2d.css",
+    "main.js": "/static/js/main.4fcafdbb.js",
+    "static/js/703.171e8c4c.chunk.js": "/static/js/703.171e8c4c.chunk.js",
+    "static/js/198.c6583a86.chunk.js": "/static/js/198.c6583a86.chunk.js",
+    "static/js/787.49325fc6.chunk.js": "/static/js/787.49325fc6.chunk.js",
     "static/media/logo.png": "/static/media/logo.0d5cb3d434fd4209b353.png",
     "static/media/more.png": "/static/media/more.dbe214f6ee6932a393a8.png",
     "static/media/onlylogo.png": "/static/media/onlylogo.2a5f7d67c3d9298cf796.png",
@@ -17,14 +17,14 @@
     "static/media/booking.png": "/static/media/booking.b0ffa06b079dc15176b9.png",
     "static/media/index.less": "/static/media/index.b1bed9b12948b138f7e7.less",
     "index.html": "/index.html",
-    "main.3fd2566f.css.map": "/static/css/main.3fd2566f.css.map",
-    "main.08b95e9f.js.map": "/static/js/main.08b95e9f.js.map",
-    "703.4bdcb43b.chunk.js.map": "/static/js/703.4bdcb43b.chunk.js.map",
-    "513.30812c95.chunk.js.map": "/static/js/513.30812c95.chunk.js.map",
-    "787.5ef133ae.chunk.js.map": "/static/js/787.5ef133ae.chunk.js.map"
+    "main.90bb6a2d.css.map": "/static/css/main.90bb6a2d.css.map",
+    "main.4fcafdbb.js.map": "/static/js/main.4fcafdbb.js.map",
+    "703.171e8c4c.chunk.js.map": "/static/js/703.171e8c4c.chunk.js.map",
+    "198.c6583a86.chunk.js.map": "/static/js/198.c6583a86.chunk.js.map",
+    "787.49325fc6.chunk.js.map": "/static/js/787.49325fc6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3fd2566f.css",
-    "static/js/main.08b95e9f.js"
+    "static/css/main.90bb6a2d.css",
+    "static/js/main.4fcafdbb.js"
   ]
 }

@@ -3688,7 +3688,9 @@ console.log('item?.packageGuestCount>>',JSON.parse(item?.PackageGuestCount).leng
                           .format("DD/MM/YYYY HH:mm")} */}
                         {/* {moment(item?.BillingDate.slice(0, 10))
                           .format("DD/MM/YYYY")}{" "} */}
-                        {moment(item?.ActualBillingDate.slice(0, 10))
+                        {/* {moment(item?.ActualBillingDate.slice(0, 10))
+                          .format("DD/MM/YYYY")}{" "} */}
+                        {moment(item?.ActualBillingDate)
                           .format("DD/MM/YYYY")}{" "}
                           {item?.ActualBillingTime}
                       </span>
@@ -4892,7 +4894,9 @@ console.log('item?.packageGuestCount>>',JSON.parse(item?.PackageGuestCount).leng
                               .format("DD/MM/YYYY HH:mm")} */}
                         {/* {moment(item?.BillingDate.slice(0, 10))
                           .format("DD/MM/YYYY")}{" "} */}
-                        {moment(item?.ActualBillingDate.slice(0, 10))
+                        {/* {moment(item?.ActualBillingDate.slice(0, 10))
+                          .format("DD/MM/YYYY")}{" "} */}
+                          {moment(item?.ActualBillingDate)
                           .format("DD/MM/YYYY")}{" "}
                           {item?.ActualBillingTime}
                           </span>

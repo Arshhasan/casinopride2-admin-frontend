@@ -1083,7 +1083,8 @@ const BillingList = () => {
                           </td> */}
                           {/*Date & Time*/}
                           <td className="manager-list">
-                            {item?.Items[0]?.BillingDate.slice(0, 10)}{" "}
+                            {/* {item?.Items[0]?.BillingDate.slice(0, 10)}{" "} */}
+                            {moment(item?.Items[0]?.BillingDate).format("DD/MM/YYYY")}{" "}{" "}
                             {item?.Items[0]?.ActualBillingTime}
                           </td>
                           <td className="manager-list">
@@ -1279,7 +1280,9 @@ const BillingList = () => {
                       ))}
                     </td>
                     <td className="manager-list">
-                      {item?.Items[0]?.ActualBillingDate.slice(0, 10)}{" "}
+                      {/* {item?.Items[0]?.ActualBillingDate.slice(0, 10)}{" "} */}
+                      {/*Not sure if we want to put ActualBillingDate or BillingDate*/}
+                      {moment(item?.Items[0]?.BillingDate).format("DD/MM/YYYY")}{" "}
                       {item?.Items[0]?.ActualBillingTime}
                     </td>
 

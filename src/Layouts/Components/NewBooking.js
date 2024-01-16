@@ -37,7 +37,7 @@ import {
 import { checkActiveOutlet } from "../../Redux/actions/users";
 import { getUserById } from "../../Redux/actions/users";
 import { countDriverBookings } from "../../Redux/actions/users";
-import { QrReader } from "react-qr-reader";
+// import { QrReader } from "react-qr-reader";
 const NewBooking = () => {
   const location = useLocation();
   const dispatch = useDispatch();
