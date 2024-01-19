@@ -655,6 +655,7 @@ const NewBooking = () => {
 
   const handleShow = () => {
     // setShow(true)
+    console.log('okuuuuu',gstNumber.length);
 
     if (guestName == "" || phone === "" || address == "") {
       toast.warning("Please fill all the fields");
@@ -664,7 +665,7 @@ const NewBooking = () => {
       toast.warning("Please select the payment option");
       setLoader(false);
       handleClose();
-    } else if (gstNumber && gstNumber.length == 15) {
+    } else if (gstNumber && gstNumber.length != 15) {
       toast.warning("Please enter a valid GST number");
       setLoader(false);
       handleClose();
