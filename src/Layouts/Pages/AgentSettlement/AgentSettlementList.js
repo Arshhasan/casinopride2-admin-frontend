@@ -240,6 +240,7 @@ console.log('today>>>>>>',today);
       const data = {
         userId: item?.UserId,
         isSettlementReport: 1,
+        userType : item?.UserTypeId,
         // settlementDate: item?.SettlementDate == null ? today : moment.utc(item?.SettlementDate).format("YYYY-MM-DD HH:mm:ss"),
         // settlementDate:  moment.utc(item?.SettlementDate).format("YYYY-MM-DD HH:mm:ss"),
         settlementDate: item?.SettlementDate != null ? moment.utc(item?.SettlementDate).format("YYYY-MM-DD HH:mm:ss") : null,

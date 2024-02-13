@@ -800,9 +800,13 @@ const NewBooking = () => {
       packageGuestCount: JSON.stringify(packageGuestCount),
       userId: loginDetails?.logindata?.userId,
       userTypeId: loginDetails?.logindata?.UserType,
+      localAgentId : localAgentId != null || localAgentId != undefined ? localAgentId : 0,
       travelAgentName: Discountpercent
         ? localAgentDetails?.Name || TravelDetails?.Name
         : "",
+        travelAgentId: TravelDetails?.Name != undefined || TravelDetails?.Name != null 
+        ? TravelAgentId
+        : 0,
       // shiftId:
       //   shiftDetails?.ShiftTypeId === 1 && shiftDetails?.ShiftOpen === 1
       //     ? 1
@@ -916,116 +920,188 @@ const NewBooking = () => {
 
           console.log("data------------>", data);
 
-          dispatch(
-            AddBillingDetails(
-              loginDetails?.logindata?.Token,
-              data,
-              (callback) => {
-                if (callback.status) {
-                  console.log(
-                    "Generate Bill --------------?",
-                    callback?.response?.Details[0]?.NumOfTeens,
-                    callback?.response?.Details
-                  );
-
-                  if (localAgentId) {
-                    const agentDetails = {
-                      userId: localAgentDetails?.Id,
-                      userType: localAgentDetails?.UserType,
-                      localAgentName: localAgentDetails?.Name,
-                    };
-                    dispatch(
-                      countDriverBookings(
-                        agentDetails,
-
-                        (callback) => {
-                          if (callback.status) {
-                            console.log(
-                              "Callback count local agent bookings---->",
-                              callback?.response?.Details
-                            );
-                          } else {
-                            toast.error(callback.error);
-                            // reject(callback);
-                          }
-                        }
-                      )
-                    );
-                  }
-
-                  /// settlement if Discountpercent
-                  if (Discountpercent) {
-                    let perc = localAgentId
-                      ? localAgentDetails?.DiscountPercent
-                      : TravelAgentId
-                      ? TravelDetails?.DiscountPercent
-                      : 0;
-
-                    const AgentSettlemetDiscount = perc - Discountpercent;
-
-                    console.log(
-                      "AgentSettlemetDiscount-------->",
-                      AgentSettlemetDiscount
-                    );
-
-                    const calculateAmountAfterDiscount =
-                      data?.actualAmount * (1 - AgentSettlemetDiscount / 100);
-
-                    console.log(
-                      "calculateAmountAfterDiscount",
-                      calculateAmountAfterDiscount
-                    );
-
-                    const AgentSettlementAmount =
-                      (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
-                      100;
-
-                    const agentData = {
-                      userId: localAgentDetails?.Id || TravelDetails?.Id,
-                      agentName: localAgentDetails?.Name || TravelDetails?.Name,
-                      userTypeId:
-                        localAgentDetails?.UserType || TravelDetails?.UserType,
-                      settlementAmount: AgentSettlementAmount,
-                      bookingDate:
-                        callback?.response?.Details?.[0]?.BookingDate?.slice(
-                          0,
-                          10
-                        ),
-                      bookingId: callback?.response?.Details?.[0]?.BookingId,
-                    };
-                    dispatch(
-                      AddupdateAgentSettlement(
-                        agentData,
-                        loginDetails?.logindata?.Token,
-                        (callback2) => {}
-                      )
-                    );
-                  }
-
-                  if (
-                    callback?.response?.Details[0]?.NumOfTeens -
-                      callback?.response?.Details[0]?.TotalGuestCount ==
-                    0
-                  ) {
-                    navigate("/TeensBilling", {
-                      state: { BookingDetails: callback?.response?.Details },
-                    });
-                    setLoader(false);
-                  } else {
-                    navigate("/BillingDetails", {
-                      state: { BookingDetails: callback?.response?.Details },
-                    });
-                    setLoader(false);
-                  }
-
-                  toast.error(callback.error);
-                } else {
-                  toast.error(callback.error);
-                  setLoader(false);
-                }
-              }
-            )
+                            /// settlement if Discountpercent
+                            if (Discountpercent) {
+                              let perc = localAgentId
+                                ? localAgentDetails?.DiscountPercent
+                                : TravelAgentId
+                                ? TravelDetails?.DiscountPercent
+                                : 0;
+          
+                              const AgentSettlemetDiscount = perc - Discountpercent;
+          
+                              console.log(
+                                "AgentSettlemetDiscount-------->",
+                                AgentSettlemetDiscount
+                              );
+          
+                              const calculateAmountAfterDiscount =
+                                data?.actualAmount * (1 - AgentSettlemetDiscount / 100);
+          
+                              console.log(
+                                "calculateAmountAfterDiscount",
+                                calculateAmountAfterDiscount
+                              );
+          
+                              const AgentSettlementAmount =
+                                (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
+                                100;
+          
+                              const agentData = {
+                                userId: localAgentDetails?.Id || TravelDetails?.Id,
+                                agentName: localAgentDetails?.Name || TravelDetails?.Name,
+                                userTypeId:
+                                  localAgentDetails?.UserType || TravelDetails?.UserType,
+                                settlementAmount: AgentSettlementAmount,
+                                bookingDate:
+                                callback?.response?.Details?.BookingDate != null ? 
+                                moment(callback?.response?.Details?.BookingDate).format("YYYY-MM-DD") :
+                                moment(callback?.response?.Details?.FutureDate
+                                  ).format("YYYY-MM-DD"),
+                                bookingId: callback?.response?.Details?.Id,
+                              };
+                              dispatch(
+                                AddupdateAgentSettlement(
+                                  agentData,
+                                  loginDetails?.logindata?.Token,
+                                  (callback2) => {
+                                    if (callback2?.status) {
+                                      dispatch(
+                                        AddBillingDetails(
+                                          loginDetails?.logindata?.Token,
+                                          data,
+                                          (callback5) => {
+                                            if (callback5.status) {
+                                              console.log(
+                                                "Generate Bill --------------?",
+                                                callback5?.response?.Details[0]?.NumOfTeens,
+                                                callback5?.response?.Details
+                                              );
+                            
+                                              if (localAgentId) {
+                                                const agentDetails = {
+                                                  userId: localAgentDetails?.Id,
+                                                  userType: localAgentDetails?.UserType,
+                                                  localAgentName: localAgentDetails?.Name,
+                                                };
+                                                dispatch(
+                                                  countDriverBookings(
+                                                    agentDetails,
+                            
+                                                    (callback) => {
+                                                      if (callback.status) {
+                                                        console.log(
+                                                          "Callback count local agent bookings---->",
+                                                          callback?.response?.Details
+                                                        );
+                                                      } else {
+                                                        toast.error(callback.error);
+                                                        // reject(callback);
+                                                      }
+                                                    }
+                                                  )
+                                                );
+                                              }
+                            
+                            
+                                              if (
+                                                callback5?.response?.Details[0]?.NumOfTeens -
+                                                  callback5?.response?.Details[0]?.TotalGuestCount ==
+                                                0
+                                              ) {
+                                                navigate("/TeensBilling", {
+                                                  state: { BookingDetails: callback5?.response?.Details },
+                                                });
+                                                setLoader(false);
+                                              } else {
+                                                navigate("/BillingDetails", {
+                                                  state: { BookingDetails: callback5?.response?.Details },
+                                                });
+                                                setLoader(false);
+                                              }
+                            
+                                              toast.error(callback5.error);
+                                            } else {
+                                              toast.error(callback5.error);
+                                              setLoader(false);
+                                            }
+                                          }
+                                        )
+                                      );
+                                    }
+                                    else{
+                                      toast.error(callback2.error)
+                                    }
+                                  }
+                                )
+                              );
+                            }
+          
+else{
+  dispatch(
+    AddBillingDetails(
+      loginDetails?.logindata?.Token,
+      data,
+      (callback) => {
+        if (callback.status) {
+          console.log(
+            "Generate Bill --------------?",
+            callback?.response?.Details[0]?.NumOfTeens,
+            callback?.response?.Details
           );
+
+          if (localAgentId) {
+            const agentDetails = {
+              userId: localAgentDetails?.Id,
+              userType: localAgentDetails?.UserType,
+              localAgentName: localAgentDetails?.Name,
+            };
+            dispatch(
+              countDriverBookings(
+                agentDetails,
+
+                (callback) => {
+                  if (callback.status) {
+                    console.log(
+                      "Callback count local agent bookings---->",
+                      callback?.response?.Details
+                    );
+                  } else {
+                    toast.error(callback.error);
+                    // reject(callback);
+                  }
+                }
+              )
+            );
+          }
+
+
+          if (
+            callback?.response?.Details[0]?.NumOfTeens -
+              callback?.response?.Details[0]?.TotalGuestCount ==
+            0
+          ) {
+            navigate("/TeensBilling", {
+              state: { BookingDetails: callback?.response?.Details },
+            });
+            setLoader(false);
+          } else {
+            navigate("/BillingDetails", {
+              state: { BookingDetails: callback?.response?.Details },
+            });
+            setLoader(false);
+          }
+
+          toast.error(callback.error);
+        } else {
+          toast.error(callback.error);
+          setLoader(false);
+        }
+      }
+    )
+  );
+}
+
 
           // navigate("/GenerateBill", {
           //   state: { userData: callback?.response?.Details },
