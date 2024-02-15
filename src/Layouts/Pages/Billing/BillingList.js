@@ -553,15 +553,6 @@ const BillingList = () => {
   console.log('dataArray-->',dataArray);
 
   dataArray.sort((a, b) => b.BookingId - a.BookingId);
-//   dataArray.sort((a, b) => {
-//   // First, sort by BookingId
-//   if (b.BookingId !== a.BookingId) {
-//     return b.BookingId - a.BookingId;
-//   } else {
-//     // If BookingId is equal, sort by BillingId
-//     return b.BillingId - a.BillingId;
-//   }
-// });
 
   dataArray.forEach((group) => {
     group.Items.sort((a, b) => {
@@ -584,7 +575,6 @@ const BillingList = () => {
   // dataArray.forEach((group) => {
   //   group.Items.sort((a, b) => b.BillNumber - a.BillNumber); // Sorting by descending order of BillNumber
   // });
-
   const combinedDataArray = dataArray;
 
   console.log("Combined Array-------------------------->", combinedDataArray);

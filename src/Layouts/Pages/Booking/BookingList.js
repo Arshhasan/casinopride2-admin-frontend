@@ -813,7 +813,6 @@ const BookingList = () => {
   const GenerateBill = (item) => {
     console.log('item?.FutureDate>>',item?.FutureDate);
     console.log('item?.BookingDate-------',item?.BookingDate);
-    console.log("Generate Bill--------->", shiftStatus);
     console.log('GenerateBill>>item>>',item);
     //checking if its Travel Agent
     if (item?.UserTypeId == 5) {
@@ -931,10 +930,10 @@ const BookingList = () => {
                       calculateAmountAfterDiscount
                     );
 
-                    const AgentSettlementAmount =
-                      (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
-                      100;
-
+                    // const AgentSettlementAmount =
+                    //   (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
+                    //   100;
+                    const AgentSettlementAmount = ( AgentSettlemetDiscount/ 100) *item?.AmountAfterDiscount
                     const agentData = {
                       userId: callback3?.response?.Details?.Id,
                       agentName: callback3?.response?.Details?.Name,

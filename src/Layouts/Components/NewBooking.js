@@ -922,6 +922,7 @@ const NewBooking = () => {
 
                             /// settlement if Discountpercent
                             if (Discountpercent) {
+                              console.log('Inside if Discountpercent--->');
                               let perc = localAgentId
                                 ? localAgentDetails?.DiscountPercent
                                 : TravelAgentId
@@ -943,10 +944,11 @@ const NewBooking = () => {
                                 calculateAmountAfterDiscount
                               );
           
-                              const AgentSettlementAmount =
-                                (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
-                                100;
-          
+                              // const AgentSettlementAmount =
+                              //   (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
+                              //   100;
+
+                                const AgentSettlementAmount =  (AgentSettlemetDiscount/100)*data?.amountAfterDiscount
                               const agentData = {
                                 userId: localAgentDetails?.Id || TravelDetails?.Id,
                                 agentName: localAgentDetails?.Name || TravelDetails?.Name,
@@ -1038,6 +1040,7 @@ const NewBooking = () => {
                             }
           
 else{
+  console.log('inside else of Discountpercent======>');
   dispatch(
     AddBillingDetails(
       loginDetails?.logindata?.Token,
@@ -1648,7 +1651,6 @@ else{
   // };
 
   return (
-    console.log('Madhubala>>>>>',shiftForUserOne),
     <div>
       <div>
         <input

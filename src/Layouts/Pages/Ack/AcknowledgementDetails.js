@@ -398,9 +398,11 @@ const AcknowledgementDetails = () => {
             calculateAmountAfterDiscount
           );
 
-          const AgentSettlementAmount =
-            (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
-            100;
+          // const AgentSettlementAmount =
+          //   (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
+          //   100;
+          const AgentSettlementAmount = (AgentSettlemetDiscount/100)*callback1?.response?.Details?.AmountAfterDiscount
+
 
           const agentData = {
             userId: localAgentDetails?.Id,
@@ -558,7 +560,6 @@ const AcknowledgementDetails = () => {
       bookingId: bookingData?.bookingId,
       settleByCompany : paymentOption == "Company Settlement" ? 1 : 0
     };
-    console.log('kolaverii>>>',data);
     const shiftData = {
       bookingId: bookingData?.bookingId,
       // shiftTypeId : shiftDetails?.ShiftTypeId === 1 && shiftDetails?.ShiftOpen === 1
@@ -664,9 +665,10 @@ const AcknowledgementDetails = () => {
             calculateAmountAfterDiscount
           );
 
-          const AgentSettlementAmount =
-            (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
-            100;
+          // const AgentSettlementAmount =
+          //   (calculateAmountAfterDiscount * AgentSettlemetDiscount) /
+          //   100;
+          const AgentSettlementAmount = (AgentSettlemetDiscount/100)*callback?.response?.Details?.AmountAfterDiscount
 
           const agentData = {
             userId: localAgentDetails?.Id,
