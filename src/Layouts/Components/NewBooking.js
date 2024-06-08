@@ -796,6 +796,9 @@ const NewBooking = () => {
   };
 
   const onsubmit = () => {
+    const discountFigureToUse = discountToggle ? discountFigure : 0;
+    const selectedOptionToUse = discountToggle ? selectedOption : null;
+
     setLoader(true);
 
     console.log("amountAfterDiscount--->", amountAfterDiscount);
@@ -822,8 +825,8 @@ const NewBooking = () => {
       teensTax: teenstaxPercentage,
       teensTaxName: teensTaxName,
       bookingDate: activeDateOfOutlet?.OutletDate,
-      discount: discountFigure,
-      panelDiscountId: selectedOption,
+      discount: discountFigureToUse,
+      panelDiscountId: selectedOptionToUse,
       couponId: couponId,
       referredBy: referredBy,
       // settledByCompany: 0,
