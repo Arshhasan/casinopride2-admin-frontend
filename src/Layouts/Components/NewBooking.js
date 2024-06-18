@@ -8,6 +8,7 @@ import {
   getPanelDiscounts,
   EditUsedCoupon,
   getUserByPhone,
+  getDiscountsUsingDiscountCode,
 } from "../../Redux/actions/users";
 import { AddBookingFn } from "../../Redux/actions/booking";
 import { connect, useSelector } from "react-redux";
@@ -211,6 +212,7 @@ const NewBooking = () => {
   const [TravelDetails, setTravelDetails] = useState();
 
   const [Discountpercent, setDiscountpercent] = useState("");
+  const [showDiscountCodeField, setShowDiscountCodeField] = useState(false);
 
   useEffect(() => {
     const url = new URL(window.location.href);
@@ -229,11 +231,13 @@ const NewBooking = () => {
             if (callback?.response?.Details?.UserType == 8) {
               setLocalAgentId(callback?.response?.Details?.Id);
               setLocalAgentDetails(callback?.response?.Details);
+              setShowDiscountCodeField(true);
             }
 
             if (callback?.response?.Details?.UserType == 5) {
               setTravelAgentId(callback?.response?.Details?.Id);
               setTravelDetails(callback?.response?.Details);
+              setShowDiscountCodeField(true);
             }
           } else {
             toast.error(callback.error);
@@ -268,6 +272,9 @@ const NewBooking = () => {
   const [packageName, setPackageName] = useState("");
 
   const [discountToggle, setDiscountToggle] = useState(false);
+  const [discountCodeToggle, setDiscountCodeToggle] = useState(false);
+  const [discountCode, setDiscountCode] = useState("");
+
   const [couponToggle, setCouponToggle] = useState(false);
   const [referredByToggle, setReferredByToggle] = useState(false);
 
@@ -278,6 +285,7 @@ const NewBooking = () => {
   const [remainingCoupons, setRemainingCoupons] = useState();
   const [bookingData, setBookingData] = useState("");
   const [couponDiscount, setCouponDiscout] = useState("");
+  const [discountCodeDiscount, setDiscountCodeDiscount] = useState(""); 
   const [totalteensPrice, setTotalTeensPrice] = useState("");
 
   const [teenpackageId, setTeenPackageId] = useState([]);
@@ -357,6 +365,7 @@ const NewBooking = () => {
         setCouponCode("");
         setSelectedOption("");
         setamountAfterDiscount("");
+        setDiscountCodeDiscount("");
         setCouponDiscout("");
         setSettledBy(0);
         // if (paymentOption == "Cash") {
@@ -373,6 +382,7 @@ const NewBooking = () => {
         console.log("inside discountToggle");
         setamountAfterDiscount("");
         setCouponDiscout("");
+        setDiscountCodeDiscount("");
         setCouponCode("");
         setSettledBy(0);
         // if (paymentOption == "Cash") {
@@ -391,12 +401,59 @@ const NewBooking = () => {
           setCardAmount(amount);
         }
       }
+    } else if(field === "discountCode") {
+        setDiscountCodeToggle(!discountCodeToggle);
+        if (!discountCodeToggle) {
+          console.log("Called Here----12>");
+          setCouponToggle(false);
+          setReferredByToggle(false);
+          setDiscountToggle(false);
+          setCouponCode("");
+          setSelectedOption("");
+          setamountAfterDiscount("");
+          setCouponDiscout("");
+          setSettledBy(0);
+          // if (paymentOption == "Cash") {
+          //   setCashAmount(DiscountedAmount);
+          // } else if (paymentOption == "UPI") {
+          //   setCardAmount(DiscountedAmount);
+          // } else if (paymentOption == "Card") {
+          //   setUpiAmount(DiscountedAmount);
+          // }
+  
+          //newww code
+        } else if (discountCodeToggle) {
+          console.log("Called Here----11>");
+          console.log("inside discountCodeToggle");
+          setamountAfterDiscount("");
+          setSelectedOption("");
+          setCouponDiscout("");
+          setCouponCode("");
+          setSettledBy(0);
+          // if (paymentOption == "Cash") {
+          //   setCashAmount(DiscountedAmount);
+          // } else if (paymentOption == "UPI") {
+          //   setCardAmount(DiscountedAmount);
+          // } else if (paymentOption == "Card") {
+          //   setUpiAmount(DiscountedAmount);
+          // }
+  
+          if (paymentOption == "Cash") {
+            setCashAmount(amount);
+          } else if (paymentOption == "UPI") {
+            setUpiAmount(amount);
+          } else if (paymentOption == "Card") {
+            setCardAmount(amount);
+          }
+        }
+      
     } else if (field === "coupon") {
       console.log("couponToggle>>", couponToggle);
       setCouponToggle(!couponToggle);
       if (!couponToggle) {
         setDiscountToggle(false);
         setReferredByToggle(false);
+        setDiscountCodeToggle(false);
         setCouponCode("");
         setSelectedOption("");
         setamountAfterDiscount("");
@@ -425,6 +482,7 @@ const NewBooking = () => {
       if (!referredByToggle) {
         setDiscountToggle(false);
         setCouponToggle(false);
+        setDiscountCodeToggle(false);
         setCouponCode("");
         setCouponDiscout("");
         setSettledBy(1);
@@ -634,6 +692,45 @@ const NewBooking = () => {
     }
   };
 
+  const handleDiscountCode = () => {
+    if (!discountCode) {
+      toast.error("Discount code is empty.");
+      return;
+    }
+
+    dispatch(getDiscountsUsingDiscountCode(
+      loginDetails?.logindata?.Token,
+      discountCode,
+      (callback) => {
+        if (callback.status) {
+        console.log(
+          "Discount Code Details ---------->",
+          callback?.response?.Details
+        );
+        const discount =
+                  (amount * callback?.response?.Details?.DiscountPercent) / 100;
+                const discountedAmount = amount - discount;
+                setDiscountCodeDiscount(discountedAmount);
+
+                if (paymentOption == "Cash") {
+                  setCashAmount(discountedAmount);
+                } else if (paymentOption == "UPI") {
+                  setUpiAmount(discountedAmount);
+                } else if (paymentOption == "Card") {
+                  setCardAmount(discountedAmount);
+                }
+
+                setDiscountFigure(callback?.response?.Details?.DiscountPercent);
+                setDiscountpercent(callback?.response?.Details?.DiscountPercent);
+
+                toast.success("Discount code is Applied");
+              } else {
+                toast.error("Discount code is invalid.");
+              }
+      }));
+      
+  }
+
   console.log(
     "discountFigure_____________________(((((((((((((((((((((((((({{{{{{{{{{{{{{{}}}}}}}}}}}}}}}______________________------------>>>>>>>>>>>>>",
     discountFigure
@@ -796,7 +893,7 @@ const NewBooking = () => {
   };
 
   const onsubmit = () => {
-    const discountFigureToUse = discountToggle ? discountFigure : 0;
+    const discountFigureToUse = (discountToggle || discountCodeToggle) ? discountFigure : 0;
     const selectedOptionToUse = discountToggle ? selectedOption : null;
 
     setLoader(true);
@@ -2071,7 +2168,7 @@ const NewBooking = () => {
           {!Discountpercent && (
             <div className="col-lg-6 mt-3">
               <div className="row">
-                <div className="col-4">
+                <div className="col-3">
                   <label for="formGroupExampleInput " className="form_text">
                     Discount
                   </label>
@@ -2087,7 +2184,25 @@ const NewBooking = () => {
                   </div>
                 </div>
 
-                <div className="col-4">
+                {
+                showDiscountCodeField && <div className="col-3">
+                  <label for="formGroupExampleInput " className="form_text">
+                    Discount Code
+                  </label>
+
+                  <div className="form-check form-switch">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="discountSwitch"
+                      checked={discountCodeToggle}
+                      onChange={() => handleToggle("discountCode")}
+                    />
+                  </div>
+                </div>
+}
+
+                <div className="col-3">
                   <label for="formGroupExampleInput " className="form_text">
                     Coupon
                   </label>
@@ -2103,7 +2218,7 @@ const NewBooking = () => {
                   </div>
                 </div>
 
-                <div className="col-4">
+                <div className="col-3">
                   <label for="formGroupExampleInput " className="form_text">
                     Settled by company
                   </label>
@@ -2153,6 +2268,32 @@ const NewBooking = () => {
                     onClick={separateInitials}
                   >
                     Check
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
+
+          <div className="row">
+            {discountCodeToggle ? (
+              <div className="col-lg-6 mt-3">
+                <div className="input-group">
+                  <input
+                    className="form-control mt-2"
+                    type="text"
+                    placeholder="Discount Code"
+                    onChange={(e) => setDiscountCode(e.target.value)}
+                    value={discountCode}
+                  />
+                  <button
+                    className="btn btn-primary"
+                    style={{ marginTop: "8px" }}
+                    type="button"
+                    onClick={handleDiscountCode}
+                  >
+                    Apply
                   </button>
                 </div>
               </div>
