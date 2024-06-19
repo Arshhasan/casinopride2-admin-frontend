@@ -2418,6 +2418,30 @@ console.log('openShiftTwo>>data>>',data);
     );
   };
 
+  const generateCashierReportShiftWiseWithShiftId = (paramShiftId) => {
+    console.log("Shiftttt", outletFormattedData, paramShiftId);
+    dispatch(
+      cashierReportShiftWise(
+        loginDetails?.logindata?.Token,
+        outletFormattedData,
+        paramShiftId,
+
+        (callback) => {
+          if (callback.status) {
+            console.log("cashierReport---shift wise>>", callback?.response);
+            window.open(callback?.response?.Details?.ReportFile, "_blank");
+
+            // window.location.reload();
+            setShowShiftReportModal(false);
+          } else {
+            console.log("cashierReport>>>Callback------", callback.error);
+            toast.error(callback.error);
+          }
+        }
+      )
+    );
+  };
+
   const closeCashierReportModal = () => {
     setShowGenerateCashierModal(false);
     window.location.reload();
@@ -2476,8 +2500,7 @@ console.log('openShiftTwo>>data>>',data);
                 
               </div>
             )}
-            <div className="d-flex justify-content-between">
-             
+            <div className="row d-flex justify-content-end">
               {!outletOpenDetails?.Details[0]?.OutletStatus == 1 &&
               !outletDetails == 1 ? (
                 <div className="col-md-4 mb-5 d-flex justify-content-end">
@@ -2532,7 +2555,7 @@ console.log('openShiftTwo>>data>>',data);
                 <div className="d-flex justify-content-center align-items-center" style={{flexBasis: "33.33%"}}>
                   {shifts[1]?.[0]?.CloseTime || recentShiftOpen?.filter((elem) => elem.ShiftTypeId === 1)?.[0]?.CloseTime ? <button
                     className="btn btn-primary m-2 p-2"
-                    onClick={() => generateReportFn(1)}
+                    onClick={() => generateCashierReportShiftWiseWithShiftId(1)}
                   >
                     Generate Report
                   </button> : <div />}
@@ -2540,7 +2563,7 @@ console.log('openShiftTwo>>data>>',data);
                 <div className="d-flex justify-content-center align-items-center" style={{flexBasis: "33.33%"}}>
                   {shifts[2]?.[0]?.CloseTime || recentShiftOpen?.filter((elem) => elem.ShiftTypeId === 2)?.[0]?.CloseTime  ? <button
                     className="btn btn-primary m-2 p-2"
-                    onClick={() => generateReportFn(2)}
+                    onClick={() => generateCashierReportShiftWiseWithShiftId(2)}
                   >
                     Generate Report
                   </button> : <div />}
@@ -2548,7 +2571,7 @@ console.log('openShiftTwo>>data>>',data);
                 <div className="d-flex justify-content-center align-items-center" style={{flexBasis: "33.33%"}}>
                   {shifts[3]?.[0]?.CloseTime || recentShiftOpen?.filter((elem) => elem.ShiftTypeId === 3)?.[0]?.CloseTime ? <button
                     className="btn btn-primary m-2 p-2"
-                    onClick={() => generateReportFn(3)}
+                    onClick={() => generateCashierReportShiftWiseWithShiftId(3)}
                   >
                     Generate Report
                   </button> : <div />}
