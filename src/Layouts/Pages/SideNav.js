@@ -46,6 +46,9 @@ const SideNav = () => {
     (state) => state.auth?.userDetailsAfterLogin.Details
   );
 
+  const validateDetails = useSelector(
+    (state) => state.auth?.userDetailsAfterValidation
+  );
   const logoutFn = () => {
     const data = {
       UserId: loginDetails?.logindata?.userId,
@@ -111,6 +114,7 @@ const SideNav = () => {
       )}
       <hr />
       <Sidenav expanded={expanded} defaultOpenKeys={["3", "4"]}>
+      <span style={{fontSize: "15px", fontWeight: "500", color: "black", padding: "0 15px", textAlign: "center"}}>Welcome, {validateDetails?.Details?.Name}</span>
         <Sidenav.Body>
           <Nav activeKey={activeKey} onSelect={setActiveKey}>
             {loginDetails?.logindata?.UserType == "1" ||
