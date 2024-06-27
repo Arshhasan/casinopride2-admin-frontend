@@ -334,11 +334,11 @@ const NewBooking = () => {
             setSelectedCity(userData?.City);
             let countrySelected = Country.getAllCountries().filter((country) => country.name === userData?.Country)?.[0];
             setSelectedCountry({
-              label: countrySelected.name,
-              value: countrySelected.name,
-              isoCode: countrySelected.isoCode
+              label: countrySelected?.name,
+              value: countrySelected?.name,
+              isoCode: countrySelected?.isoCode
             });
-            let stateSelected = State?.getStatesOfCountry(countrySelected?.isoCode).filter((state) => state.name === userData?.State)?.[0];
+            let stateSelected = State?.getStatesOfCountry(countrySelected?.isoCode || selectedCountry?.isoCode).filter((state) => state.name === userData?.State)?.[0];
             setSelectedState(stateSelected);
             setDateofbirth(userData?.DOB);
             console.log("Callback---------get user details", callback?.response);
@@ -544,12 +544,6 @@ const NewBooking = () => {
     "Selected city-------------------------------------------->",
     selectedCity
   );
-
-  useEffect(() => {
-    console.log(selectedCountry);
-    console.log(selectedCountry?.isoCode);
-    console.log(State?.getStatesOfCountry(selectedCountry?.isoCode));
-  }, [selectedCountry]);
 
   console.log("selectedCountry------------->", selectedCountry);
 
