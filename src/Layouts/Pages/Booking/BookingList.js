@@ -1233,15 +1233,15 @@ const BookingList = () => {
             </div>
 
             <div className="col-md-4 col-lg-4 d-flex justify-content-end mb-3">
-              <button className="btn btn-primary">
-                <Link
+            <Link
                   to="/NewBooking"
                   state={{ userType: "4" }}
                   className="addLinks"
                 >
-                  New Booking
-                </Link>
+              <button className="btn btn-primary h-100">
+                New Booking
               </button>
+              </Link>
             </div>
           </div>
         </div>
