@@ -2637,38 +2637,37 @@ const BillingDetails = () => {
                           ),
                         };
 
-                          dispatch(
-                            sendEmail(data, (callback) => {
-                              if (callback.status) {
-                                toast.success("Email sent");
-                                navigate("/NewBooking");
+                        dispatch(
+                          sendEmail(data, (callback) => {
+                            if (callback.status) {
+                              toast.success("Email sent");
+                              navigate("/NewBooking");
 
-                                toast.error(callback.error);
-                              } else {
-                                toast.error(callback.error);
-                              }
-                            })
-                          );
+                              toast.error(callback.error);
+                            } else {
+                              toast.error(callback.error);
+                            }
+                          })
+                        );
 
-                          const apiUrl = `http://commnestsms.com/api/push.json?apikey=635cd8e64fddd&route=transactional&sender=CPGOAA&mobileno=${BookingDetails[0]?.Phone}&text=Thank%20you%20for%20choosing%20Casino%20Pride.%20View%20e-bill%20of%20Rs%20${FinalAmount}%20at%20-%20${callback?.response?.shortUrl}%0ALets%20Play%20with%20Pride%20!%0AGood%20luck%20!%0ACPGOAA`;
-                          fetch(apiUrl)
-                            .then((response) => {
-                              if (!response.ok) {
-                                throw new Error(
-                                  `HTTP error! Status: ${response.status}`
-                                );
-                              }
-                              return response.json(); // Parse the JSON response
-                            })
-                            .then((data) => {
-                              console.log(data); // Handle the parsed JSON data here
-                              toast.success("Details sent to customer");
-                            })
-                            .catch((error) => {
-                              console.error("Fetch error:", error);
-                              toast.success("Details sent to customer");
-                            });
-                        
+                        const apiUrl = `http://commnestsms.com/api/push.json?apikey=635cd8e64fddd&route=transactional&sender=CPGOAA&mobileno=${BookingDetails[0]?.Phone}&text=Thank%20you%20for%20choosing%20Casino%20Pride.%20View%20e-bill%20of%20Rs%20${FinalAmount}%20at%20-%20${callback?.response?.shortUrl}%0ALets%20Play%20with%20Pride%20!%0AGood%20luck%20!%0ACPGOAA`;
+                        fetch(apiUrl)
+                          .then((response) => {
+                            if (!response.ok) {
+                              throw new Error(
+                                `HTTP error! Status: ${response.status}`
+                              );
+                            }
+                            return response.json(); // Parse the JSON response
+                          })
+                          .then((data) => {
+                            console.log(data); // Handle the parsed JSON data here
+                            toast.success("Details sent to customer");
+                          })
+                          .catch((error) => {
+                            console.error("Fetch error:", error);
+                            toast.success("Details sent to customer");
+                          });
 
                         setLoader(false);
                       } else {
@@ -3961,7 +3960,7 @@ const BillingDetails = () => {
                                   className="BillPrintFont"
                                 >
                                   {/* <p>Kids</p> */}
-                                  <p>Entry, Food (HSN-996331)</p>
+                                  <p>Entry, Food (HSN-999692)</p>
                                 </td>
 
                                 <td
@@ -5201,7 +5200,7 @@ const BillingDetails = () => {
                                 <td style={{ textAlign: "center" }}>
                                   {/* <p className="BillPrintFontPrint">Kids</p> */}
                                   <p className="BillPrintFontPrint">
-                                    Entry, Food (HSN-996331)
+                                    Entry, Food (HSN-999692)
                                   </p>
                                 </td>
 
