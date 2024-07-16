@@ -1458,9 +1458,10 @@ const TeensBilling = () => {
                       className="BillPrintFont"
                     >
                       {" "}
-                      {moment
-                        .utc(item?.BillDateTime)
-                        .format("DD/MM/YYYY HH:mm")}
+                      {moment(item?.ActualBillingDate).format(
+                          "DD/MM/YYYY"
+                        )}{" "}
+                      {item?.ActualBillingTime}
                     </span>
                   </p>
 
@@ -1768,9 +1769,10 @@ const TeensBilling = () => {
                         Date & Time:
                         <span className="BillPrintFontPrint">
                           {" "}
-                          {moment
-                            .utc(item?.BillDateTime)
-                            .format("DD/MM/YYYY HH:mm")}
+                          {moment(item?.ActualBillingDate).format(
+                              "DD/MM/YYYY"
+                            )}{" "}
+                          {item?.ActualBillingTime}
                         </span>
                       </p>
                     </div>
