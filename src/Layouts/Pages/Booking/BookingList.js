@@ -1426,7 +1426,7 @@ const BookingList = () => {
                     moment(item?.BookingDate).format("YYYY-MM-DD") == activeDateOfOutlet?.OutletDate
                     ? (
                     <AiFillEdit
-                      onClick={() => ([1, 2].includes(loginDetails?.logindata?.UserType)) ? navigate("/UpdateBooking/" + item.Id ) : startEditing(item)}
+                      onClick={() => ([1, 2].includes(loginDetails?.logindata?.UserType) && item?.IsBillGenerated != 1) ? navigate("/UpdateBooking/" + item.Id ) : startEditing(item)}
                       style={{
                         height: "20px",
                         width: "20px",
