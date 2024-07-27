@@ -55,6 +55,7 @@ const NewBooking = () => {
   const [shiftOneOpen, setShiftOneOpen] = useState(false);
   const [shiftTwoOpen, setShiftTwoOpen] = useState(false);
   const [shiftThreeOpen, setShiftThreeOpen] = useState(false);
+  const [toggleCounter, setToggleCounter] = useState(0); 
   const handleClose = () => setShow(false);
 
   const loginDetails = useSelector(
@@ -249,10 +250,21 @@ const NewBooking = () => {
     }
 
     const Discount = url.searchParams.get("Discountpercent");
+    const DiscountCodeURL  = url.searchParams.get("DiscountCode");
+    if(DiscountCodeURL) {
+      setDiscountCodeToggle(true);
+      setDiscountCode(DiscountCodeURL);
+      setToggleCounter(toggleCounter + 1);
+      
+    }
     setDiscountpercent(Discount);
     setDiscountFigure(Discount);
   }, []);
 
+  useEffect(() => {
+    if(toggleCounter)
+    handleDiscountCode()
+  }, [toggleCounter])
   const [guestName, setGuestName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
