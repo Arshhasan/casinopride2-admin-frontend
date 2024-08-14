@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import cancel from "../../assets/Images/cancel.png";
+import moment from "moment";
 
 const AddPackage = () => {
   const location = useLocation();
@@ -19,7 +20,8 @@ const AddPackage = () => {
     (state) => state.auth?.userDetailsAfterLogin.Details
   );
 
-  console.log("userData", userData);
+  const [loading, setLoading] = useState(false);
+const [startDate, setStartDate] = useState(moment().format('YYYY-MM-DD'));
 
   const formattedData = userData?.packageItems.map((item) => ({
     itemId: item?.Id,
@@ -36,7 +38,7 @@ const AddPackage = () => {
     taxDiffWeekend: item?.TaxDiffWeekend,
   }));
 
-  console.log(formattedData);
+  const todayDate = moment().format("YYYY-MM-DD");
 
   const [packageName, setPackageName] = useState(
     userData?.PackageName ? userData?.PackageName : ""
@@ -144,7 +146,7 @@ const AddPackage = () => {
       packageItems[0]?.itemWeekendPrice !== 0 &&
       packageItems[0]?.itemTax !== 0 &&
       packageWeekdayPrice !== "" &&
-      packageWeekendPrice !== ""
+      packageWeekendPrice !== "" && !!startDate
     );
   };
 
@@ -193,13 +195,16 @@ const AddPackage = () => {
         packageTeensRate: actualTeensRate,
         packageTeensTax: packageTeensPercentage,
         packageTeensTaxName: packageTeensTax,
-        isPackageEnabled: 1,
+        isPackageEnabled: startDate === new Date().toISOString().substring(0,10) ? 1 : 0,
+        startDate: startDate
       };
       console.log("Data-------->", data);
 
+      setLoading(true);
       dispatch(
         AddPackageDetails(data, loginDetails?.logindata?.Token, (callback) => {
           if (callback.status) {
+            setLoading(false);
             toast.success("Package Added");
             navigate(-1);
             toast.error(callback.error);
@@ -363,6 +368,26 @@ const AddPackage = () => {
             onChange={(e) => setPackageTeensPercentage(e.target.value)}
             defaultValue={userData?.PackageTeensTax}
           />
+        </div>
+
+        <div className="col-lg-6 mt-3">
+      
+            <label for="formGroupExampleInput " className="form_text">
+              Start Date <span style={{ color: "red" }}>*</span>
+            </label>
+            <input
+              class="form-control mt-2"
+              type="date"
+              placeholder="Enter Start Date"
+              onChange={(e) => {
+                console.log({ startDate: e.target.value})
+                setStartDate(e.target.value)}}
+              disabled={userData}
+              value={startDate}
+              // defaultValue={moment(userData?.StartDate).format("YYYY-MM-DD")}
+              min={todayDate}
+            />
+          
         </div>
 
         {userData ? (
@@ -653,7 +678,7 @@ const AddPackage = () => {
                 type="submit"
                 className="btn btn_colour mt-5 btn-lg"
                 onClick={handleSubmit}
-                disabled={isButtonDisabled}
+                disabled={isButtonDisabled || loading}
               >
                 Submit
               </button>
