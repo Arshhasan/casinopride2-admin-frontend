@@ -21,7 +21,7 @@ const AddPackage = () => {
   );
 
   const [loading, setLoading] = useState(false);
-const [startDate, setStartDate] = useState(moment().format('YYYY-MM-DD'));
+const [startDate, setStartDate] = useState(userData?.PackageStartDate ?? moment().format('YYYY-MM-DD'));
 
   const formattedData = userData?.packageItems.map((item) => ({
     itemId: item?.Id,
@@ -380,7 +380,6 @@ const [startDate, setStartDate] = useState(moment().format('YYYY-MM-DD'));
               type="date"
               placeholder="Enter Start Date"
               onChange={(e) => {
-                console.log({ startDate: e.target.value})
                 setStartDate(e.target.value)}}
               disabled={userData}
               value={startDate}
