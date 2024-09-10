@@ -147,7 +147,7 @@ const Shifts = () => {
 
     dispatch(
       checkShiftForUser(
-        checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
+        checkActiveOtlet !== true ? today : activeDateOfOutlet?.OutletDate,
         validateDetails?.Details?.Id,
         validateDetails?.Details?.UserType,
         loginDetails?.logindata?.Token,
@@ -164,7 +164,7 @@ const Shifts = () => {
             ) {
               dispatch(
                 recentShiftForOutlet(
-                  !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
+                  checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
                   loginDetails?.logindata?.Token,
                   (callback) => {
                     if (callback) {
@@ -213,7 +213,7 @@ const Shifts = () => {
 
     dispatch(
       checkCurrentOutletFn(
-        !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
+        checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
         loginDetails?.logindata?.Token,
         (callback) => {
           if (callback.status) {
@@ -222,6 +222,7 @@ const Shifts = () => {
               callback?.response?.Details[0]?.OutletStatus
             );
             setOutletDetails(callback?.response?.Details[0]?.OutletStatus);
+            dispatch(saveOutletDetails(callback?.response));
           } else {
             // toast.error(callback.error);
           }
@@ -2504,6 +2505,9 @@ console.log('openShiftTwo>>data>>',data);
               {!outletOpenDetails?.Details[0]?.OutletStatus == 1 &&
               !outletDetails == 1 ? (
                 <div className="col-md-4 mb-5 d-flex justify-content-end">
+                  <Button variant="outline-primary" className="m-auto" onClick={() => generateCashierReport()}>
+                    Generate outlet report
+                  </Button>
                   <Button variant="primary" onClick={openOutletModal}>
                     Open Outlet
                   </Button>
