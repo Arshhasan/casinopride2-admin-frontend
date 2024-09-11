@@ -82,8 +82,7 @@ const Shifts = () => {
   const [defaultShift1, setDefaultShift1] = useState(false);
   const [shiftDetailsForUser, setSHiftDetaislForUser] = useState();
   const [openCloseOtletModal, setOpenCloseOutletModal] = useState(false);
-  const [showGenerateCashierModal, setShowGenerateCashierModal] =
-    useState(false);
+  const [showGenerateCashierModal, setShowGenerateCashierModal] = useState(false);
 
   const [showShiftReportModal, setShowShiftReportModal] = useState(false);
 
@@ -1415,10 +1414,7 @@ console.log('openShiftTwo>>data>>',data);
                   </button>
                 </div>
               </div>
-      
             </div>
-
- 
 
             <div className="col-md-4">
               <div class="Shiftcard">
@@ -1498,14 +1494,6 @@ console.log('openShiftTwo>>data>>',data);
                     Reopen
                   </button>
                 </div>
-
-                {/* <button
-              className="btn btn-primary mr-2"
-              onClick={handleConfirmShow}
-              style={{ width: "100%" }}
-            >
-              Close
-            </button> */}
               </div>
             </div>
 
@@ -1583,14 +1571,6 @@ console.log('openShiftTwo>>data>>',data);
                     Reopen
                   </button>
                 </div>
-
-                {/* <button
-              className="btn btn-primary mr-2"
-              onClick={handleConfirmShow}
-              style={{ width: "100%" }}
-            >
-              Close
-            </button> */}
               </div>
             </div>
 

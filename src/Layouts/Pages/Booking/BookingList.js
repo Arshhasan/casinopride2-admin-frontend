@@ -1666,6 +1666,11 @@ const BookingList = () => {
                 )}
               </p>
             </div>
+            {selectedUserDetails?.IsBookingWebsite ? <div className="col-6">
+              <p className="table-modal-list ">
+              {`Booking Mode: Website`}
+              </p>
+            </div> : null}
           </Modal.Body>
           <Modal.Footer></Modal.Footer>
         </Modal>
