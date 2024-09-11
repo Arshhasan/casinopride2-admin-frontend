@@ -18,7 +18,6 @@ import { openShiftFn } from "../../../Redux/actions/users";
 import { closeShiftFn } from "../../../Redux/actions/users";
 import { closeOutletFunction } from "../../../Redux/actions/users";
 import { reopenShiftFunction } from "../../../Redux/actions/users";
-import api from "../../../Service/api";
 import { saveOutletDetails } from "../../../Redux/reducers/auth";
 import { checkCurrentOutletFn } from "../../../Redux/actions/users";
 import { Oval } from "react-loader-spinner";
@@ -56,11 +55,6 @@ const Shifts = () => {
   const outletFormattedData = parsedDate?.format("YYYY-MM-DD");
 
   const [outletOpen, setOutletOpen] = useState(false);
-
-  const [shift1close, setShift1close] = useState(false);
-  const [shift2Close, setShift2Close] = useState(false);
-  const [shift3Close, setShift3close] = useState(false);
-
   //from api integration ---------------->
 
   const [checkOutletOpen, setCheckOutletOpen] = useState(false);
@@ -87,7 +81,6 @@ const Shifts = () => {
 
   const [defaultShift1, setDefaultShift1] = useState(false);
   const [shiftDetailsForUser, setSHiftDetaislForUser] = useState();
-  const [closeShiftButton, setCloseShiftButton] = useState(false);
   const [openCloseOtletModal, setOpenCloseOutletModal] = useState(false);
   const [showGenerateCashierModal, setShowGenerateCashierModal] =
     useState(false);
@@ -147,7 +140,7 @@ const Shifts = () => {
 
     dispatch(
       checkShiftForUser(
-        checkActiveOtlet !== true ? today : activeDateOfOutlet?.OutletDate,
+        checkActiveOtlet == true ? today : activeDateOfOutlet?.OutletDate,
         validateDetails?.Details?.Id,
         validateDetails?.Details?.UserType,
         loginDetails?.logindata?.Token,
@@ -164,7 +157,7 @@ const Shifts = () => {
             ) {
               dispatch(
                 recentShiftForOutlet(
-                  checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
+                  !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
                   loginDetails?.logindata?.Token,
                   (callback) => {
                     if (callback) {
@@ -213,7 +206,7 @@ const Shifts = () => {
 
     dispatch(
       checkCurrentOutletFn(
-        checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
+        !checkActiveOtlet ? activeDateOfOutlet?.OutletDate : today,
         loginDetails?.logindata?.Token,
         (callback) => {
           if (callback.status) {
@@ -1877,83 +1870,6 @@ console.log('openShiftTwo>>data>>',data);
         );
       }
 
-      // return (
-      //   <div className="row">
-      //     <div className="col-md-4">
-      //       <div class="Shiftcard">
-      //         <p className="outletTex">Shift One</p>
-      //       </div>
-      //       <div className={`card ${isOpen ? "open" : "closed"}`}>
-      //         <div className="card-header">
-      //           <h5 className="mb-0">Open the shift one</h5>
-      //         </div>
-
-      //         <div className="card-footer">
-      //           <button
-      //             className={`btn ${
-      //               outletDetails === 1 ? "btn-primary" : "btn-secondary"
-      //             } mr-2`}
-      //             onClick={handleShowOpenShift}
-      //             style={{ width: "100%" }}
-      //           >
-      //             Open
-      //           </button>
-      //         </div>
-      //       </div>
-      //     </div>
-
-      //     <div className="col-md-4">
-      //       <div class="Shiftcard">
-      //         <p className="outletTex">Shift Two</p>
-      //       </div>
-      //       <div className={`card ${isOpen ? "open" : "closed"}`}>
-      //         <div className="card-header">
-      //           <h5 className="mb-0">Open the shift Two</h5>
-      //         </div>
-
-      //         <div className="card-footer">
-      //           <button
-      //             className={`btn ${
-      //               outletDetails === 1 ? "btn-primary" : "btn-secondary"
-      //             } mr-2`}
-      //             onClick={handleShowOpenShift}
-      //             style={{ width: "100%" }}
-      //             disabled={true}
-      //           >
-      //             Open
-      //           </button>
-      //         </div>
-      //       </div>
-      //     </div>
-
-      //     <div className="col-md-4">
-      //       <div class="Shiftcard">
-      //         <p className="outletTex">Shift Three</p>
-      //       </div>
-      //       <div className={`card ${isOpen ? "open" : "closed"}`}>
-      //         <div className="card-header">
-      //           <h5 className="mb-0">Open the shift Three</h5>
-      //         </div>
-
-      //         <div className="card-footer">
-      //           <button
-      //             className={`btn ${
-      //               outletDetails === 1 ? "btn-primary" : "btn-secondary"
-      //             } mr-2`}
-      //             onClick={handleShowOpenShift}
-      //             style={{ width: "100%" }}
-      //             disabled={true}
-      //           >
-      //             Open
-      //           </button>
-      //         </div>
-      //       </div>
-      //     </div>
-      //   </div>
-      // );
-
-
-
     } else if (
       Object.keys(shifts).length === 0 &&
       recentShiftOpen?.length > 0
@@ -2516,20 +2432,6 @@ console.log('openShiftTwo>>data>>',data);
                 <></>
               )}
 
-              {/* {outletDetails == 1 &&
-              shifts &&
-              shifts[3] &&
-              shifts[3][0]?.ShiftOpen === 0 &&
-              shifts[3][0]?.ShiftTypeId == 3 && 
-              shifts[2][0]?.ShiftOpen === 0 ? (
-                <div className="col-md-4 mb-5 d-flex justify-content-end">
-                  <Button variant="danger" onClick={OpenCLoseOutletModalFn}>
-                    Close Outlet
-                  </Button>
-                </div>
-              ) : (
-                <></>
-              )} */}
               {outletDetails == 1 &&
               shifts &&
               ((shifts[3] &&
@@ -2595,131 +2497,6 @@ console.log('openShiftTwo>>data>>',data);
                 </div>
               </div>
             </div>
-
-            {/* <div className="row">
-            <div className="col-md-4">
-              <div class="Shiftcard">
-                <p className="outletTex">Shift One</p>
-              </div>
-              <div className={`card ${isOpen ? "open" : "closed"}`}>
-                <div className="card-header">
-                  <h5 className="mb-0">Open the shift one</h5>
-                </div>
-
-                <div className="card-footer">
-                  <button
-                    className="btn btn-primary mr-2"
-                    onClick={handleConfirmShow}
-                    style={{ width: "100%" }}
-                  >
-                    Close
-                  </button>
-
-                  <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
-                    onClick={handleShowOpenShift}
-                    style={{ width: "100%" }}
-                  >
-                    Open
-                  </button>
-
-                  <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
-                    onClick={reopenShiftOneFn}
-                    style={{ width: "100%" }}
-                  >
-                    Reopen
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-md-4">
-              <div class="Shiftcard">
-                <p className="outletTex">Shift Two</p>
-              </div>
-              <div className={`card ${isOpen ? "open" : "closed"}`}>
-                <div className="card-header">
-                  <h5 className="mb-0">Open the shift Two</h5>
-                </div>
-
-                <div className="card-footer">
-                  <button
-                    className="btn btn-primary mr-2"
-                    onClick={handleConfirmShow}
-                    style={{ width: "100%" }}
-                  >
-                    Close
-                  </button>
-
-                  <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
-                    onClick={handleShowOpenShift}
-                    style={{ width: "100%" }}
-                  >
-                    Open
-                  </button>
-
-                  <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
-                    onClick={reopenShiftTwoFn}
-                    style={{ width: "100%" }}
-                  >
-                    Reopen
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-md-4">
-              <div class="Shiftcard">
-                <p className="outletTex">Shift Three</p>
-              </div>
-              <div className={`card ${isOpen ? "open" : "closed"}`}>
-                <div className="card-header">
-                  <h5 className="mb-0">Open the shift Three</h5>
-                </div>
-
-                <div className="card-footer">
-                  <button
-                    className="btn btn-primary mr-2"
-                    onClick={handleConfirmShow}
-                    style={{ width: "100%" }}
-                  >
-                    Close
-                  </button>
-
-                  <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
-                    onClick={handleShowOpenShift}
-                    style={{ width: "100%" }}
-                  >
-                    Open
-                  </button>
-
-                  <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
-                    onClick={reopenShiftThreeFn}
-                    style={{ width: "100%" }}
-                  >
-                    Reopen
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div> */}
           </div>
         )}
 
