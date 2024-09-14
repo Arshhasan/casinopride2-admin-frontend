@@ -2914,7 +2914,6 @@ const BillingDetails = () => {
         ((item?.PayAtCounter == 1 && item?.UserTypeId == 5) ||
           (item?.PayAtCounter != 1 &&
             (item?.UserTypeId != 0 ||
-              item?.UserTypeId == 3 || 
               item?.UserTypeId != 5 ||
               item?.UserTypeId != 6)))
           ? item?.CashAmount
@@ -2925,7 +2924,6 @@ const BillingDetails = () => {
         ((item?.PayAtCounter == 1 && item?.UserTypeId == 5) ||
           (item?.PayAtCounter != 1 &&
             (item?.UserTypeId != 0 ||
-            item?.UserTypeId == 3 || 
             item?.UserTypeId != 5 ||
             item?.UserTypeId != 6)))
           ? item?.CardAmount
@@ -2936,7 +2934,6 @@ const BillingDetails = () => {
         ((item?.PayAtCounter == 1 && item?.UserTypeId == 5) ||
           (item?.PayAtCounter != 1 &&
             (item?.UserTypeId != 0 ||
-            item?.UserTypeId == 3 || 
             item?.UserTypeId != 5 ||
             item?.UserTypeId != 6)))
           ? item?.UPIAmount
@@ -2958,9 +2955,8 @@ const BillingDetails = () => {
         item?.SettledByCompany == 0 &&
         item?.PayAtCounter != 1 &&
         (item?.UserTypeId == 0 ||
-          item?.UserTypeId == 3 || 
           item?.UserTypeId == 5 ||
-          item?.UserTypeId == 6)
+          item?.UserTypeId == 6) 
           ? item?.UPIAmount + item?.CardAmount
           : 0;
       const resultRate = Rate.map(
