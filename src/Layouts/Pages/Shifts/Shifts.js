@@ -88,7 +88,7 @@ const Shifts = () => {
 
   const [shiftId, setShiftId] = useState(0);
 
-  
+
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -145,7 +145,7 @@ const Shifts = () => {
         loginDetails?.logindata?.Token,
         (callback) => {
           if (callback) {
-            console.log('callback?.response?.Details>>',callback?.response?.Details);
+            console.log('callback?.response?.Details>>', callback?.response?.Details);
             console.log(
               "Callback from shifts for user -----------***********************8--->",
               callback?.response?.Details
@@ -160,7 +160,7 @@ const Shifts = () => {
                   loginDetails?.logindata?.Token,
                   (callback) => {
                     if (callback) {
-                      console.log('recent shift for outlet>>callback>>',callback);
+                      console.log('recent shift for outlet>>callback>>', callback);
                       console.log(
                         "Recent shift for outlet----------------------------------*********************************----- ->",
                         callback?.response?.Details
@@ -439,7 +439,7 @@ const Shifts = () => {
       userId: validateDetails?.Details?.Id,
       openTime: time,
     };
-console.log('openShiftTwo>>data>>',data);
+    console.log('openShiftTwo>>data>>', data);
     dispatch(
       openShiftFn(data, loginDetails?.logindata?.Token, (callback) => {
         if (callback.status) {
@@ -1236,7 +1236,7 @@ console.log('openShiftTwo>>data>>',data);
       Object.keys(shifts).length === 0 &&
       recentShiftOpen?.length > 0
     ) {
-      console.log('yarrrrrrrrrrrr',recentShiftOpen);
+      console.log('yarrrrrrrrrrrr', recentShiftOpen);
       if (
         recentShiftOpen[0]?.ShiftTypeId == 1 &&
         recentShiftOpen[0]?.ShiftOpen == 1
@@ -1259,12 +1259,12 @@ console.log('openShiftTwo>>data>>',data);
       else if (
         recentShiftOpen[0]?.ShiftTypeId == 1 &&
         recentShiftOpen[0]?.ShiftOpen == 0) {
-          openShiftTwo()
+        openShiftTwo()
       }
       else if (
         recentShiftOpen[0]?.ShiftTypeId == 2 &&
         recentShiftOpen[0]?.ShiftOpen == 0) {
-          openSHiftThree()
+        openSHiftThree()
       }
     } else {
       console.log('444444');
@@ -1274,7 +1274,7 @@ console.log('openShiftTwo>>data>>',data);
 
   const generateReportFn = (shiftId) => {
     const reportData = {
-      userId: loginDetails.logindata?.UserType===1 ? 0 : loginDetails.logindata.userId,
+      userId: loginDetails.logindata?.UserType === 1 ? 0 : loginDetails.logindata.userId,
       billDate: new Date().toJSON().slice(0, 10),
       futureDate: "",
       shiftId: shiftId,
@@ -1355,10 +1355,10 @@ console.log('openShiftTwo>>data>>',data);
   console.log("shift Details For User------->", shiftDetailsForUser);
 
   console.log("outletDetails-------->", outletDetails);
-  
+
   if (shiftDetailsForUser) {
     shiftDetailsForUser.forEach((item) => {
-      console.log('inside shiftDetailsForUser>>item>>',item);
+      console.log('inside shiftDetailsForUser>>item>>', item);
       const { ShiftTypeId, OpenTime, CloseTime, ShiftOpen } = item;
       if (!shifts[ShiftTypeId]) {
         shifts[ShiftTypeId] = [];
@@ -1381,19 +1381,19 @@ console.log('openShiftTwo>>data>>',data);
     shiftDetailsForUser,
     shifts,
   }) => {
-    console.log('shifts---->tareefan>>>',shifts);
-    console.log('inside shiftOneComponent-->recentShiftOpen-->',recentShiftOpen);
-    console.log('inside shiftOneComponent-->shiftDetailsForUser===>',shiftDetailsForUser);
+    console.log('shifts---->tareefan>>>', shifts);
+    console.log('inside shiftOneComponent-->recentShiftOpen-->', recentShiftOpen);
+    console.log('inside shiftOneComponent-->shiftDetailsForUser===>', shiftDetailsForUser);
     if (
       shiftDetailsForUser &&
       shiftDetailsForUser?.length > 0 &&
       recentShiftOpen &&
       recentShiftOpen?.length == 0
     ) {
-      console.log("reached in first condition",shifts);
+      console.log("reached in first condition", shifts);
 
       if (Object.keys(shifts).length != 0 && shifts && shifts[1] && shifts[1][0]?.ShiftOpen == 1) {
-        console.log('Log 11',shifts);
+        console.log('Log 11', shifts);
         return (
           <div className="row">
             <div className="col-md-4">
@@ -1427,9 +1427,8 @@ console.log('openShiftTwo>>data>>',data);
 
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={handleShowOpenShift}
                     style={{ width: "100%" }}
                     disabled={true}
@@ -1451,9 +1450,8 @@ console.log('openShiftTwo>>data>>',data);
 
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={handleShowOpenShift}
                     style={{ width: "100%" }}
                     disabled={true}
@@ -1472,7 +1470,7 @@ console.log('openShiftTwo>>data>>',data);
         shifts[1][0]?.ShiftOpen == 0 &&
         !shifts[2]
       ) {
-        console.log("Reached hereeeeee for shift 2",shifts);
+        console.log("Reached hereeeeee for shift 2", shifts);
         return (
           <div className="row">
             <div className="col-md-4">
@@ -1485,9 +1483,8 @@ console.log('openShiftTwo>>data>>',data);
                 </div>
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={reopenShiftOneFn}
                     style={{ width: "100%" }}
                   >
@@ -1508,9 +1505,8 @@ console.log('openShiftTwo>>data>>',data);
 
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={handleShowOpenShift}
                     style={{ width: "100%" }}
                   >
@@ -1531,9 +1527,8 @@ console.log('openShiftTwo>>data>>',data);
 
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={handleShowOpenShift}
                     style={{ width: "100%" }}
                     disabled={true}
@@ -1545,10 +1540,10 @@ console.log('openShiftTwo>>data>>',data);
             </div>
           </div>
         );
-      } 
- 
+      }
+
       else if (Object.keys(shifts).length != 0 && shifts && shifts[2] && shifts[2][0]?.ShiftOpen == 1) {
-        console.log('log 12',shifts);
+        console.log('log 12', shifts);
         return (
           <div className="row">
             <div className="col-md-4">
@@ -1561,9 +1556,8 @@ console.log('openShiftTwo>>data>>',data);
                 </div>
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={reopenShiftOneFn}
                     style={{ width: "100%" }}
                     disabled={true}
@@ -1585,9 +1579,8 @@ console.log('openShiftTwo>>data>>',data);
 
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={handleConfirmShow}
                     style={{ width: "100%" }}
                   >
@@ -1608,9 +1601,8 @@ console.log('openShiftTwo>>data>>',data);
 
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={handleShowOpenShift}
                     style={{ width: "100%" }}
                     disabled={true}
@@ -1626,11 +1618,11 @@ console.log('openShiftTwo>>data>>',data);
         Object.keys(shifts).length != 0 &&
         shifts &&
         shifts[2] &&
-        shifts[2][0]?.ShiftOpen == 0 
+        shifts[2][0]?.ShiftOpen == 0
         &&
         !shifts[3]
       ) {
-        console.log('Log 13',shifts);
+        console.log('Log 13', shifts);
         return (
           <div className="row">
             <div className="col-md-4">
@@ -1649,13 +1641,12 @@ console.log('openShiftTwo>>data>>',data);
                   >
                     open
                   </button> */}
-                    <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                  <button
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={reopenShiftOneFn}
                     style={{ width: "100%" }}
-                    // disabled={true}
+                  // disabled={true}
                   >
                     Reopen
                   </button>
@@ -1673,9 +1664,8 @@ console.log('openShiftTwo>>data>>',data);
                 </div>
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={reopenShiftTwoFn}
                     style={{ width: "100%" }}
                   >
@@ -1696,9 +1686,8 @@ console.log('openShiftTwo>>data>>',data);
 
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={handleShowOpenShift}
                     style={{ width: "100%" }}
                   >
@@ -1710,7 +1699,7 @@ console.log('openShiftTwo>>data>>',data);
           </div>
         );
       } else if (Object.keys(shifts).length != 0 && shifts && shifts[3] && shifts[3][0]?.ShiftOpen == 1) {
-        console.log('Log 14',shifts);
+        console.log('Log 14', shifts);
         return (
           <div className="row">
             <div className="col-md-4">
@@ -1744,9 +1733,8 @@ console.log('openShiftTwo>>data>>',data);
                 </div>
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={reopenShiftTwoFn}
                     style={{ width: "100%" }}
                     disabled={true}
@@ -1779,8 +1767,8 @@ console.log('openShiftTwo>>data>>',data);
             </div>
           </div>
         );
-      } else if (Object.keys(shifts).length != 0 &&shifts && shifts[3] && shifts[3][0]?.ShiftOpen == 0) {
-        console.log('Log 15',shifts);
+      } else if (Object.keys(shifts).length != 0 && shifts && shifts[3] && shifts[3][0]?.ShiftOpen == 0) {
+        console.log('Log 15', shifts);
         return (
           <div className="row">
             <div className="col-md-4">
@@ -1813,9 +1801,8 @@ console.log('openShiftTwo>>data>>',data);
                 </div>
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={reopenShiftTwoFn}
                     style={{ width: "100%" }}
                   >
@@ -1835,9 +1822,8 @@ console.log('openShiftTwo>>data>>',data);
                 </div>
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={reopenShiftThreeFn}
                     style={{ width: "100%" }}
                   >
@@ -1854,7 +1840,7 @@ console.log('openShiftTwo>>data>>',data);
       Object.keys(shifts).length === 0 &&
       recentShiftOpen?.length > 0
     ) {
-      console.log("Reached in second conditon",shifts);
+      console.log("Reached in second conditon", shifts);
       console.log("recentShiftOpen", recentShiftOpen);
       if (
         recentShiftOpen[0]?.ShiftTypeId == 1 &&
@@ -1874,9 +1860,8 @@ console.log('openShiftTwo>>data>>',data);
 
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={handleShowOpenShift}
                     style={{ width: "100%" }}
                   >
@@ -1897,9 +1882,8 @@ console.log('openShiftTwo>>data>>',data);
 
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={handleShowOpenShift}
                     style={{ width: "100%" }}
                     disabled={true}
@@ -1921,9 +1905,8 @@ console.log('openShiftTwo>>data>>',data);
 
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={handleShowOpenShift}
                     style={{ width: "100%" }}
                     disabled={true}
@@ -1935,90 +1918,87 @@ console.log('openShiftTwo>>data>>',data);
             </div>
           </div>
         );
-      } 
+      }
       else if (recentShiftOpen[0]?.ShiftTypeId == 2 &&
         recentShiftOpen[0]?.ShiftOpen == 0) {
-          console.log('checkingggg>>>');
-          return (
-            <div className="row">
-              <div className="col-md-4">
-                <div class="Shiftcard">
-                  <p className="outletTex">Shift One</p>
+        console.log('checkingggg>>>');
+        return (
+          <div className="row">
+            <div className="col-md-4">
+              <div class="Shiftcard">
+                <p className="outletTex">Shift One</p>
+              </div>
+              <div className={`card ${isOpen ? "open" : "closed"}`}>
+                <div className="card-header">
+                  <h5 className="mb-0">Open the shift one</h5>
                 </div>
-                <div className={`card ${isOpen ? "open" : "closed"}`}>
-                  <div className="card-header">
-                    <h5 className="mb-0">Open the shift one</h5>
-                  </div>
-                  <div className="card-footer">
-                    <button
-                      className={`btn ${
-                        outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                <div className="card-footer">
+                  <button
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
                       } mr-2`}
-                      onClick={reopenShiftOneFn}
-                      style={{ width: "100%" }}
-                    >
-                      Reopen
-                    </button>
-                  </div>
-  
-                  {/* <button
+                    onClick={reopenShiftOneFn}
+                    style={{ width: "100%" }}
+                  >
+                    Reopen
+                  </button>
+                </div>
+
+                {/* <button
                 className="btn btn-primary mr-2"
                 onClick={handleConfirmShow}
                 style={{ width: "100%" }}
               >
                 Close
               </button> */}
-                </div>
               </div>
-  
-              <div className="col-md-4">
-                <div class="Shiftcard">
-                  <p className="outletTex">Shift Two</p>
-                </div>
-                <div className={`card ${isOpen ? "open" : "closed"}`}>
-                  <div className="card-header">
-                    <h5 className="mb-0">Open the shift Two</h5>
-                  </div>
-  
-                  <div className="card-footer">
-                    <button
-                      className={`btn ${
-                        outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                      } mr-2`}
-                      onClick={reopenShiftTwoFn}
-                      style={{ width: "100%" }}
-                    >
-                      Reopen
-                    </button>
-                  </div>
-                </div>
+            </div>
+
+            <div className="col-md-4">
+              <div class="Shiftcard">
+                <p className="outletTex">Shift Two</p>
               </div>
-  
-              <div className="col-md-4">
-                <div class="Shiftcard">
-                  <p className="outletTex">Shift Three</p>
+              <div className={`card ${isOpen ? "open" : "closed"}`}>
+                <div className="card-header">
+                  <h5 className="mb-0">Open the shift Two</h5>
                 </div>
-                <div className={`card ${isOpen ? "open" : "closed"}`}>
-                  <div className="card-header">
-                    <h5 className="mb-0">Open the shift Three</h5>
-                  </div>
-  
-                  <div className="card-footer">
-                    <button
-                      className={`btn ${
-                        outletDetails === 1 ? "btn-primary" : "btn-secondary"
+
+                <div className="card-footer">
+                  <button
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
                       } mr-2`}
-                      onClick={handleShowOpenShift}
-                      style={{ width: "100%" }}
-                      disabled={true}
-                    >
-                      Open
-                    </button>
-                  </div>
+                    onClick={reopenShiftTwoFn}
+                    style={{ width: "100%" }}
+                  >
+                    Reopen
+                  </button>
                 </div>
               </div>
             </div>
-          );
+
+            <div className="col-md-4">
+              <div class="Shiftcard">
+                <p className="outletTex">Shift Three</p>
+              </div>
+              <div className={`card ${isOpen ? "open" : "closed"}`}>
+                <div className="card-header">
+                  <h5 className="mb-0">Open the shift Three</h5>
+                </div>
+
+                <div className="card-footer">
+                  <button
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
+                    onClick={handleShowOpenShift}
+                    style={{ width: "100%" }}
+                    disabled={true}
+                  >
+                    Open
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
       }
       else if (
         (recentShiftOpen[0]?.ShiftTypeId == 2 &&
@@ -2041,9 +2021,8 @@ console.log('openShiftTwo>>data>>',data);
                 </div>
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={reopenShiftOneFn}
                     style={{ width: "100%" }}
                   >
@@ -2072,9 +2051,8 @@ console.log('openShiftTwo>>data>>',data);
 
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={handleShowOpenShift}
                     style={{ width: "100%" }}
                   >
@@ -2095,9 +2073,8 @@ console.log('openShiftTwo>>data>>',data);
 
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={handleShowOpenShift}
                     style={{ width: "100%" }}
                     disabled={true}
@@ -2116,8 +2093,8 @@ console.log('openShiftTwo>>data>>',data);
         (recentShiftOpen[0]?.ShiftTypeId == 2 &&
           recentShiftOpen[0]?.ShiftOpen == 0 &&
           recentShiftOpen[0]?.OpenTime != "" &&
-          recentShiftOpen[0]?.CloseTime != "") 
-          
+          recentShiftOpen[0]?.CloseTime != "")
+
       ) {
         console.log('log 445');
         return (
@@ -2152,9 +2129,8 @@ console.log('openShiftTwo>>data>>',data);
                 </div>
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={reopenShiftTwoFn}
                     style={{ width: "100%" }}
                   >
@@ -2175,9 +2151,8 @@ console.log('openShiftTwo>>data>>',data);
 
                 <div className="card-footer">
                   <button
-                    className={`btn ${
-                      outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                    } mr-2`}
+                    className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                      } mr-2`}
                     onClick={handleShowOpenShift}
                     style={{ width: "100%" }}
                   >
@@ -2188,10 +2163,10 @@ console.log('openShiftTwo>>data>>',data);
             </div>
           </div>
         );
-      } 
+      }
 
     } else {
-      console.log("Reached in 3rd condition",shifts);
+      console.log("Reached in 3rd condition", shifts);
       return (
         <div className="row">
           <div className="col-md-4">
@@ -2205,9 +2180,8 @@ console.log('openShiftTwo>>data>>',data);
 
               <div className="card-footer">
                 <button
-                  className={`btn ${
-                    outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                  } mr-2`}
+                  className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                    } mr-2`}
                   onClick={handleShowOpenShift}
                   style={{ width: "100%" }}
                   disabled={!outletDetails ? true : false}
@@ -2229,9 +2203,8 @@ console.log('openShiftTwo>>data>>',data);
 
               <div className="card-footer">
                 <button
-                  className={`btn ${
-                    outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                  } mr-2`}
+                  className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                    } mr-2`}
                   onClick={handleShowOpenShift}
                   style={{ width: "100%" }}
                   disabled={true}
@@ -2253,9 +2226,8 @@ console.log('openShiftTwo>>data>>',data);
 
               <div className="card-footer">
                 <button
-                  className={`btn ${
-                    outletDetails === 1 ? "btn-primary" : "btn-secondary"
-                  } mr-2`}
+                  className={`btn ${outletDetails === 1 ? "btn-primary" : "btn-secondary"
+                    } mr-2`}
                   onClick={handleShowOpenShift}
                   style={{ width: "100%" }}
                   disabled={true}
@@ -2352,9 +2324,9 @@ console.log('openShiftTwo>>data>>',data);
       "activeDateOfOutlet?.OutletDate>>",
       activeDateOfOutlet?.OutletDate
     ),
-    console.log('return-->>recentShiftOpen>>',recentShiftOpen),
-    console.log('return>>shiftDetailsForUser>>',shiftDetailsForUser),
-    console.log('return==>shifts>>>>',shifts),
+    console.log('return-->>recentShiftOpen>>', recentShiftOpen),
+    console.log('return>>shiftDetailsForUser>>', shiftDetailsForUser),
+    console.log('return==>shifts>>>>', shifts),
     (
       <div>
         {loader ? (
@@ -2380,26 +2352,26 @@ console.log('openShiftTwo>>data>>',data);
         ) : (
           <div
             className="container mt-5"
-            // style={{ backgroundColor: "green" }}
+          // style={{ backgroundColor: "green" }}
           >
-             <h5 style={{marginBottom: "8px"}}>Welcome, {validateDetails?.Details?.Name}</h5>
+            <h5 style={{ marginBottom: "8px" }}>Welcome, {validateDetails?.Details?.Name}</h5>
             {(activeDateOfOutlet?.OutletDate != undefined ||
               activeDateOfOutlet?.OutletDate != null) && (
-              <div>
-              
-                <h5 className="mb-0" style={{ paddingBottom: "20px" }}>
-                  Outlet Date :{" "}
-                  {activeDateOfOutlet?.OutletDate != undefined ||
-                  activeDateOfOutlet?.OutletDate != null
-                    ? activeDateOfOutlet?.OutletDate
-                    : ""}   
-                </h5>
-                
-              </div>
-            )}
+                <div>
+
+                  <h5 className="mb-0" style={{ paddingBottom: "20px" }}>
+                    Outlet Date :{" "}
+                    {activeDateOfOutlet?.OutletDate != undefined ||
+                      activeDateOfOutlet?.OutletDate != null
+                      ? activeDateOfOutlet?.OutletDate
+                      : ""}
+                  </h5>
+
+                </div>
+              )}
             <div className="row d-flex justify-content-end">
               {!outletOpenDetails?.Details[0]?.OutletStatus == 1 &&
-              !outletDetails == 1 ? (
+                !outletDetails == 1 ? (
                 <div className="col-md-4 mb-5 d-flex justify-content-end">
                   <Button variant="outline-primary" className="m-auto" onClick={() => generateCashierReport()}>
                     Generate outlet report
@@ -2413,14 +2385,14 @@ console.log('openShiftTwo>>data>>',data);
               )}
 
               {outletDetails == 1 &&
-              shifts &&
-              ((shifts[3] &&
-              shifts[3][0]?.ShiftOpen === 0 &&
-              shifts[3][0]?.ShiftTypeId == 3) ||
-              (shifts[3] &&
-                shifts[3][0]?.ShiftOpen === 0 &&
-                shifts[3][0]?.ShiftTypeId == 3 && 
-                shifts[2][0]?.ShiftOpen === 0)) ? (
+                shifts &&
+                ((shifts[3] &&
+                  shifts[3][0]?.ShiftOpen === 0 &&
+                  shifts[3][0]?.ShiftTypeId == 3) ||
+                  (shifts[3] &&
+                    shifts[3][0]?.ShiftOpen === 0 &&
+                    shifts[3][0]?.ShiftTypeId == 3 &&
+                    shifts[2][0]?.ShiftOpen === 0)) ? (
                 <div className="col-md-4 mb-5 d-flex justify-content-end">
                   <Button variant="danger" onClick={OpenCLoseOutletModalFn}>
                     Close Outlet
@@ -2436,9 +2408,9 @@ console.log('openShiftTwo>>data>>',data);
               shiftDetailsForUser,
               shifts,
             })}
-             <div className="row mt-3 mx-auto">
+            <div className="row mt-3 mx-auto">
               <div className="col-lg mx-auto d-flex text-center justify-content-around">
-                <div className="d-flex justify-content-center align-items-center" style={{flexBasis: "33.33%"}}>
+                <div className="d-flex justify-content-center align-items-center" style={{ flexBasis: "33.33%" }}>
                   {shifts[1]?.[0]?.CloseTime || recentShiftOpen?.filter((elem) => elem.ShiftTypeId === 1)?.[0]?.CloseTime ? <button
                     className="btn btn-primary m-2 p-2"
                     onClick={() => generateCashierReportShiftWiseWithShiftId(1)}
@@ -2446,15 +2418,15 @@ console.log('openShiftTwo>>data>>',data);
                     Generate Report
                   </button> : <div />}
                 </div>
-                <div className="d-flex justify-content-center align-items-center" style={{flexBasis: "33.33%"}}>
-                  {shifts[2]?.[0]?.CloseTime || recentShiftOpen?.filter((elem) => elem.ShiftTypeId === 2)?.[0]?.CloseTime  ? <button
+                <div className="d-flex justify-content-center align-items-center" style={{ flexBasis: "33.33%" }}>
+                  {shifts[2]?.[0]?.CloseTime || recentShiftOpen?.filter((elem) => elem.ShiftTypeId === 2)?.[0]?.CloseTime ? <button
                     className="btn btn-primary m-2 p-2"
                     onClick={() => generateCashierReportShiftWiseWithShiftId(2)}
                   >
                     Generate Report
                   </button> : <div />}
                 </div>
-                <div className="d-flex justify-content-center align-items-center" style={{flexBasis: "33.33%"}}>
+                <div className="d-flex justify-content-center align-items-center" style={{ flexBasis: "33.33%" }}>
                   {shifts[3]?.[0]?.CloseTime || recentShiftOpen?.filter((elem) => elem.ShiftTypeId === 3)?.[0]?.CloseTime ? <button
                     className="btn btn-primary m-2 p-2"
                     onClick={() => generateCashierReportShiftWiseWithShiftId(3)}
