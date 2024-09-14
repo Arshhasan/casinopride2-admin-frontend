@@ -2370,37 +2370,43 @@ const Shifts = () => {
                 </div>
               )}
             <div className="row d-flex justify-content-end">
-              {!outletOpenDetails?.Details[0]?.OutletStatus == 1 &&
-                !outletDetails == 1 ? (
-                <div className="col-md-4 mb-5 d-flex justify-content-end">
-                  <Button variant="outline-primary" className="m-auto" onClick={() => generateCashierReport()}>
+              <div>
+                <div className="d-flex justify-content-end">
+                  <Button variant="outline-primary" className="mb-5" onClick={() => generateCashierReport()}>
                     Generate outlet report
                   </Button>
-                  <Button variant="primary" onClick={openOutletModal}>
-                    Open Outlet
-                  </Button>
+                  {!outletOpenDetails?.Details[0]?.OutletStatus == 1 &&
+                    !outletDetails == 1 ? (
+                    <div className="mb-5 d-flex justify-content-end" style={{ marginLeft: "1rem" }}>
+                      <Button variant="primary" onClick={openOutletModal}>
+                        Open Outlet
+                      </Button>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                  {outletDetails == 1 &&
+                    shifts &&
+                    ((shifts[3] &&
+                      shifts[3][0]?.ShiftOpen === 0 &&
+                      shifts[3][0]?.ShiftTypeId == 3) ||
+                      (shifts[3] &&
+                        shifts[3][0]?.ShiftOpen === 0 &&
+                        shifts[3][0]?.ShiftTypeId == 3 &&
+                        shifts[2][0]?.ShiftOpen === 0)) ? (
+                    <div className="mb-5 d-flex justify-content-end" style={{ marginLeft: "1rem" }}>
+                      <Button variant="danger" onClick={OpenCLoseOutletModalFn}>
+                        Close Outlet
+                      </Button>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                 </div>
-              ) : (
-                <></>
-              )}
 
-              {outletDetails == 1 &&
-                shifts &&
-                ((shifts[3] &&
-                  shifts[3][0]?.ShiftOpen === 0 &&
-                  shifts[3][0]?.ShiftTypeId == 3) ||
-                  (shifts[3] &&
-                    shifts[3][0]?.ShiftOpen === 0 &&
-                    shifts[3][0]?.ShiftTypeId == 3 &&
-                    shifts[2][0]?.ShiftOpen === 0)) ? (
-                <div className="col-md-4 mb-5 d-flex justify-content-end">
-                  <Button variant="danger" onClick={OpenCLoseOutletModalFn}>
-                    Close Outlet
-                  </Button>
-                </div>
-              ) : (
-                <></>
-              )}
+              </div>
+
+
             </div>
 
             {shiftOneComponent({
