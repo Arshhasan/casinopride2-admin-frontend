@@ -1259,12 +1259,8 @@ const TeensBilling = () => {
         : 0,
 
     OnlinePayu:
-      BookingDetails[0]?.SettledByCompany == 0 &&
-      BookingDetails[0]?.PayAtCounter != 1 &&
-      (BookingDetails[0]?.UserTypeId == 0 ||
-        BookingDetails[0]?.UserTypeId == 5 ||
-        BookingDetails[0]?.UserTypeId == 6)
-        ? BookingDetails[0]?.UPIAmount + BookingDetails[0]?.CardAmount
+      BookingDetails[0]?.PaymentMode === "OnlinePayu" ? 
+        BookingDetails[0]?.AmountAfterDiscount
         : 0,
   };
 

@@ -2952,12 +2952,8 @@ const BillingDetails = () => {
           : 0;
 
       const OnlinePayu =
-        item?.SettledByCompany == 0 &&
-        item?.PayAtCounter != 1 &&
-        (item?.UserTypeId == 0 ||
-          item?.UserTypeId == 5 ||
-          item?.UserTypeId == 6) 
-          ? item?.UPIAmount + item?.CardAmount
+        item?.PaymentMode === "OnlinePayu"
+          ? item?.AmountAfterDiscount
           : 0;
       const resultRate = Rate.map(
         (value, index) => value * packageGuestCount[index]

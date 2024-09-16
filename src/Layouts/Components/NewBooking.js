@@ -363,7 +363,6 @@ const NewBooking = () => {
       () =>
         debounce((phoneNumber) => {
           setPhone(phoneNumber);
-
           fetchUserByPhone(phoneNumber?.includes("+91") ? phoneNumber.replace("+91", "") : phoneNumber);
         }, DEBOUNCE_TIME_MS),
       [fetchUserByPhone]
