@@ -30,9 +30,9 @@ const AddEditCategory = () => {
     useEffect(() => {
         if (categoryData) {
             setFormData({
-                name: categoryData.Name || "",
+                name: categoryData.Category || "",
                 description: categoryData.Description || "",
-                discountPercentage: categoryData.DiscountPercent || "",
+                discountPercentage: categoryData.DiscountPercentage || "",
                 isActive: categoryData.IsActive !== undefined ? categoryData.IsActive : 1,
             });
         }
@@ -91,7 +91,7 @@ const AddEditCategory = () => {
 
         if (categoryData) {
             // Edit Mode
-            payload.categoryId = categoryData.Id;
+            payload.categoryId = categoryData.idCategoryMaster;
             dispatch(
                 updateCategoryDiscount(payload, token, (callback) => {
                     setLoading(false);
@@ -137,7 +137,7 @@ const AddEditCategory = () => {
                 <div className="card-body">
                     {categoryData && (
                         <div className="alert alert-info mb-4">
-                            <strong>Note:</strong> You are editing the pricing rules for <strong>{categoryData.Name}</strong>.
+                            <strong>Note:</strong> You are editing the pricing rules for <strong>{categoryData.Category}</strong>.
                         </div>
                     )}
 

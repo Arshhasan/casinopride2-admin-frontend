@@ -95,7 +95,7 @@ const CategoryList = () => {
                             <div className="card h-100 shadow-sm">
                                 <div className="card-body">
                                     <div className="d-flex justify-content-between align-items-start mb-3">
-                                        <h5 className="card-title mb-0">{category.Name}</h5>
+                                        <h5 className="card-title mb-0">{category.Category}</h5>
                                         <Link
                                             to="/AddCategory"
                                             state={{ categoryData: category }}
@@ -115,7 +115,7 @@ const CategoryList = () => {
                                         <div className="d-flex justify-content-between mb-2">
                                             <span style={{ fontWeight: "500" }}>Discount:</span>
                                             <span className="badge bg-success">
-                                                {category.DiscountPercent || 0}%
+                                                {category.DiscountPercentage || 0}%
                                             </span>
                                         </div>
                                         <div className="d-flex justify-content-between">
@@ -147,7 +147,7 @@ const CategoryList = () => {
                     <Modal.Title>Category Details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <h5>{selectedCategory.Name}</h5>
+                    <h5>{selectedCategory.Category}</h5>
                     <p className="text-muted">{selectedCategory.Description || "No description available"}</p>
 
                     <hr />
@@ -155,7 +155,7 @@ const CategoryList = () => {
                     <div className="mb-3">
                         <strong>Pricing Rules:</strong>
                         <ul className="mt-2">
-                            <li>Discount Rate: <strong>{selectedCategory.DiscountPercent || 0}%</strong></li>
+                            <li>Discount Rate: <strong>{selectedCategory.DiscountPercentage || 0}%</strong></li>
                         </ul>
                     </div>
 

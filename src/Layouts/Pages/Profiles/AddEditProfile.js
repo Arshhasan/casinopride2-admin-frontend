@@ -245,7 +245,7 @@ const AddEditProfile = () => {
                                     <div className="alert alert-info" style={{ backgroundColor: "#e3f2fd", border: "none" }}>
                                         <strong>Category Details:</strong>
                                         <ul className="mb-0 mt-2">
-                                            <li>Discount: {selectedCategory.DiscountPercent || 0}%</li>
+                                            <li>Discount: {selectedCategory.DiscountPercentage || 0}%</li>
                                         </ul>
                                     </div>
                                 </div>
