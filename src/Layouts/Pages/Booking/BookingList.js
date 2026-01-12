@@ -710,7 +710,8 @@ const BookingList = () => {
       const filtered = filteredUserBookings?.filter(
         (item) =>
           item?.FullName?.toLowerCase()?.includes(lowerCaseQuery) ||
-          item?.Phone?.includes(value)
+          item?.Phone?.includes(value) ||
+          item?.CategoryName?.toLowerCase()?.includes(lowerCaseQuery)
       );
       setFilteredUserBookings(filtered);
     }
@@ -1265,6 +1266,9 @@ const BookingList = () => {
                 Guest Phone
               </th>
               <th scope="col" className="text-center table_heading">
+                Category
+              </th>
+              <th scope="col" className="text-center table_heading">
                 Packages
               </th>
               <th scope="col" className="text-center table_heading">
@@ -1337,12 +1341,26 @@ const BookingList = () => {
                   <td className="manager-list ">{item.FullName}</td>
                   {/* <td className="manager-list">{item.Phone}</td> */}
                   <td className="manager-list">
-  {item?.Phone
-    ? loginDetails?.logindata?.UserType === 2
-      ? item.Phone.replace(/\d(?=\d{4})/g, "*")
-      : item.Phone
-    : "N/A"}
-</td>
+                    {item?.Phone
+                      ? loginDetails?.logindata?.UserType === 2
+                        ? item.Phone.replace(/\d(?=\d{4})/g, "*")
+                        : item.Phone
+                      : "N/A"}
+                  </td>
+                  <td className="manager-list">
+                    <span
+                      style={{
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        backgroundColor: "#e3f2fd",
+                        color: "#1976d2",
+                        fontSize: "12px",
+                        fontWeight: "500",
+                      }}
+                    >
+                      {item.CategoryName || "-"}
+                    </span>
+                  </td>
 
                   <td className="manager-list" style={{ fontSize: "12px" }}>
                     {item && item?.PackageName && item?.PackageName ? (
