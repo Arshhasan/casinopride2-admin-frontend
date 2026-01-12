@@ -46,7 +46,7 @@ const PackagesPage = ({
   const [filterPackageDetails, setFilterPackageDetails] = useState([]);
   const [itemDetails, setItemDetails] = useState([]);
 
-  console.log({bookingDetailsPackagePage: bookingDetails})
+  console.log({ bookingDetailsPackagePage: bookingDetails })
 
   const loginDetails = useSelector(
     (state) => state.auth?.userDetailsAfterLogin.Details
@@ -99,16 +99,16 @@ const PackagesPage = ({
     PackageName,
     newValue // Add the new parameter for the value
   ) => {
-    console.log('check>>>',newValue);
+    console.log('check>>>', newValue);
     setSelectedPackages((prevSelectedPackages) => {
       const updatedPackages = { ...prevSelectedPackages };
       const currentCount = updatedPackages[packageId]?.[counterType] || 0;
-  
+
       console.log(
         "PackageName------------------------------<<>>>>>>>>>>><<<<<<<<<<>>>>>>>>>>>>",
         PackageName
       );
-  
+
       console.log(
         "PackageWeekdayPrice------------------------------<<>>>>>>>>>>><<<<<<<<<<>>>>>>>>>>>>",
         PackageWeekdayPrice,
@@ -126,9 +126,9 @@ const PackagesPage = ({
             PackageWeekendPrice,
           };
         }
-        else{
+        else {
           // const currentCount = updatedPackages[packageId]?.[counterType] || 0;
-          console.log('currentCount--->',currentCount);
+          console.log('currentCount--->', currentCount);
           if (increment || currentCount > 0) {
 
             updatedPackages[packageId] = {
@@ -138,25 +138,25 @@ const PackagesPage = ({
               PackageWeekdayPrice,
               PackageWeekendPrice,
             };
-    
+
             if (updatedPackages[packageId][counterType] <= 0) {
               delete updatedPackages[packageId];
             }
-          } 
+          }
         }
-  
+
       } else {
         toast.error("Please Check if the outlet is open");
       }
-  
+
 
       return updatedPackages;
     });
   };
   const [selectedPackages, setSelectedPackages] = useState({});
 
-  
-  
+
+
 
   // const handleCounterChange = (
   //   packageId,
@@ -190,7 +190,7 @@ const PackagesPage = ({
   //           PackageWeekdayPrice,
   //           PackageWeekendPrice,
   //         };
-  
+
   //         if (updatedPackages[packageId][counterType] <= 0) {
   //           delete updatedPackages[packageId];
   //         }
@@ -235,24 +235,24 @@ const PackagesPage = ({
   const packageWeekendPrices = [];
 
   useEffect(() => {
-    if(!!bookingDetails && Object.keys(bookingDetails).length > 0 && JSON.parse(bookingDetails?.PackageId) && JSON.parse(bookingDetails?.PackageId).length > 0) {
-    JSON.parse(bookingDetails?.PackageId)?.forEach((elem, index) => {
-      console.log(elem);
-      handleCounterChange(
-        elem,
-        "adults",
-        false,
-        JSON.parse(bookingDetails?.PackageWeekdayPrice)[index],
-        JSON.parse(bookingDetails?.PackageWeekendPrice)[index],
-        JSON.parse(bookingDetails?.PackageName)[index],
-        JSON.parse(bookingDetails?.PackageGuestCount)[index]
-      )
-    });
-  }
+    if (!!bookingDetails && Object.keys(bookingDetails).length > 0 && JSON.parse(bookingDetails?.PackageId) && JSON.parse(bookingDetails?.PackageId).length > 0) {
+      JSON.parse(bookingDetails?.PackageId)?.forEach((elem, index) => {
+        console.log(elem);
+        handleCounterChange(
+          elem,
+          "adults",
+          false,
+          JSON.parse(bookingDetails?.PackageWeekdayPrice)[index],
+          JSON.parse(bookingDetails?.PackageWeekendPrice)[index],
+          JSON.parse(bookingDetails?.PackageName)[index],
+          JSON.parse(bookingDetails?.PackageGuestCount)[index]
+        )
+      });
+    }
   }, [bookingDetails]);
-  
 
-  
+
+
 
   Object.keys(selectedPackages).forEach((packageId) => {
     const packageData = selectedPackages[packageId];
@@ -265,7 +265,7 @@ const PackagesPage = ({
     );
 
     if (groupedData) {
-      console.log('packageData=====>',packageData)
+      console.log('packageData=====>', packageData)
       const packagePrice =
         (packageData.adults || 0) *
         (!isTodayWeekday
@@ -303,10 +303,10 @@ const PackagesPage = ({
 
   const handleIncrement = () => {
     if (outletDate != undefined || outletDate != null) {
-    setTeensCount((prevCount) => prevCount + 1);
-      
+      setTeensCount((prevCount) => prevCount + 1);
+
     }
-    else{
+    else {
       toast.error("Please Check if outlet is open");
     }
   };
@@ -328,43 +328,43 @@ const PackagesPage = ({
     0
   );
 
-  const totalTeensPrice = teensCount * groupedData[0]?.PackageTeensPrice;
+  const totalTeensPrice = (teensCount || 0) * (groupedData[0]?.PackageTeensPrice || 0);
 
-  const totalTeensRate = teensCount * groupedData[0]?.PackageTeensRate;
+  const totalTeensRate = (teensCount || 0) * (groupedData[0]?.PackageTeensRate || 0);
 
   console.log(
     "teensCount * groupedData[0]?.PackageTeensRate----------->",
     groupedData[0]
   );
 
-  const teensTaxPercentage = groupedData[0]?.PackageTeensTax;
+  const teensTaxPercentage = groupedData[0]?.PackageTeensTax || 0;
 
-  const teensTaxName = groupedData[0]?.PackageTeensTaxName;
+  const teensTaxName = groupedData[0]?.PackageTeensTaxName || "";
 
-  const totalAmountOfAllPackages = totalTeensPrice + TotalAmount;
+  const totalAmountOfAllPackages = (totalTeensPrice || 0) + (TotalAmount || 0);
 
-  const totalCountofCustomer = teensCount + TotalAdultGustCount;
+  const totalCountofCustomer = (teensCount || 0) + (TotalAdultGustCount || 0);
 
   useEffect(() => {
     console.log("totalTeensRate------------------>", totalTeensRate);
-    setamount(totalAmountOfAllPackages);
-    setamountAfterDiscount(totalAmountOfAllPackages - ((totalAmountOfAllPackages * Discountpercent)/100));
-    setPackageIds(formattedData.packageId);
-    setPackageGuestCount(formattedData.packageGuestCount);
-    settoalGuestCount(totalCountofCustomer);
-    setNumberofteens(teensCount);
-    setTotalTeensPrice(totalTeensPrice);
-    setTeenPackageId(groupedData[0]?.Id);
-    setTotalTeensTax();
-    setTotalTeensRate(totalTeensRate);
-    setTeensTaxPercentage(teensTaxPercentage);
-    setTeensTaxName(teensTaxName);
-    setPackageName(formattedData?.packageNames);
-    setPackageWeekendPrice(formattedData?.packageWeekendPrices);
-    setPackageWeekdaysPrice(formattedData?.packageWeekdayPrices);
-    setTeensWeekendPrice(groupedData[0]?.PackageWeekendPrice);
-    setTeensWeekdayPrice(groupedData[0]?.PackageWeekdayPrice);
-    setTeensPackageName([groupedData[0]?.PackageName]);
+    setamount(totalAmountOfAllPackages || 0);
+    setamountAfterDiscount((totalAmountOfAllPackages || 0) - (((totalAmountOfAllPackages || 0) * (Discountpercent || 0)) / 100));
+    setPackageIds(formattedData.packageId || []);
+    setPackageGuestCount(formattedData.packageGuestCount || []);
+    settoalGuestCount(totalCountofCustomer || 0);
+    setNumberofteens(teensCount || 0);
+    setTotalTeensPrice(totalTeensPrice || 0);
+    setTeenPackageId(groupedData[0]?.Id || null);
+    setTotalTeensTax(0);
+    setTotalTeensRate(totalTeensRate || 0);
+    setTeensTaxPercentage(teensTaxPercentage || 0);
+    setTeensTaxName(teensTaxName || "");
+    setPackageName(formattedData?.packageNames || []);
+    setPackageWeekendPrice(formattedData?.packageWeekendPrices || []);
+    setPackageWeekdaysPrice(formattedData?.packageWeekdayPrices || []);
+    setTeensWeekendPrice(groupedData[0]?.PackageWeekendPrice || 0);
+    setTeensWeekdayPrice(groupedData[0]?.PackageWeekdayPrice || 0);
+    setTeensPackageName([groupedData[0]?.PackageName || ""]);
   }, [TotalAmount, teensCount]);
 
   console.log("total amount-------->", TotalAmount);
@@ -513,30 +513,30 @@ const PackagesPage = ({
                             {/* Kids: {teensCount} */}
                             Kids: {""}
                           </span>
-                              {/* Replace the paragraph with an editable input field */}
-                            <input
-                              type="text"
-                              value={teensCount}
-                              onChange={(e) => setTeensCount(parseInt(e.target.value, 10) || 0)}
-                              style={{
-                                width: "40px", // Adjust the width as needed
-                                textAlign: "center",
-                                fontWeight: "bold",
-                                fontSize: "12px",
-                                marginTop: "10px",
-                                
-                              }}
-                                onKeyDown={(e) => {
-                            // Clear input on backspace
-                            if (e.key === 'Backspace') {
-                              e.target.value = ''; // Clear the input value
-                              if (e.target.value == '') {
-                              setTeensCount(0);
-                                
+                          {/* Replace the paragraph with an editable input field */}
+                          <input
+                            type="text"
+                            value={teensCount}
+                            onChange={(e) => setTeensCount(parseInt(e.target.value, 10) || 0)}
+                            style={{
+                              width: "40px", // Adjust the width as needed
+                              textAlign: "center",
+                              fontWeight: "bold",
+                              fontSize: "12px",
+                              marginTop: "10px",
+
+                            }}
+                            onKeyDown={(e) => {
+                              // Clear input on backspace
+                              if (e.key === 'Backspace') {
+                                e.target.value = ''; // Clear the input value
+                                if (e.target.value == '') {
+                                  setTeensCount(0);
+
+                                }
                               }
-                            }
-                          }}
-                            />
+                            }}
+                          />
                         </div>
                         <div className="text-center col-lg-3 col-md-3 col-sm-3 col-3">
                           <button
@@ -616,14 +616,14 @@ const PackagesPage = ({
                   )} */}
 
                   {Object.keys(selectedPackages).length > 0 ||
-                  teensCount > 0 ? (
+                    teensCount > 0 ? (
                     <div className="selected-packages row">
                       <div className="card col-12 mt-4">
                         <div className="card-body">
                           <h5 className="card-title">Selected Packages</h5>
                           {Object.entries(selectedPackages).map(
                             ([index, item]) => (
-                              console.log('item--->',item),
+                              console.log('item--->', item),
                               <div className="row package-item" key={index}>
                                 <div className="col-4">
                                   <p className="mb-0 detail">
@@ -726,7 +726,7 @@ const PackagesPage = ({
                             </div>
                           )}
 
-                          {(Discountpercent == "" || Discountpercent == null)? (
+                          {(Discountpercent == "" || Discountpercent == null) ? (
                             <></>
                           ) : (
                             <div className="row package-item">
@@ -743,7 +743,7 @@ const PackagesPage = ({
                                   {totalAmountOfAllPackages -
                                     (totalAmountOfAllPackages *
                                       Discountpercent) /
-                                      100}
+                                    100}
                                 </p>
                               </div>
                             </div>
