@@ -6,7 +6,9 @@ import { Oval } from "react-loader-spinner";
 import "../../../assets/global.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal } from "react-bootstrap";
+import { getAllCategories } from "../../../Redux/actions/users";
 
 // Dummy data for categories
 const DUMMY_CATEGORIES = [
@@ -47,9 +49,6 @@ const DUMMY_CATEGORIES = [
         createdAt: "2024-01-10",
     },
 ];
-
-import { useDispatch, useSelector } from "react-redux";
-import { getAllCategories } from "../../../Redux/actions/users";
 
 const CategoryList = () => {
     const dispatch = useDispatch();

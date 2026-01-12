@@ -8,6 +8,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button, Modal } from "react-bootstrap";
 import more from "../../../assets/Images/more.png";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserDetails, deleteUser } from "../../../Redux/actions/users";
 
 // Dummy data for profiles
 const DUMMY_PROFILES = [
@@ -100,10 +103,6 @@ const DUMMY_PROFILES = [
     createdAt: "2024-03-10",
   },
 ];
-
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { getUserDetails, deleteUser } from "../../../Redux/actions/users";
 
 const ProfileList = () => {
   const dispatch = useDispatch();
