@@ -4,7 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../../assets/global.css";
 import { useDispatch, useSelector } from "react-redux";
-import { updateCategoryDiscount } from "../../../Redux/actions/users";
+import { updateCategoryDiscount, addCategory } from "../../../Redux/actions/users";
 
 const AddEditCategory = () => {
     const dispatch = useDispatch();
@@ -68,6 +68,15 @@ const AddEditCategory = () => {
             newErrors.discountPercentage = "Discount must be between 0 and 100";
         }
 
+        if (!formData.commissionPercentage && formData.commissionPercentage !== 0) {
+            newErrors.commissionPercentage = "Commission percentage is required";
+        } else if (
+            parseFloat(formData.commissionPercentage) < 0 ||
+            parseFloat(formData.commissionPercentage) > 100
+        ) {
+            newErrors.commissionPercentage = "Commission must be between 0 and 100";
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -80,32 +89,50 @@ const AddEditCategory = () => {
             return;
         }
 
-        if (!categoryData) {
-            toast.warning("Adding new categories is not supported yet by the backend. You can only edit existing ones.");
-            return;
-        }
-
         setLoading(true);
 
         const payload = {
-            categoryId: categoryData.Id,
+            categoryName: formData.name,
             discountPercentage: parseFloat(formData.discountPercentage),
+            commissionPercentage: parseFloat(formData.commissionPercentage),
+            description: formData.description,
             isActive: formData.isActive
         };
 
-        dispatch(
-            updateCategoryDiscount(payload, loginDetails?.logindata?.Token, (callback) => {
-                setLoading(false);
-                if (callback.status) {
-                    toast.success("Category updated successfully!");
-                    setTimeout(() => {
-                        navigate("/CategoryList");
-                    }, 1500);
-                } else {
-                    toast.error(callback.error || "Failed to update category");
-                }
-            })
-        );
+        const token = loginDetails?.logindata?.Token;
+
+        if (categoryData) {
+            // Edit Mode
+            payload.categoryId = categoryData.Id;
+            dispatch(
+                updateCategoryDiscount(payload, token, (callback) => {
+                    setLoading(false);
+                    if (callback.status) {
+                        toast.success("Category updated successfully!");
+                        setTimeout(() => {
+                            navigate("/CategoryList");
+                        }, 1500);
+                    } else {
+                        toast.error(callback.error || "Failed to update category");
+                    }
+                })
+            );
+        } else {
+            // Add Mode
+            dispatch(
+                addCategory(payload, token, (callback) => {
+                    setLoading(false);
+                    if (callback.status) {
+                        toast.success("Category created successfully!");
+                        setTimeout(() => {
+                            navigate("/CategoryList");
+                        }, 1500);
+                    } else {
+                        toast.error(callback.error || "Failed to create category");
+                    }
+                })
+            );
+        }
     };
 
     const handleCancel = () => {
@@ -123,13 +150,6 @@ const AddEditCategory = () => {
                     {categoryData && (
                         <div className="alert alert-info mb-4">
                             <strong>Note:</strong> You are editing the pricing rules for <strong>{categoryData.Name}</strong>.
-                            Currently, only Discount Percentage and Status can be updated.
-                        </div>
-                    )}
-
-                    {!categoryData && (
-                        <div className="alert alert-warning mb-4">
-                            <strong>Notice:</strong> The backend currently only supports updating existing categories. Adding new ones is disabled.
                         </div>
                     )}
 
@@ -148,7 +168,6 @@ const AddEditCategory = () => {
                                     value={formData.name}
                                     onChange={handleChange}
                                     placeholder="e.g., Feet on Street Agent"
-                                    readOnly={!!categoryData}
                                 />
                                 {errors.name && (
                                     <div className="invalid-feedback">{errors.name}</div>
@@ -168,7 +187,6 @@ const AddEditCategory = () => {
                                     onChange={handleChange}
                                     placeholder="Brief description of this category"
                                     rows="3"
-                                    readOnly={!!categoryData}
                                 />
                             </div>
 
@@ -200,23 +218,26 @@ const AddEditCategory = () => {
                             {/* Commission Percentage */}
                             <div className="col-md-6 mb-3">
                                 <label htmlFor="commissionPercentage" className="form-label">
-                                    Commission Percentage
+                                    Commission Percentage <span style={{ color: "red" }}>*</span>
                                 </label>
                                 <div className="input-group">
                                     <input
                                         type="number"
                                         step="0.01"
-                                        className="form-control"
+                                        className={`form-control ${errors.commissionPercentage ? "is-invalid" : ""}`}
                                         id="commissionPercentage"
                                         name="commissionPercentage"
                                         value={formData.commissionPercentage}
                                         onChange={handleChange}
                                         placeholder="5"
-                                        readOnly
                                     />
                                     <span className="input-group-text">%</span>
+                                    {errors.commissionPercentage && (
+                                        <div className="invalid-feedback">
+                                            {errors.commissionPercentage}
+                                        </div>
+                                    )}
                                 </div>
-                                <small className="text-muted">Currently read-only in backend.</small>
                             </div>
 
                             {/* Status Toggle */}
@@ -250,15 +271,15 @@ const AddEditCategory = () => {
                             <button
                                 type="submit"
                                 className="btn btn-primary"
-                                disabled={loading || !categoryData}
+                                disabled={loading}
                             >
                                 {loading ? (
                                     <>
                                         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                        Updating...
+                                        {categoryData ? "Updating..." : "Creating..."}
                                     </>
                                 ) : (
-                                    "Update Category"
+                                    categoryData ? "Update Category" : "Create Category"
                                 )}
                             </button>
                         </div>

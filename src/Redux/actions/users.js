@@ -1245,3 +1245,29 @@ export const updateCategoryDiscount = (data, token, callback) => async (dispatch
       });
     });
 };
+
+export const addCategory = (data, token, callback) => async (dispatch) => {
+  api.CORE_PORT.post("/core/category", data, {
+    headers: { AuthToken: token },
+  })
+    .then((response) => {
+      if (response.data?.Details) {
+        callback({
+          status: true,
+          response: response?.data,
+        });
+      } else if (response.data?.Error) {
+        callback({
+          status: false,
+          error: response.data?.Error?.ErrorMessage,
+        });
+      }
+    })
+    .catch((err) => {
+      console.log("error", err);
+      callback({
+        status: false,
+        error: "An error occurred while adding category",
+      });
+    });
+};
