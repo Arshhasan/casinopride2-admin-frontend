@@ -10,46 +10,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal } from "react-bootstrap";
 import { getAllCategories } from "../../../Redux/actions/users";
 
-// Dummy data for categories
-const DUMMY_CATEGORIES = [
-    {
-        id: 1,
-        name: "Feet on Street Agent",
-        discountPercentage: 10,
-        commissionPercentage: 5,
-        description: "Agents who actively promote on the streets and public areas",
-        activeProfiles: 12,
-        createdAt: "2024-01-10",
-    },
-    {
-        id: 2,
-        name: "Alliances",
-        discountPercentage: 15,
-        commissionPercentage: 7,
-        description: "Strategic partnership agents and corporate alliances",
-        activeProfiles: 8,
-        createdAt: "2024-01-10",
-    },
-    {
-        id: 3,
-        name: "Taxi Agent",
-        discountPercentage: 8,
-        commissionPercentage: 4,
-        description: "Taxi drivers and transportation service providers",
-        activeProfiles: 25,
-        createdAt: "2024-01-10",
-    },
-    {
-        id: 4,
-        name: "Local Agent",
-        discountPercentage: 12,
-        commissionPercentage: 6,
-        description: "Local area agents and community representatives",
-        activeProfiles: 15,
-        createdAt: "2024-01-10",
-    },
-];
-
 const CategoryList = () => {
     const dispatch = useDispatch();
     const [categories, setCategories] = useState([]);
@@ -98,8 +58,7 @@ const CategoryList = () => {
                 <div className="row">
                     <div className="col-md-12 mb-3">
                         <div className="alert alert-info" style={{ backgroundColor: "#e3f2fd", border: "none" }}>
-                            <strong>About Categories:</strong> Categories define discount and commission rules that automatically apply to all profiles within that category.
-                            This ensures consistent pricing across all agents in the same category.
+                            <strong>About Categories:</strong> Categories define discount rules that automatically apply to all profiles within that category.
                         </div>
                     </div>
                     <div className="col-md-12 d-flex justify-content-end mb-3">
@@ -156,13 +115,7 @@ const CategoryList = () => {
                                         <div className="d-flex justify-content-between mb-2">
                                             <span style={{ fontWeight: "500" }}>Discount:</span>
                                             <span className="badge bg-success">
-                                                {category.DiscountPercent}%
-                                            </span>
-                                        </div>
-                                        <div className="d-flex justify-content-between mb-2">
-                                            <span style={{ fontWeight: "500" }}>Commission:</span>
-                                            <span className="badge bg-primary">
-                                                {category.CommissionPercent || 0}%
+                                                {category.DiscountPercent || 0}%
                                             </span>
                                         </div>
                                         <div className="d-flex justify-content-between">
@@ -202,8 +155,7 @@ const CategoryList = () => {
                     <div className="mb-3">
                         <strong>Pricing Rules:</strong>
                         <ul className="mt-2">
-                            <li>Discount Rate: <strong>{selectedCategory.DiscountPercent}%</strong></li>
-                            <li>Commission Rate: <strong>{selectedCategory.CommissionPercent || 0}%</strong></li>
+                            <li>Discount Rate: <strong>{selectedCategory.DiscountPercent || 0}%</strong></li>
                         </ul>
                     </div>
 
@@ -211,12 +163,7 @@ const CategoryList = () => {
                         <strong>Statistics:</strong>
                         <ul className="mt-2">
                             <li>Status: <strong>{selectedCategory.IsActive ? "Active" : "Inactive"}</strong></li>
-                            <li>Created: <strong>{selectedCategory.currentTs || "-"}</strong></li>
                         </ul>
-                    </div>
-
-                    <div className="alert alert-warning" style={{ fontSize: "14px" }}>
-                        <strong>Note:</strong> Changing discount or commission rates will affect all profiles in this category.
                     </div>
                 </Modal.Body>
                 <Modal.Footer>

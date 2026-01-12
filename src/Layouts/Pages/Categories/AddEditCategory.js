@@ -16,7 +16,6 @@ const AddEditCategory = () => {
         name: "",
         description: "",
         discountPercentage: "",
-        commissionPercentage: "",
         isActive: 1,
     });
 
@@ -34,7 +33,6 @@ const AddEditCategory = () => {
                 name: categoryData.Name || "",
                 description: categoryData.Description || "",
                 discountPercentage: categoryData.DiscountPercent || "",
-                commissionPercentage: categoryData.CommissionPercent || "0",
                 isActive: categoryData.IsActive !== undefined ? categoryData.IsActive : 1,
             });
         }
@@ -68,15 +66,6 @@ const AddEditCategory = () => {
             newErrors.discountPercentage = "Discount must be between 0 and 100";
         }
 
-        if (!formData.commissionPercentage && formData.commissionPercentage !== 0) {
-            newErrors.commissionPercentage = "Commission percentage is required";
-        } else if (
-            parseFloat(formData.commissionPercentage) < 0 ||
-            parseFloat(formData.commissionPercentage) > 100
-        ) {
-            newErrors.commissionPercentage = "Commission must be between 0 and 100";
-        }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -94,7 +83,6 @@ const AddEditCategory = () => {
         const payload = {
             categoryName: formData.name,
             discountPercentage: parseFloat(formData.discountPercentage),
-            commissionPercentage: parseFloat(formData.commissionPercentage),
             description: formData.description,
             isActive: formData.isActive
         };
@@ -191,7 +179,7 @@ const AddEditCategory = () => {
                             </div>
 
                             {/* Discount Percentage */}
-                            <div className="col-md-6 mb-3">
+                            <div className="col-md-12 mb-3">
                                 <label htmlFor="discountPercentage" className="form-label">
                                     Discount Percentage <span style={{ color: "red" }}>*</span>
                                 </label>
@@ -210,31 +198,6 @@ const AddEditCategory = () => {
                                     {errors.discountPercentage && (
                                         <div className="invalid-feedback">
                                             {errors.discountPercentage}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Commission Percentage */}
-                            <div className="col-md-6 mb-3">
-                                <label htmlFor="commissionPercentage" className="form-label">
-                                    Commission Percentage <span style={{ color: "red" }}>*</span>
-                                </label>
-                                <div className="input-group">
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        className={`form-control ${errors.commissionPercentage ? "is-invalid" : ""}`}
-                                        id="commissionPercentage"
-                                        name="commissionPercentage"
-                                        value={formData.commissionPercentage}
-                                        onChange={handleChange}
-                                        placeholder="5"
-                                    />
-                                    <span className="input-group-text">%</span>
-                                    {errors.commissionPercentage && (
-                                        <div className="invalid-feedback">
-                                            {errors.commissionPercentage}
                                         </div>
                                     )}
                                 </div>

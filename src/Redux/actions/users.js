@@ -1247,7 +1247,7 @@ export const updateCategoryDiscount = (data, token, callback) => async (dispatch
 };
 
 export const addCategory = (data, token, callback) => async (dispatch) => {
-  api.CORE_PORT.post("/core/category", data, {
+  api.CORE_PORT.post("/core/addCategory", data, {
     headers: { AuthToken: token },
   })
     .then((response) => {
