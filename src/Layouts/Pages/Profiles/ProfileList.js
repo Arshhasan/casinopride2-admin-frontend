@@ -101,7 +101,13 @@ const DUMMY_PROFILES = [
   },
 ];
 
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserDetails, deleteUser } from "../../../Redux/actions/users";
+
 const ProfileList = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -111,14 +117,30 @@ const ProfileList = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [profileToDelete, setProfileToDelete] = useState(null);
 
-  // Simulate API call with dummy data
+  const loginDetails = useSelector(
+    (state) => state.auth?.userDetailsAfterLogin.Details
+  );
+
+  const fetchProfiles = () => {
+    setLoading(true);
+    dispatch(
+      getUserDetails(loginDetails?.logindata?.Token, 11, (callback) => {
+        setLoading(false);
+        if (callback.status) {
+          setProfiles(callback?.response?.Details || []);
+          setFilterProfileList(callback?.response?.Details || []);
+        } else {
+          toast.error(callback.error || "Failed to fetch profiles");
+        }
+      })
+    );
+  };
+
   useEffect(() => {
-    setTimeout(() => {
-      setProfiles(DUMMY_PROFILES);
-      setFilterProfileList(DUMMY_PROFILES);
-      setLoading(false);
-    }, 1000);
-  }, []);
+    if (loginDetails?.logindata?.Token) {
+      fetchProfiles();
+    }
+  }, [dispatch, loginDetails]);
 
   const filterProfileDetails = (value) => {
     if (value?.trim() === "") {
@@ -127,10 +149,10 @@ const ProfileList = () => {
       const lowerCaseQuery = value?.toLowerCase();
       const filtered = profiles.filter(
         (item) =>
-          item?.name?.toLowerCase()?.includes(lowerCaseQuery) ||
-          item?.mobile?.includes(value) ||
-          item?.email?.toLowerCase()?.includes(lowerCaseQuery) ||
-          item?.categoryName?.toLowerCase()?.includes(lowerCaseQuery)
+          item?.Name?.toLowerCase()?.includes(lowerCaseQuery) ||
+          item?.Phone?.includes(value) ||
+          item?.Email?.toLowerCase()?.includes(lowerCaseQuery) ||
+          item?.CategoryName?.toLowerCase()?.includes(lowerCaseQuery)
       );
       setFilterProfileList(filtered);
     }
@@ -152,12 +174,17 @@ const ProfileList = () => {
   };
 
   const handleDeleteConfirm = () => {
-    // Simulate delete operation
-    const updatedProfiles = profiles.filter((p) => p.id !== profileToDelete);
-    setProfiles(updatedProfiles);
-    setFilterProfileList(updatedProfiles);
-    setShowDeleteModal(false);
-    toast.success("Profile deleted successfully!");
+    dispatch(
+      deleteUser(loginDetails?.logindata?.Token, profileToDelete, (callback) => {
+        if (callback.status) {
+          toast.success("Profile deleted successfully!");
+          fetchProfiles();
+        } else {
+          toast.error(callback.error || "Failed to delete profile");
+        }
+        setShowDeleteModal(false);
+      })
+    );
   };
 
   const handleCloseDelete = () => {
@@ -251,13 +278,13 @@ const ProfileList = () => {
             </tr>
           ) : (
             filterProfileList.map((item) => (
-              <tr key={item.id}>
-                <td className="manager-list">{item.name}</td>
+              <tr key={item.Id}>
+                <td className="manager-list">{item.Name}</td>
                 <td className="manager-list">
-                  {item.mobile ? item.mobile : "-"}
+                  {item.Phone ? item.Phone : "-"}
                 </td>
                 <td className="manager-list">
-                  {item.email ? item.email : "-"}
+                  {item.Email ? item.Email : "-"}
                 </td>
                 <td className="manager-list">
                   <span
@@ -270,11 +297,11 @@ const ProfileList = () => {
                       fontWeight: "500",
                     }}
                   >
-                    {item.categoryName}
+                    {item.CategoryName}
                   </span>
                 </td>
                 <td className="manager-list">
-                  {item.status ? (
+                  {item.IsUserEnabled ? (
                     <span style={{ color: "green" }}>Active</span>
                   ) : (
                     <span style={{ color: "red" }}>Inactive</span>
@@ -311,47 +338,37 @@ const ProfileList = () => {
           <Modal.Title>Profile Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p className="manager-list">
-            <strong>Name:</strong> {selectedProfile.name}
-          </p>
-          {selectedProfile.mobile && (
-            <p className="manager-list">
-              <strong>Mobile:</strong> {selectedProfile.mobile}
+          <div className="profile-details-modal">
+            <p>
+              <strong>Name:</strong> {selectedProfile.Name}
             </p>
-          )}
-          {selectedProfile.email && (
-            <p className="manager-list">
-              <strong>Email:</strong> {selectedProfile.email}
+            <p>
+              <strong>Mobile:</strong> {selectedProfile.Phone}
             </p>
-          )}
-          <p className="manager-list">
-            <strong>Category:</strong> {selectedProfile.categoryName}
-          </p>
-          {selectedProfile.url && (
-            <p className="manager-list">
+            <p>
+              <strong>Email:</strong> {selectedProfile.Email || "-"}
+            </p>
+            <p>
+              <strong>Category:</strong> {selectedProfile.CategoryName}
+            </p>
+            <p>
               <strong>Booking URL:</strong>{" "}
               <a
-                href={selectedProfile.url}
+                href={selectedProfile.QRLink}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {selectedProfile.url}
+                {selectedProfile.QRLink}
               </a>
             </p>
-          )}
-          <p className="manager-list">
-            <strong>Status:</strong>{" "}
-            {selectedProfile.status ? (
-              <span style={{ color: "green" }}>Active</span>
-            ) : (
-              <span style={{ color: "red" }}>Inactive</span>
-            )}
-          </p>
-          {selectedProfile.createdAt && (
-            <p className="manager-list">
-              <strong>Created At:</strong> {selectedProfile.createdAt}
+            <p>
+              <strong>Status:</strong>{" "}
+              {selectedProfile.IsUserEnabled ? "Active" : "Inactive"}
             </p>
-          )}
+            <p>
+              <strong>Created At:</strong> {selectedProfile.currentTs}
+            </p>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseViewMore}>

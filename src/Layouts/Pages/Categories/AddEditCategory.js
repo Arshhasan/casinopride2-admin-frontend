@@ -3,8 +3,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../../assets/global.css";
+import { useDispatch, useSelector } from "react-redux";
+import { updateCategoryDiscount } from "../../../Redux/actions/users";
 
 const AddEditCategory = () => {
+    const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
     const categoryData = location.state?.categoryData;
@@ -14,7 +17,12 @@ const AddEditCategory = () => {
         description: "",
         discountPercentage: "",
         commissionPercentage: "",
+        isActive: 1,
     });
+
+    const loginDetails = useSelector(
+        (state) => state.auth?.userDetailsAfterLogin.Details
+    );
 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -23,19 +31,20 @@ const AddEditCategory = () => {
     useEffect(() => {
         if (categoryData) {
             setFormData({
-                name: categoryData.name || "",
-                description: categoryData.description || "",
-                discountPercentage: categoryData.discountPercentage || "",
-                commissionPercentage: categoryData.commissionPercentage || "",
+                name: categoryData.Name || "",
+                description: categoryData.Description || "",
+                discountPercentage: categoryData.DiscountPercent || "",
+                commissionPercentage: categoryData.CommissionPercent || "0",
+                isActive: categoryData.IsActive !== undefined ? categoryData.IsActive : 1,
             });
         }
     }, [categoryData]);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
         setFormData({
             ...formData,
-            [name]: value,
+            [name]: type === "checkbox" ? (checked ? 1 : 0) : value,
         });
         // Clear error for this field when user starts typing
         if (errors[name]) {
@@ -50,26 +59,13 @@ const AddEditCategory = () => {
             newErrors.name = "Category name is required";
         }
 
-        if (!formData.description.trim()) {
-            newErrors.description = "Description is required";
-        }
-
-        if (!formData.discountPercentage) {
+        if (!formData.discountPercentage && formData.discountPercentage !== 0) {
             newErrors.discountPercentage = "Discount percentage is required";
         } else if (
             parseFloat(formData.discountPercentage) < 0 ||
             parseFloat(formData.discountPercentage) > 100
         ) {
             newErrors.discountPercentage = "Discount must be between 0 and 100";
-        }
-
-        if (!formData.commissionPercentage) {
-            newErrors.commissionPercentage = "Commission percentage is required";
-        } else if (
-            parseFloat(formData.commissionPercentage) < 0 ||
-            parseFloat(formData.commissionPercentage) > 100
-        ) {
-            newErrors.commissionPercentage = "Commission must be between 0 and 100";
         }
 
         setErrors(newErrors);
@@ -84,20 +80,32 @@ const AddEditCategory = () => {
             return;
         }
 
+        if (!categoryData) {
+            toast.warning("Adding new categories is not supported yet by the backend. You can only edit existing ones.");
+            return;
+        }
+
         setLoading(true);
 
-        // Simulate API call
-        setTimeout(() => {
-            setLoading(false);
-            if (categoryData) {
-                toast.success("Category updated successfully!");
-            } else {
-                toast.success("Category created successfully!");
-            }
-            setTimeout(() => {
-                navigate("/CategoryList");
-            }, 1500);
-        }, 1000);
+        const payload = {
+            categoryId: categoryData.Id,
+            discountPercentage: parseFloat(formData.discountPercentage),
+            isActive: formData.isActive
+        };
+
+        dispatch(
+            updateCategoryDiscount(payload, loginDetails?.logindata?.Token, (callback) => {
+                setLoading(false);
+                if (callback.status) {
+                    toast.success("Category updated successfully!");
+                    setTimeout(() => {
+                        navigate("/CategoryList");
+                    }, 1500);
+                } else {
+                    toast.error(callback.error || "Failed to update category");
+                }
+            })
+        );
     };
 
     const handleCancel = () => {
@@ -112,12 +120,16 @@ const AddEditCategory = () => {
 
             <div className="card">
                 <div className="card-body">
-                    {categoryData && categoryData.activeProfiles > 0 && (
+                    {categoryData && (
+                        <div className="alert alert-info mb-4">
+                            <strong>Note:</strong> You are editing the pricing rules for <strong>{categoryData.Name}</strong>.
+                            Currently, only Discount Percentage and Status can be updated.
+                        </div>
+                    )}
+
+                    {!categoryData && (
                         <div className="alert alert-warning mb-4">
-                            <strong>Warning:</strong> This category has{" "}
-                            <strong>{categoryData.activeProfiles}</strong> active profiles.
-                            Changing discount or commission rates will affect all bookings
-                            from these profiles.
+                            <strong>Notice:</strong> The backend currently only supports updating existing categories. Adding new ones is disabled.
                         </div>
                     )}
 
@@ -136,6 +148,7 @@ const AddEditCategory = () => {
                                     value={formData.name}
                                     onChange={handleChange}
                                     placeholder="e.g., Feet on Street Agent"
+                                    readOnly={!!categoryData}
                                 />
                                 {errors.name && (
                                     <div className="invalid-feedback">{errors.name}</div>
@@ -145,21 +158,18 @@ const AddEditCategory = () => {
                             {/* Description */}
                             <div className="col-md-12 mb-3">
                                 <label htmlFor="description" className="form-label">
-                                    Description <span style={{ color: "red" }}>*</span>
+                                    Description
                                 </label>
                                 <textarea
-                                    className={`form-control ${errors.description ? "is-invalid" : ""
-                                        }`}
+                                    className={`form-control ${errors.description ? "is-invalid" : ""}`}
                                     id="description"
                                     name="description"
                                     value={formData.description}
                                     onChange={handleChange}
                                     placeholder="Brief description of this category"
                                     rows="3"
+                                    readOnly={!!categoryData}
                                 />
-                                {errors.description && (
-                                    <div className="invalid-feedback">{errors.description}</div>
-                                )}
                             </div>
 
                             {/* Discount Percentage */}
@@ -171,8 +181,7 @@ const AddEditCategory = () => {
                                     <input
                                         type="number"
                                         step="0.01"
-                                        className={`form-control ${errors.discountPercentage ? "is-invalid" : ""
-                                            }`}
+                                        className={`form-control ${errors.discountPercentage ? "is-invalid" : ""}`}
                                         id="discountPercentage"
                                         name="discountPercentage"
                                         value={formData.discountPercentage}
@@ -186,64 +195,46 @@ const AddEditCategory = () => {
                                         </div>
                                     )}
                                 </div>
-                                <small className="form-text text-muted">
-                                    This discount will be automatically applied to all profiles in
-                                    this category.
-                                </small>
                             </div>
 
                             {/* Commission Percentage */}
                             <div className="col-md-6 mb-3">
                                 <label htmlFor="commissionPercentage" className="form-label">
-                                    Commission Percentage <span style={{ color: "red" }}>*</span>
+                                    Commission Percentage
                                 </label>
                                 <div className="input-group">
                                     <input
                                         type="number"
                                         step="0.01"
-                                        className={`form-control ${errors.commissionPercentage ? "is-invalid" : ""
-                                            }`}
+                                        className="form-control"
                                         id="commissionPercentage"
                                         name="commissionPercentage"
                                         value={formData.commissionPercentage}
                                         onChange={handleChange}
                                         placeholder="5"
+                                        readOnly
                                     />
                                     <span className="input-group-text">%</span>
-                                    {errors.commissionPercentage && (
-                                        <div className="invalid-feedback">
-                                            {errors.commissionPercentage}
-                                        </div>
-                                    )}
                                 </div>
-                                <small className="form-text text-muted">
-                                    Commission rate for all profiles in this category.
-                                </small>
+                                <small className="text-muted">Currently read-only in backend.</small>
                             </div>
 
-                            {/* Preview Box */}
-                            {formData.discountPercentage && formData.commissionPercentage && (
-                                <div className="col-md-12 mb-3">
-                                    <div
-                                        className="alert alert-success"
-                                        style={{ backgroundColor: "#e8f5e9", border: "none" }}
-                                    >
-                                        <strong>Preview:</strong>
-                                        <ul className="mb-0 mt-2">
-                                            <li>
-                                                Customers will receive a{" "}
-                                                <strong>{formData.discountPercentage}%</strong> discount
-                                                on bookings
-                                            </li>
-                                            <li>
-                                                Agents will earn a{" "}
-                                                <strong>{formData.commissionPercentage}%</strong>{" "}
-                                                commission
-                                            </li>
-                                        </ul>
-                                    </div>
+                            {/* Status Toggle */}
+                            <div className="col-md-12 mb-3">
+                                <div className="form-check form-switch">
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        id="isActive"
+                                        name="isActive"
+                                        checked={formData.isActive === 1}
+                                        onChange={handleChange}
+                                    />
+                                    <label className="form-check-label" htmlFor="isActive">
+                                        Category Status: <strong>{formData.isActive === 1 ? "Active" : "Inactive"}</strong>
+                                    </label>
                                 </div>
-                            )}
+                            </div>
                         </div>
 
                         {/* Action Buttons */}
@@ -259,21 +250,15 @@ const AddEditCategory = () => {
                             <button
                                 type="submit"
                                 className="btn btn-primary"
-                                disabled={loading}
+                                disabled={loading || !categoryData}
                             >
                                 {loading ? (
                                     <>
-                                        <span
-                                            className="spinner-border spinner-border-sm me-2"
-                                            role="status"
-                                            aria-hidden="true"
-                                        ></span>
-                                        {categoryData ? "Updating..." : "Creating..."}
+                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Updating...
                                     </>
-                                ) : categoryData ? (
-                                    "Update Category"
                                 ) : (
-                                    "Create Category"
+                                    "Update Category"
                                 )}
                             </button>
                         </div>
