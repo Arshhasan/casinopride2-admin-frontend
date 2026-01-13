@@ -48,6 +48,9 @@ const AddUser = () => {
     userData?.MonthlySettlement ? userData?.MonthlySettlement : 0
   );
 
+  const [category, setCategory] = useState("");
+  const categories = ["Category A", "Category B", "Category C"];
+
   const [isChecked, setIsChecked] = useState(
     userData?.IsUserEnabled ? userData?.IsUserEnabled : 0
   );
@@ -496,9 +499,9 @@ const AddUser = () => {
         )}
 
         {userType == "5" ||
-        userType == "6" ||
-        userData?.UserType == "5" ||
-        userData?.UserType == "6" ? (
+          userType == "6" ||
+          userData?.UserType == "5" ||
+          userData?.UserType == "6" ? (
           <div className="col-lg-6 mt-3">
             {userType == "5" || userData?.UserType == "5" ? (
               <label for="formGroupExampleInput " className="form_text">
@@ -521,8 +524,8 @@ const AddUser = () => {
           <></>
         )}
         {userType == "5" ||
-        userData?.UserType == "5" ||
-        userData?.UserType == "6" ? (
+          userData?.UserType == "5" ||
+          userData?.UserType == "6" ? (
           <div className="col-lg-6 mt-3">
             <label for="formGroupExampleInput " className="form_text">
               Monthly settlement
@@ -540,6 +543,22 @@ const AddUser = () => {
         ) : (
           <></>
         )}
+
+        <div className="col-lg-6 mt-3">
+          <label className="form_text">Category</label>
+          <select
+            className="form-control mt-2"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="">Select Category</option>
+            {categories.map((cat, index) => (
+              <option key={index} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {(userData && userType == 6) || (userData && userType == 8) ? (
           <div className="col-lg-6 mt-3">
