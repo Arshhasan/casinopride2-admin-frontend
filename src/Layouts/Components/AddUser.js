@@ -49,7 +49,7 @@ const AddUser = () => {
   );
 
   const [category, setCategory] = useState("");
-  const categories = ["Category A", "Category B", "Category C"];
+  const categories = ["Street Agent", "Shop", "Hotel", "Restaurant"];
 
   const [isChecked, setIsChecked] = useState(
     userData?.IsUserEnabled ? userData?.IsUserEnabled : 0
@@ -498,7 +498,7 @@ const AddUser = () => {
           </div>
         )}
 
-        {userType == "5" ||
+        {/* {userType == "5" ||
           userType == "6" ||
           userData?.UserType == "5" ||
           userData?.UserType == "6" ? (
@@ -522,7 +522,7 @@ const AddUser = () => {
           </div>
         ) : (
           <></>
-        )}
+        )} */}
         {userType == "5" ||
           userData?.UserType == "5" ||
           userData?.UserType == "6" ? (
