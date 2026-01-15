@@ -4,6 +4,7 @@ import {
   AddUserDetails,
   EditUserDetails,
   addQrCodeLink,
+  getAllCategories,
 } from "../../Redux/actions/users";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -48,14 +49,28 @@ const AddUser = () => {
     userData?.MonthlySettlement ? userData?.MonthlySettlement : 0
   );
 
-  const [category, setCategory] = useState("");
-  const categories = ["Street Agent", "Shop", "Hotel", "Restaurant"];
+  const [category, setCategory] = useState(userData?.CategoryId || "");
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
   const [isChecked, setIsChecked] = useState(
     userData?.IsUserEnabled ? userData?.IsUserEnabled : 0
   );
 
   const [disableAddUserButton, setDisableAddUserButton] = useState(false);
+
+  useEffect(() => {
+    if (loginDetails?.logindata?.Token) {
+      dispatch(
+        getAllCategories(loginDetails?.logindata?.Token, (callback) => {
+          setLoadingCategories(false);
+          if (callback.status) {
+            setCategories(callback?.response?.Details || []);
+          }
+        })
+      );
+    }
+  }, [dispatch, loginDetails]);
 
   const isValidEmail = (email) => {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -104,7 +119,6 @@ const AddUser = () => {
       toast.warning("Please enter all the fields");
       setDisableAddUserButton(false);
     }
-
     // else if (phone.length > 10 || phone.length < 10) {
     //   toast.warning("Please enter a valid phone number (up to 10 digits)");
     // }
@@ -127,6 +141,7 @@ const AddUser = () => {
         monthlySettlement: monthlysettlement,
         isUserEnabled: 1,
         isActive: 1,
+        categoryId: category ? Number(category) : null,
       };
 
       dispatch(
@@ -252,6 +267,7 @@ const AddUser = () => {
         userRef: userData?.Ref,
         isUserEnabled: isChecked,
         isActive: 1,
+        categoryId: category ? Number(category) : null,
       };
 
       dispatch(
@@ -551,10 +567,10 @@ const AddUser = () => {
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
-            <option value="">Select Category</option>
-            {categories.map((cat, index) => (
-              <option key={index} value={cat}>
-                {cat}
+            <option value="">{loadingCategories ? "Loading..." : "Select Category"}</option>
+            {categories.map((cat) => (
+              <option key={cat.Id} value={cat.Id}>
+                {cat.Name}
               </option>
             ))}
           </select>
