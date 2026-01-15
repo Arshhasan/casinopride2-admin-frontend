@@ -1268,12 +1268,12 @@ const BookingList = () => {
               <th scope="col" className="text-center table_heading">
                 Category
               </th>
-              <th scope="col" className="text-center table_heading">
+              {/* <th scope="col" className="text-center table_heading">
                 Packages
               </th>
               <th scope="col" className="text-center table_heading">
                 Package Amount
-              </th>
+              </th> */}
               <th scope="col" className="text-center table_heading">
                 Total Amount
               </th>
@@ -1362,7 +1362,7 @@ const BookingList = () => {
                     </span>
                   </td>
 
-                  <td className="manager-list" style={{ fontSize: "12px" }}>
+                  {/* <td className="manager-list" style={{ fontSize: "12px" }}>
                     {item && item?.PackageName && item?.PackageName ? (
                       JSON.parse(item?.PackageName).map((item, index) => (
                         <li key={index} style={{ listStyleType: "none" }}>
@@ -1372,7 +1372,7 @@ const BookingList = () => {
                     ) : (
                       <span>No package name available</span>
                     )}
-                  </td>
+                  </td> */}
 
                   {/* <td className="manager-list">
                   {item?.FinalPrice?.map((price, index) => (
@@ -1381,12 +1381,8 @@ const BookingList = () => {
                     </li>
                   ))}
                 </td> */}
-                  <td className="manager-list">
-                    {/* {item?.Items[0]?.FinalPrice?.map((price, index) => (
-                              <li key={index} style={{ listStyleType: "none" }}>
-                                {price}
-                              </li>
-                            ))} */}
+                  {/* <td className="manager-list">
+                    
                     {item?.TeensPrice === 0 &&
                       item?.FinalPrice.length !== 0 && (
                         // Display only price
@@ -1413,7 +1409,7 @@ const BookingList = () => {
                       item?.FinalPrice.length === 0 && (
                         <div>{item?.TeensPrice}</div>
                       )}
-                  </td>
+                  </td> */}
 
                   <td className="manager-list">
                     {item?.ActualAmount - item?.AmountAfterDiscount ==
