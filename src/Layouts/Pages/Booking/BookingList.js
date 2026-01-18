@@ -1260,6 +1260,9 @@ const BookingList = () => {
           <thead>
             <tr>
               <th scope="col" className="text-center table_heading">
+                Booking ID
+              </th>
+              <th scope="col" className="text-center table_heading">
                 Guest Name
               </th>
               <th scope="col" className="text-center table_heading">
@@ -1279,6 +1282,9 @@ const BookingList = () => {
               </th>
               <th scope="col" className="text-center table_heading">
                 Total Guest Count
+              </th>
+              <th scope="col" className="text-center table_heading">
+                Payment Status
               </th>
               <th scope="col" className="text-center table_heading">
                 Generate Bill
@@ -1307,7 +1313,7 @@ const BookingList = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="6" className="text-center">
+                <td colSpan={loginDetails?.logindata?.UserType === 1 || loginDetails?.logindata?.UserType === 2 ? "11" : "10"} className="text-center">
                   <div
                     style={{
                       display: "flex",
@@ -1331,13 +1337,14 @@ const BookingList = () => {
               </tr>
             ) : filteredUserBookings.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center">
+                <td colSpan={loginDetails?.logindata?.UserType === 1 || loginDetails?.logindata?.UserType === 2 ? "11" : "10"} className="text-center">
                   No data found.
                 </td>
               </tr>
             ) : (
               filteredUserBookings.map((item) => (
                 <tr key={item.id}>
+                  <td className="manager-list ">{item.Id}</td>
                   <td className="manager-list ">{item.FullName}</td>
                   {/* <td className="manager-list">{item.Phone}</td> */}
                   <td className="manager-list">
@@ -1418,6 +1425,34 @@ const BookingList = () => {
                       : item?.AmountAfterDiscount}
                   </td>
                   <td className="manager-list">{item.TotalGuestCount}</td>
+
+                  {/*Payment Status column */}
+                  <td className="manager-list">
+                    <span
+                      style={{
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        backgroundColor: item?.PaymentMode === "Cash" 
+                          ? "#ffebee" 
+                          : !item?.PaymentMode 
+                            ? "#fff3e0" 
+                            : "#e8f5e9",
+                        color: item?.PaymentMode === "Cash" 
+                          ? "#c62828" 
+                          : !item?.PaymentMode 
+                            ? "#e65100" 
+                            : "#2e7d32",
+                        fontSize: "12px",
+                        fontWeight: "500",
+                      }}
+                    >
+                      {item?.PaymentMode === "Cash" 
+                        ? "Unpaid" 
+                        : !item?.PaymentMode 
+                          ? "Not Found" 
+                          : "Paid"}
+                    </span>
+                  </td>
 
                   {/*Generate Bill column */}
                   <td className="manager-list">
