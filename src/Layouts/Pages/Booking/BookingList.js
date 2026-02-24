@@ -1743,6 +1743,13 @@ const BookingList = () => {
                 {`Booking Date: ${selectedUserDetails?.CreatedOn?.slice(0, 10) || selectedUserDetails?.BookingDate}`}
               </p>
             </div>
+            {selectedUserDetails?.CreatedOn && (
+              <div className="col-6">
+                <p className="table-modal-list ">
+                  Last Created: {moment(selectedUserDetails.CreatedOn).format("YYYY-MM-DD HH:mm:ss")}
+                </p>
+              </div>
+            )}
           </Modal.Body>
           <Modal.Footer></Modal.Footer>
         </Modal>
