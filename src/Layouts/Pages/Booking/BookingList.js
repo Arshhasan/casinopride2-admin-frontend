@@ -5,6 +5,7 @@ import {
   getPackageDetails,
   deletePackage,
   getUserById,
+  getAllCategories,
 } from "../../../Redux/actions/users";
 import {
   fetchBookingDetailsById,
@@ -86,6 +87,8 @@ const BookingList = () => {
   console.log("futureDate---->", futureDate);
 
   const [filteredUserBookings, setFilteredUserBookings] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const fetchUserBookingFn = () => {
     dispatch(
@@ -99,8 +102,10 @@ const BookingList = () => {
               "Callback---------get user bookings",
               callback?.response
             );
-            setUserBookings(callback?.response?.Details);
-            setFilteredUserBookings(callback?.response?.Details);
+            const bookings = callback?.response?.Details || [];
+            setUserBookings(bookings);
+            // Initially show all bookings, filters will be applied via useEffect
+            setFilteredUserBookings(bookings);
           } else {
             console.log(callback.error);
             toast.error(callback.error);
@@ -126,9 +131,22 @@ const BookingList = () => {
     );
   };
 
+  const fetchCategories = () => {
+    dispatch(
+      getAllCategories(loginDetails?.logindata?.Token, (callback) => {
+        if (callback.status) {
+          setCategories(callback?.response?.Details || []);
+        } else {
+          console.log("Error fetching categories:", callback.error);
+        }
+      })
+    );
+  };
+
   useEffect(() => {
     fetchUserBookingFn();
     fetchPackageDetails();
+    fetchCategories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
@@ -166,6 +184,8 @@ const BookingList = () => {
 
   useEffect(() => {
     fetchUserBookingFn();
+    setSelectedCategory(""); // Reset category filter when date changes
+    setSearchQuery(""); // Reset search when date changes
   }, [futureDate]);
 
   const outletOpenDate = useSelector(
@@ -701,21 +721,38 @@ const BookingList = () => {
     filteredUserBookings
   );
 
-  const filterBookingDetails = (value) => {
-    if (value?.trim() === "") {
-      fetchUserBookingFn();
-      // setFilteredManagerDetails([]);
-    } else {
+  const filterBookingDetails = (value = searchQuery, categoryFilter = selectedCategory) => {
+    let filtered = userBookings || [];
+    
+    // Apply category filter
+    if (categoryFilter && categoryFilter !== "") {
+      const selectedCategoryName = categories.find(cat => cat.Id === parseInt(categoryFilter))?.Name;
+      if (selectedCategoryName) {
+        filtered = filtered.filter(
+          (item) => item?.CategoryName === selectedCategoryName
+        );
+      }
+    }
+    
+    // Apply search filter
+    if (value && value.trim() !== "") {
       const lowerCaseQuery = value?.toLowerCase();
-      const filtered = filteredUserBookings?.filter(
+      filtered = filtered.filter(
         (item) =>
           item?.FullName?.toLowerCase()?.includes(lowerCaseQuery) ||
           item?.Phone?.includes(value) ||
           item?.CategoryName?.toLowerCase()?.includes(lowerCaseQuery)
       );
-      setFilteredUserBookings(filtered);
     }
+    
+    setFilteredUserBookings(filtered);
   };
+
+  // Filter when category or search query changes
+  useEffect(() => {
+    filterBookingDetails(searchQuery, selectedCategory);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, searchQuery, userBookings, categories]);
 
   //shift code
 
@@ -1207,9 +1244,23 @@ const BookingList = () => {
       <div>
         <ToastContainer />
         <h3 className="mb-4">Booking List</h3>
+        <div className="mb-3">
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <div>
+              <strong>Total Bookings: </strong>
+              <span className="badge bg-primary">{userBookings?.length || 0}</span>
+              {selectedCategory && (
+                <>
+                  <strong className="ms-3">Filtered: </strong>
+                  <span className="badge bg-info">{filteredUserBookings?.length || 0}</span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
         <div>
           <div className="row">
-            <div className="col-md-6 col-lg-6 mb-3">
+            <div className="col-md-4 col-lg-4 mb-3">
               <p style={{ fontWeight: "bold" }}>Search</p>
               <div className="input-group">
                 <input
@@ -1217,12 +1268,29 @@ const BookingList = () => {
                   className="form-control"
                   placeholder="Search"
                   onChange={(e) => {
-                    // setSearchQuery(e.target.value);
-                    // filterPackageDetailsFn();
+                    setSearchQuery(e.target.value);
                     filterBookingDetails(e.target.value);
                   }}
                 />
               </div>
+            </div>
+
+            <div className="col-md-3 col-lg-3 mb-3">
+              <p style={{ fontWeight: "bold" }}>Category Filter</p>
+              <select
+                className="form-control"
+                value={selectedCategory}
+                onChange={(e) => {
+                  setSelectedCategory(e.target.value);
+                }}
+              >
+                <option value="">All Categories</option>
+                {categories.map((category) => (
+                  <option key={category.Id} value={category.Id}>
+                    {category.Name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="col-md-2 col-lg-2 mb-2">
@@ -1232,17 +1300,13 @@ const BookingList = () => {
                   type="date"
                   className="form-control"
                   placeholder="Search name"
-                  // onChange={(e) => {
-                  //   setSearchQuery(e.target.value);
-                  //   filterPackageDetailsFn();
-                  // }}
                   defaultValue={today}
                   onChange={(e) => setFutureDate(e.target.value)}
                 />
               </div>
             </div>
 
-            <div className="col-md-4 col-lg-4 d-flex justify-content-end mb-3">
+            <div className="col-md-3 col-lg-3 d-flex justify-content-end mb-3">
               <Link
                 to="/NewBooking"
                 state={{ userType: "4" }}
