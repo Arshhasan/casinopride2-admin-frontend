@@ -1284,6 +1284,9 @@ const BookingList = () => {
                 Total Guest Count
               </th>
               <th scope="col" className="text-center table_heading">
+                Created On
+              </th>
+              <th scope="col" className="text-center table_heading">
                 Payment Status
               </th>
               <th scope="col" className="text-center table_heading">
@@ -1313,7 +1316,7 @@ const BookingList = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={loginDetails?.logindata?.UserType === 1 || loginDetails?.logindata?.UserType === 2 ? "11" : "10"} className="text-center">
+                <td colSpan={loginDetails?.logindata?.UserType === 1 || loginDetails?.logindata?.UserType === 2 ? "12" : "11"} className="text-center">
                   <div
                     style={{
                       display: "flex",
@@ -1337,7 +1340,7 @@ const BookingList = () => {
               </tr>
             ) : filteredUserBookings.length === 0 ? (
               <tr>
-                <td colSpan={loginDetails?.logindata?.UserType === 1 || loginDetails?.logindata?.UserType === 2 ? "11" : "10"} className="text-center">
+                <td colSpan={loginDetails?.logindata?.UserType === 1 || loginDetails?.logindata?.UserType === 2 ? "12" : "11"} className="text-center">
                   No data found.
                 </td>
               </tr>
@@ -1425,6 +1428,13 @@ const BookingList = () => {
                       : item?.AmountAfterDiscount}
                   </td>
                   <td className="manager-list">{item.TotalGuestCount}</td>
+
+                  {/*Created On column */}
+                  <td className="manager-list">
+                    {item?.CreatedOn
+                      ? moment(item.CreatedOn).format("YYYY-MM-DD hh:mm A")
+                      : "N/A"}
+                  </td>
 
                   {/*Payment Status column */}
                   <td className="manager-list">
@@ -1746,7 +1756,7 @@ const BookingList = () => {
             {selectedUserDetails?.CreatedOn && (
               <div className="col-6">
                 <p className="table-modal-list ">
-                  Last Created: {moment(selectedUserDetails.CreatedOn).format("YYYY-MM-DD HH:mm:ss")}
+                  Created On:   {moment(selectedUserDetails.CreatedOn).format("YYYY-MM-DD hh:mm A")}
                 </p>
               </div>
             )}
