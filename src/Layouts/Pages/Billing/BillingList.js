@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "../../../assets/ManagerList.css";
 import { Link } from "react-router-dom";
-import { getPackageDetails, deletePackage } from "../../../Redux/actions/users";
+import {
+  getPackageDetails,
+  deletePackage,
+  getAllCategories,
+} from "../../../Redux/actions/users";
 import { fetchUserbookings } from "../../../Redux/actions/booking";
 import { useDispatch } from "react-redux";
 import {
@@ -25,6 +29,7 @@ import { voidBill } from "../../../Redux/actions/billing";
 import { updateBillForVoid } from "../../../Redux/actions/billing";
 import { generateCSVReport } from "../../../Redux/actions/billing";
 import { generateNoShowReport } from "../../../Redux/actions/billing";
+import { generateDetailedReportExcel } from "../../../Redux/actions/billing";
 import { useNavigate } from "react-router-dom";
 import printerpng from "../../../assets/Images/printerpng.png";
 import { AiOutlinePrinter } from "react-icons/ai";
@@ -105,6 +110,12 @@ const BillingList = () => {
     : moment().format("YYYY-MM-DD"));
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [categoryOptions, setCategoryOptions] = useState([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(0);
+  const [reportSummary, setReportSummary] = useState({
+    allCount: 0,
+    selectedCategoryCount: 0,
+  });
 
   const handleChangeLimit = (dataKey) => {
     setPage(1);
@@ -219,10 +230,23 @@ const BillingList = () => {
     );
   };
 
+  const fetchCategories = () => {
+    dispatch(
+      getAllCategories(loginDetails?.logindata?.Token, (callback) => {
+        if (callback.status) {
+          setCategoryOptions(callback?.response?.Details || []);
+        } else {
+          console.log("Callback---------category details--error", callback.error);
+        }
+      })
+    );
+  };
+
   useEffect(() => {
     console.log("Called when id changed");
     fetchBillingDetailsFn();
     fetchUsersDetails();
+    fetchCategories();
     fetchVoidBillList();
     fetchNoShowGuestList();
     if (
@@ -249,6 +273,8 @@ const BillingList = () => {
     setSearhBillId(0);
     setFromDate("");
     setToDate("");
+    setSelectedCategoryId(0);
+    setReportSummary({ allCount: 0, selectedCategoryCount: 0 });
     setReportId(selectedOption?.value);
   };
 
@@ -356,6 +382,8 @@ const BillingList = () => {
     setBillDate(moment().format('YYYY-MM-DD'));;
     setFromDate("");
     setToDate("");
+    setSelectedCategoryId(0);
+    setReportSummary({ allCount: 0, selectedCategoryCount: 0 });
     fetchBillingDetailsFn();
   };
 
@@ -549,6 +577,46 @@ const BillingList = () => {
   };
 
   const generateReportFn = () => {
+    if (Number(reportId) === 8) {
+      if (!fromDate || !toDate) {
+        toast.error("Please select both From and To dates.");
+        return;
+      }
+
+      const detailedReportData = {
+        fromDate,
+        toDate,
+        categoryId: Number(selectedCategoryId || 0),
+        userTypeRole: Number(loginDetails?.logindata?.UserType || 0),
+      };
+
+      dispatch(
+        generateDetailedReportExcel(
+          loginDetails?.logindata?.Token,
+          detailedReportData,
+          (callback) => {
+            if (callback.status) {
+              setLoading(false);
+              const summary = callback?.response?.Details?.Summary;
+              if (summary) {
+                setReportSummary({
+                  allCount: summary?.allCount || 0,
+                  selectedCategoryCount: summary?.selectedCategoryCount || 0,
+                });
+              }
+              if (callback?.response?.Details?.ReportFile) {
+                window.open(callback?.response?.Details?.ReportFile, "_blank");
+              }
+            } else {
+              console.log("Callback------detailed report error", callback.error);
+              toast.error(callback.error);
+            }
+          }
+        )
+      );
+      return;
+    }
+
     const reportData = {
       userId: userId,
       billDate:fromDate || toDate?"": billDate,
@@ -939,6 +1007,27 @@ const BillingList = () => {
                 ) : (
                   <></>
                 )}
+                {reportId == 8 ? (
+                  <div className="col-md-3 col-lg-3 mb-2">
+                    <p style={{ fontWeight: "bold" }}>Category</p>
+                    <div className="input-group">
+                      <select
+                        className="form-control"
+                        value={selectedCategoryId}
+                        onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
+                      >
+                        <option value={0}>All Categories</option>
+                        {categoryOptions?.map((category) => (
+                          <option key={category.Id} value={category.Id}>
+                            {category.Name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
 
                 {reportId == 4 ? (
                   <div className="col-md-3 col-lg-2 mb-2">
@@ -1037,10 +1126,20 @@ const BillingList = () => {
                 {loginDetails?.logindata?.UserType !== 2 && (
   <div className="col-lg-2 col-md-4 col-sm-6">
     <button className="btn btn-primary mt-4" onClick={generateReportFn}>
-      Generate Report
+      {Number(reportId) === 8 ? "Export Excel" : "Generate Report"}
     </button>
   </div>
 )}
+                {Number(reportId) === 8 && (
+                  <div className="col-lg-4 col-md-6 col-sm-12 mt-4">
+                    <span className="badge bg-primary me-2">
+                      Total Count (All): {reportSummary.allCount}
+                    </span>
+                    <span className="badge bg-info text-dark">
+                      Selected Category Count: {reportSummary.selectedCategoryCount}
+                    </span>
+                  </div>
+                )}
                 {/* <div className="col-md-1 col-lg-1 d-flex justify-content-end mb-3">
             <button className="btn btn-primary" onClick={searchBtn}>
               Search
