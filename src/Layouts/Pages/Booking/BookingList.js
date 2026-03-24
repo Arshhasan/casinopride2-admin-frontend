@@ -1348,6 +1348,9 @@ const BookingList = () => {
                 Total Guest Count
               </th>
               <th scope="col" className="text-center table_heading">
+                Kids
+              </th>
+              <th scope="col" className="text-center table_heading">
                 Created On
               </th>
               <th scope="col" className="text-center table_heading">
@@ -1380,7 +1383,7 @@ const BookingList = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={loginDetails?.logindata?.UserType === 1 || loginDetails?.logindata?.UserType === 2 ? "12" : "11"} className="text-center">
+                <td colSpan={loginDetails?.logindata?.UserType === 1 || loginDetails?.logindata?.UserType === 2 ? "13" : "12"} className="text-center">
                   <div
                     style={{
                       display: "flex",
@@ -1404,7 +1407,7 @@ const BookingList = () => {
               </tr>
             ) : filteredUserBookings.length === 0 ? (
               <tr>
-                <td colSpan={loginDetails?.logindata?.UserType === 1 || loginDetails?.logindata?.UserType === 2 ? "12" : "11"} className="text-center">
+                <td colSpan={loginDetails?.logindata?.UserType === 1 || loginDetails?.logindata?.UserType === 2 ? "13" : "12"} className="text-center">
                   No data found.
                 </td>
               </tr>
@@ -1492,6 +1495,11 @@ const BookingList = () => {
                       : item?.AmountAfterDiscount}
                   </td>
                   <td className="manager-list">{item.TotalGuestCount}</td>
+                  <td className="manager-list">
+                    {Number(item?.HasKids ?? item?.NumOfKids ?? item?.NumOfTeens ?? 0) > 0
+                      ? "Yes"
+                      : "No"}
+                  </td>
 
                   {/*Created On column */}
                   <td className="manager-list">
