@@ -132,6 +132,11 @@ const UpdateBooking = () => {
                       "callabck.response.details>>",
                       callback?.response?.Details
                     );
+                    setCustomerCategoryId(
+                      callback?.response?.Details?.CategoryId
+                        ? Number(callback.response.Details.CategoryId)
+                        : null
+                    );
                     setLocalAgentId(callback?.response?.Details?.Id);
                     setLocalAgentDetails(callback?.response?.Details);
                   } else {
@@ -236,6 +241,7 @@ const UpdateBooking = () => {
 
   const [localAgentDetails, setLocalAgentDetails] = useState("");
   const [localAgentId, setLocalAgentId] = useState();
+  const [customerCategoryId, setCustomerCategoryId] = useState(null);
 
   const [TravelAgentId, setTravelAgentId] = useState("");
   const [TravelDetails, setTravelDetails] = useState();
@@ -989,6 +995,7 @@ const UpdateBooking = () => {
           setTeensWeekendPrice={setTeensWeekendPrice}
           setTeensPackageName={setTeensPackageName}
           outletDate={activeDateOfOutlet?.OutletDate}
+          categoryId={customerCategoryId}
           bookingDetails={bookingDetails}
         />
         <div className="col-lg-6 mt-3 mt-3">

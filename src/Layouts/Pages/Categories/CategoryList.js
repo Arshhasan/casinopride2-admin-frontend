@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal } from "react-bootstrap";
-import { getAllCategories } from "../../../Redux/actions/users";
+import { getAllCategories, getCategoryPackages, updateCategoryPackages } from "../../../Redux/actions/users";
 
 const CategoryList = () => {
     const dispatch = useDispatch();
@@ -16,6 +16,9 @@ const CategoryList = () => {
     const [loading, setLoading] = useState(true);
     const [showViewModal, setShowViewModal] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState({});
+    const [categoryPackages, setCategoryPackages] = useState([]);
+    const [packagesLoading, setPackagesLoading] = useState(false);
+    const [savingPackages, setSavingPackages] = useState(false);
 
     const loginDetails = useSelector(
         (state) => state.auth?.userDetailsAfterLogin.Details
@@ -49,6 +52,57 @@ const CategoryList = () => {
     const handleCloseView = () => {
         setShowViewModal(false);
         setSelectedCategory({});
+        setCategoryPackages([]);
+    };
+
+    useEffect(() => {
+        if (!showViewModal) return;
+        if (!selectedCategory?.Id) return;
+        if (!loginDetails?.logindata?.Token) return;
+
+        setPackagesLoading(true);
+        dispatch(
+            getCategoryPackages(loginDetails?.logindata?.Token, selectedCategory.Id, (callback) => {
+                setPackagesLoading(false);
+                if (callback.status) {
+                    setCategoryPackages(callback?.response?.Details || []);
+                } else {
+                    toast.error(callback.error || "Failed to fetch category packages");
+                }
+            })
+        );
+    }, [showViewModal, selectedCategory, loginDetails, dispatch]);
+
+    const togglePackage = (packageId) => {
+        setCategoryPackages((prev) =>
+            prev.map((p) =>
+                p.Id === packageId
+                    ? { ...p, CategoryIsEnabled: p.CategoryIsEnabled ? 0 : 1 }
+                    : p
+            )
+        );
+    };
+
+    const saveCategoryPackages = () => {
+        if (!selectedCategory?.Id) return;
+        setSavingPackages(true);
+        const payload = {
+            categoryId: selectedCategory.Id,
+            packages: (categoryPackages || []).map((p) => ({
+                packageId: p.Id,
+                isEnabled: p.CategoryIsEnabled ? 1 : 0,
+            })),
+        };
+        dispatch(
+            updateCategoryPackages(loginDetails?.logindata?.Token, payload, (callback) => {
+                setSavingPackages(false);
+                if (callback.status) {
+                    toast.success("Category packages updated");
+                } else {
+                    toast.error(callback.error || "Failed to update category packages");
+                }
+            })
+        );
     };
 
     return (
@@ -165,10 +219,53 @@ const CategoryList = () => {
                             <li>Status: <strong>{selectedCategory.IsActive ? "Active" : "Inactive"}</strong></li>
                         </ul>
                     </div>
+
+                    <hr />
+
+                    <div className="mb-3">
+                        <strong>Package Visibility (for this category)</strong>
+                        <div className="text-muted" style={{ fontSize: "13px" }}>
+                            Default is <strong>Hidden</strong>. Enable packages here to allow customers in this category to see/select them.
+                        </div>
+
+                        {packagesLoading ? (
+                            <div className="mt-3">Loading packages...</div>
+                        ) : categoryPackages.length === 0 ? (
+                            <div className="mt-3">No packages found.</div>
+                        ) : (
+                            <div className="mt-3" style={{ maxHeight: "320px", overflowY: "auto" }}>
+                                {categoryPackages.map((p) => (
+                                    <div
+                                        key={p.Id}
+                                        className="d-flex justify-content-between align-items-center py-2"
+                                        style={{ borderBottom: "1px solid #eee" }}
+                                    >
+                                        <div>
+                                            <div style={{ fontWeight: 600 }}>{p.PackageName}</div>
+                                            <div className="text-muted" style={{ fontSize: "12px" }}>
+                                                Global: {p.IsPackageEnabled === 1 ? "Enabled" : "Disabled"}
+                                            </div>
+                                        </div>
+                                        <div className="form-check form-switch m-0">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                checked={!!p.CategoryIsEnabled}
+                                                onChange={() => togglePackage(p.Id)}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseView}>
                         Close
+                    </Button>
+                    <Button variant="primary" onClick={saveCategoryPackages} disabled={savingPackages || packagesLoading}>
+                        {savingPackages ? "Saving..." : "Save Package Visibility"}
                     </Button>
                     <Link
                         to="/AddCategory"

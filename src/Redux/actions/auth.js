@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 console.log("Log from apin ", api);
 
 const today = moment().format("YYYY-MM-DD");
+const AUTH_TOKEN_KEY = "AuthToken";
 
 console.log("loginDetails");
 
@@ -43,6 +44,10 @@ export const Login = (data, callback) => async (dispatch) => {
                 })
                   .then((response) => {
                     console.log("Login data -->", response.data);
+                    const authToken = response?.data?.Details?.logindata?.Token;
+                    if (authToken) {
+                      localStorage.setItem(AUTH_TOKEN_KEY, authToken);
+                    }
                     dispatch(saveLoginData(response.data));
                     callback({
                       status: true,
@@ -87,6 +92,10 @@ export const Login = (data, callback) => async (dispatch) => {
           })
             .then((response) => {
               console.log("Login data -->", response.data);
+              const authToken = response?.data?.Details?.logindata?.Token;
+              if (authToken) {
+                localStorage.setItem(AUTH_TOKEN_KEY, authToken);
+              }
               dispatch(saveLoginData(response.data));
               callback({
                 status: true,
@@ -136,6 +145,7 @@ export const Logout = (data, token, callback) => async (dispatch) => {
       console.log("LOGOUT RESPONSE :: ==>", response.data);
       if (response.data?.Details) {
         console.log("LOGOUT :: ==>", response.data?.Details);
+        localStorage.removeItem(AUTH_TOKEN_KEY);
 
         callback({ status: true, res: response.data?.Details });
       } else if (response.data?.Error?.ErrorMessage) {

@@ -33,7 +33,8 @@ const PackagesPage = ({
   setTeensPackageName,
   Discountpercent,
   outletDate,
-  bookingDetails = {}
+  bookingDetails = {},
+  categoryId = null,
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
@@ -51,9 +52,9 @@ const PackagesPage = ({
   const loginDetails = useSelector(
     (state) => state.auth?.userDetailsAfterLogin.Details
   );
-  const fetchPackageDetails = () => {
+  const fetchPackageDetails = (catId = null) => {
     dispatch(
-      getPackagesDetails(loginDetails?.logindata?.Token, 4, (callback) => {
+      getPackagesDetails(loginDetails?.logindata?.Token, 4, catId, (callback) => {
         if (callback.status) {
           setLoading(false);
 
@@ -66,8 +67,8 @@ const PackagesPage = ({
   };
 
   useEffect(() => {
-    fetchPackageDetails();
-  }, [dispatch]);
+    fetchPackageDetails(categoryId);
+  }, [dispatch, categoryId]);
 
   console.log(
     "Package Detailsnew ------------------------------------>",

@@ -119,7 +119,7 @@ const BookingList = () => {
 
   const fetchPackageDetails = () => {
     dispatch(
-      getPackagesDetails(loginDetails?.logindata?.Token, 4, (callback) => {
+      getPackagesDetails(loginDetails?.logindata?.Token, 4, null, (callback) => {
         if (callback.status) {
           setLoading(false);
 

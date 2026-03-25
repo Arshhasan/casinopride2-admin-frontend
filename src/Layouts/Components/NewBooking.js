@@ -214,6 +214,7 @@ const NewBooking = () => {
 
   const [Discountpercent, setDiscountpercent] = useState("");
   const [showDiscountCodeField, setShowDiscountCodeField] = useState(false);
+  const [customerCategoryId, setCustomerCategoryId] = useState(null);
 
   useEffect(() => {
     const url = new URL(window.location.href);
@@ -339,6 +340,7 @@ const NewBooking = () => {
       getUserByPhone(loginDetails?.logindata?.Token, phoneNumber, (callback) => {
         if (callback.status) {
           const userData = callback?.response?.Details;
+          setCustomerCategoryId(userData?.CategoryId ? Number(userData.CategoryId) : null);
           setGuestName(userData?.FullName);
           setEmail(userData?.Email);
           setAddress(userData?.Address);
@@ -1990,6 +1992,7 @@ const NewBooking = () => {
           setTeensWeekendPrice={setTeensWeekendPrice}
           setTeensPackageName={setTeensPackageName}
           outletDate={activeDateOfOutlet?.OutletDate}
+          categoryId={customerCategoryId}
         />
         <div className="col-lg-6 mt-3 mt-3">
           <label for="formGroupExampleInput " className="form_text">

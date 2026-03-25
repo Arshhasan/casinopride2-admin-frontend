@@ -152,6 +152,40 @@ export const getAllCategories = (token, callback) => async (dispatch) => {
     });
 };
 
+export const getCategoryPackages = (token, categoryId, callback) => async (dispatch) => {
+  api.CORE_PORT.get(`/core/categoryPackages?categoryId=${Number(categoryId)}`, {
+    headers: { AuthToken: token },
+  })
+    .then((response) => {
+      if (response.data?.Details) {
+        callback({ status: true, response: response?.data });
+      } else if (response.data?.Error) {
+        callback({ status: false, error: response.data?.Error?.ErrorMessage });
+      }
+    })
+    .catch((err) => {
+      console.log("error", err);
+      callback({ status: false, error: "Failed to fetch category packages" });
+    });
+};
+
+export const updateCategoryPackages = (token, data, callback) => async (dispatch) => {
+  api.CORE_PORT.post("/core/categoryPackages", data, {
+    headers: { AuthToken: token },
+  })
+    .then((response) => {
+      if (response.data?.Details) {
+        callback({ status: true, response: response?.data });
+      } else if (response.data?.Error) {
+        callback({ status: false, error: response.data?.Error?.ErrorMessage });
+      }
+    })
+    .catch((err) => {
+      console.log("error", err);
+      callback({ status: false, error: "Failed to update category packages" });
+    });
+};
+
 export const getPackageDetails =
   (token, usertype, callback) => async (dispatch) => {
     console.log(token);

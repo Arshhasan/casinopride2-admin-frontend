@@ -44,11 +44,15 @@ export const EditUserDetails = (data, token, callback) => async (dispatch) => {
 };
 
 export const getPackagesDetails =
-  (token, usertype, callback) => async (dispatch) => {
+  (token, usertype, categoryId, callback) => async (dispatch) => {
     console.log(token);
     console.log(usertype);
 
-    api.BOOKING_PORT.get("/booking/displayPackages", {
+    const url = categoryId
+      ? `/booking/displayPackages?categoryId=${Number(categoryId)}`
+      : "/booking/displayPackages";
+
+    api.BOOKING_PORT.get(url, {
       headers: { AuthToken: token },
     })
       .then((response) => {
