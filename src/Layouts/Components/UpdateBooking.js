@@ -454,8 +454,9 @@ const UpdateBooking = () => {
   };
 
   const isValidEmail = (email) => {
-    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    return emailPattern.test(email);
+    const normalizedEmail = (email || "").trim();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    return emailPattern.test(normalizedEmail);
   };
 
   const currentDate = new Date();
@@ -484,6 +485,7 @@ const UpdateBooking = () => {
   const handleShow = () => {
     // setShow(true)
     console.log("okuuuuu", gstNumber?.length);
+    const normalizedEmail = (email || "").trim();
 
     if (guestName == "" || phone === "" || address == "") {
       toast.warning("Please fill all the fields");
@@ -493,7 +495,7 @@ const UpdateBooking = () => {
       toast.warning("Please enter a valid GST number");
       setLoader(false);
       handleClose();
-    } else if (!isValidEmail(email) && loginDetails?.logindata?.UserType !== ROLES.GRE ) {
+    } else if (!isValidEmail(normalizedEmail) && loginDetails?.logindata?.UserType !== ROLES.GRE ) {
       toast.warning("Please enter a valid email address");
       setLoader(false);
       handleClose();
@@ -528,7 +530,7 @@ const UpdateBooking = () => {
       guestName: guestName,
       address: address,
       phone: phone,
-      email: email,
+      email: (email || "").trim(),
       dob: dateofbirth,
       country: selectedCountry?.name,
       state: selectedState?.name,
