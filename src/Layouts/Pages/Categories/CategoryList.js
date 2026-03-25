@@ -20,6 +20,12 @@ const CategoryList = () => {
     const [packagesLoading, setPackagesLoading] = useState(false);
     const [savingPackages, setSavingPackages] = useState(false);
 
+    const selectedCategoryId =
+        selectedCategory?.Id ??
+        selectedCategory?.idCategoryMaster ??
+        selectedCategory?.categoryId ??
+        null;
+
     const loginDetails = useSelector(
         (state) => state.auth?.userDetailsAfterLogin.Details
     );
@@ -57,12 +63,12 @@ const CategoryList = () => {
 
     useEffect(() => {
         if (!showViewModal) return;
-        if (!selectedCategory?.Id) return;
+        if (!selectedCategoryId) return;
         if (!loginDetails?.logindata?.Token) return;
 
         setPackagesLoading(true);
         dispatch(
-            getCategoryPackages(loginDetails?.logindata?.Token, selectedCategory.Id, (callback) => {
+            getCategoryPackages(loginDetails?.logindata?.Token, selectedCategoryId, (callback) => {
                 setPackagesLoading(false);
                 if (callback.status) {
                     setCategoryPackages(callback?.response?.Details || []);
@@ -71,7 +77,7 @@ const CategoryList = () => {
                 }
             })
         );
-    }, [showViewModal, selectedCategory, loginDetails, dispatch]);
+    }, [showViewModal, selectedCategoryId, loginDetails, dispatch]);
 
     const togglePackage = (packageId) => {
         setCategoryPackages((prev) =>
@@ -84,10 +90,10 @@ const CategoryList = () => {
     };
 
     const saveCategoryPackages = () => {
-        if (!selectedCategory?.Id) return;
+        if (!selectedCategoryId) return;
         setSavingPackages(true);
         const payload = {
-            categoryId: selectedCategory.Id,
+            categoryId: selectedCategoryId,
             packages: (categoryPackages || []).map((p) => ({
                 packageId: p.Id,
                 isEnabled: p.CategoryIsEnabled ? 1 : 0,
@@ -145,7 +151,10 @@ const CategoryList = () => {
                     </div>
                 ) : (
                     categories.map((category) => (
-                        <div className="col-md-6 col-lg-4 mb-4" key={category.Id}>
+                        <div
+                            className="col-md-6 col-lg-4 mb-4"
+                            key={category.Id ?? category.idCategoryMaster ?? category.categoryId}
+                        >
                             <div className="card h-100 shadow-sm">
                                 <div className="card-body">
                                     <div className="d-flex justify-content-between align-items-start mb-3">
