@@ -659,7 +659,8 @@ export const getUserByPhone =
   (token, phone, callback) => async (dispatch) => {
     console.log(token);
 
-    api.BOOKING_PORT.get(`/booking/getUserByPhone?phone=${phone}`, {
+    // IMPORTANT: use coreservice lookup so we get the customer's CategoryId (needed for package filtering)
+    api.CORE_PORT.get(`/core/getUserByPhone?phone=${phone}`, {
       headers: { AuthToken: token },
     })
       .then((response) => {
